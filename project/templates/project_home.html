@@ -1,90 +1,105 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-  <main class="container-fluid">
-    <div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
-      <div class="lh-1">
-        <h1 class="h6 mb-0 text-white lh-1">Projet</h1>
+<main class="container-fluid">
+  <div class="p-3 my-3 text-white bg-purple rounded shadow-sm">
+    <div class="lh-1">
+      <div class="row">
+        <div class="col-md-3">
+          <input type="text" id="searchProject" class="form-control form-control-sm typeahead"
+            placeholder="chercher projet">
+        </div>
+        <div class="col-md-2 offset-md-7">
+          <a class="btn btn-dark btn-sm"> New Project</a>
+        </div>
       </div>
     </div>
-    <div class="my-3 p-3 bg-body rounded shadow-sm">
-      <form>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group row">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
-              <div class="col-sm-9">
-                <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
-              <div class="col-sm-9">
-                <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
-              <div class="col-sm-9">
-                <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
-              </div>
+  </div>
+  <div class="my-3 p-3 border border-2 rounded shadow-sm bg-light">
+    <form>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group row">
+            <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="col-sm-9">
+              <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group row">
-              <label for="email1" class="col-sm-3 col-form-label">Clinet nbr</label>
-              <div class="col-sm-9">
-                <select class="form-control form-control-sm form-select">
-                  <option>Small select</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label">Email</label>
-              <div class="col-sm-9">
-                <input type="email" class="form-control form-control-sm" id="email2" />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label">Email</label>
-              <div class="col-sm-9">
-                <input type="email" class="form-control form-control-sm" id="email2" />
-              </div>
+          <div class="form-group row mt-2">
+            <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="col-sm-9">
+              <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="exampleFormControlTextarea1">Project description</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-              <label for="exampleFormControlTextarea1">To do</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          <div class="form-group row mt-2">
+            <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="col-sm-9">
+              <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
             </div>
           </div>
         </div>
-      </form>
-    </div>
-    <div class="my-3 p-3 bg-body rounded shadow-sm">
-      <h5>Projects Articles</h5>
-      <table data-toggle="table" data-pagination="true" data-search="true">
-        <thead>
-          <tr>
-            <th data-sortable="true" data-field="id">Item ID</th>
-            <th data-field="name">Item Name</th>
-            <th data-field="price">Item Price</th>
-            <th data-field="price">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>A</th>
-            <th>B</th>
-            <th>C</th>
-            <th></th>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+        <div class="col-md-4">
+          <div class="form-group row">
+            <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="col-sm-9">
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control form-control-sm" id="email2" />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control form-control-sm" id="email2" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group row">
+            <label for="desc" class="col-sm-3 col-form-label col-form-label-sm">Project description</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="to_do" class="col-sm-3 col-form-label col-form-label-sm">To do </label>
+            <div class="col-sm-9">
+              <textarea class="form-control" id="to_do" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="my-3 p-3 border border-2 rounded shadow-sm bg-light">
+    <h5>Projects Articles</h5>
+    <table data-toggle="table" data-pagination="true" data-search="true" class="bg-body">
+      <thead>
+        <tr>
+          <th data-sortable="true" data-field="id">Item ID</th>
+          <th data-field="name">Item Name</th>
+          <th data-field="price">Item Price</th>
+          <th data-field="price">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>A</th>
+          <th>B</th>
+          <th>C</th>
+          <th></th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
 {% endblock %}
