@@ -15,50 +15,49 @@
       </div>
     </div>
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-      <form>
+      <form method="POST" action="{% url 'create-project' %}">
+        {% csrf_token %}
+        {% include 'alert.html' %}
         <div class="row">
+          <input type="hidden" name="project_nbr" value="p12313" />
           <div class="col-md-4">
-            <div class="form-group row">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+            <div class="form-group row mt-2">
+              <label for="id_project_name" class="col-sm-3 col-form-label col-form-label-sm">Project name</label>
               <div class="col-sm-9">
-                <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
+                <input type="text" name="project_name" class="form-control form-control-sm" id="id_project_name"/>
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Client number</label>
               <div class="col-sm-9">
-                <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
+                <select class="form-select form-select-sm" name="client" aria-label=".form-select-sm example">
+                  <option> Client number </option> 
+                  {% for client in clients %} 
+                      <option value="{{ client.id }}" {% if project.client.id == client.id %} selected {% endif %}>
+                        {{ client.id }}
+                      </option>
+                    {% endfor %} 
+                </select>
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+              <label for="id_client_name" class="col-sm-3 col-form-label col-form-label-sm">Client Name</label>
               <div class="col-sm-9">
-                <input type="email" name="email1" class="form-control form-control-sm" id="email1" />
+                <input type="text" class="form-control form-control-sm" id="id_client_name"/>
               </div>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group row">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+              <label for="client_ref" class="col-sm-3 col-form-label col-form-label-sm">Client Ref</label>
               <div class="col-sm-9">
-                <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                  <option selected>Open this select menu</option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
-                </select>
+                <input type="text" name="client_ref" class="form-control form-control-sm" id="client_ref" />
               </div>
             </div>
             <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+              <label for="our_ref" class="col-sm-3 col-form-label col-form-label-sm">Our Ref</label>
               <div class="col-sm-9">
-                <input type="email" class="form-control form-control-sm" id="email2" />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Email</label>
-              <div class="col-sm-9">
-                <input type="email" class="form-control form-control-sm" id="email2" />
+                <input type="text" name="our_ref" class="form-control form-control-sm" id="our_ref" />
               </div>
             </div>
           </div>
@@ -66,27 +65,28 @@
             <div class="form-group row">
               <label for="desc" class="col-sm-3 col-form-label col-form-label-sm">Project description</label>
               <div class="col-sm-9">
-                <textarea class="form-control" id="desc" rows="4"></textarea>
+                <textarea class="form-control" name="project_description" id="desc" rows="2"></textarea>
               </div>
             </div>
             <div class="form-group row mt-2">
               <label for="to_do" class="col-sm-3 col-form-label col-form-label-sm">To do</label>
               <div class="col-sm-9">
-                <textarea class="form-control" id="to_do" rows="4"></textarea>
+                <textarea class="form-control" id="to_do" name="to_do" rows="2"></textarea>
               </div>
             </div>
           </div>
         </div>
+        <button type="submit" class="mt-2 btn btn-dark btn-sm">Save project</button>
       </form>
     </div>
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-      <h5>Projects Articles</h5>
+      <h5>Project Articles</h5>
       <table data-toggle="table" data-pagination="true" data-search="true" class="bg-body">
         <thead>
           <tr>
-            <th data-sortable="true" data-field="id">Item ID</th>
-            <th data-field="name">Item Name</th>
-            <th data-field="price">Item Price</th>
+            <th data-sortable="true" data-field="id">ID Article </th>
+            <th data-field="name">Article Name</th>
+            <th data-field="price">Price</th>
             <th data-field="price">Action</th>
           </tr>
         </thead>

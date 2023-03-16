@@ -5,21 +5,24 @@ from .models import Client, Country
 from .forms import ClientForm
 
 def client_list(request):
-    clients = Client.objects.all()[:1]
+    clients = Client.objects.all()[:10]
     countries = Country.objects.all()
     context =  {'clients': clients,'countries':countries}
     return render(request, 'client_list.html',context)
 
 def client_detail(request, pk):
     client = get_object_or_404(Client, pk=pk)
-    return render(request, 'client_detail.html', {'client': client})
+    clients = Client.objects.all()[:10]
+    countries = Country.objects.all()
+    context = {'client':client,'clients':clients,'countries':countries}
+    return render(request, 'client_list.html', context)
 
 def client_create(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Client has been creted successfully')
+            messages.success(request, 'Client has been created successfully')
         else:
             messages.error(request, 'An error occured ! please retry again ')
     return redirect('client-list')
@@ -39,10 +42,9 @@ def client_edit(request, pk):
     return render(request, 'client_form.html', {'form': form})
 
 def client_delete(request, pk):
-    if request.method == 'POST':
-        client = get_object_or_404(Client, pk=pk)
-        client.delete()
-        messages.success(request, 'project has been deleted successfully')
-    return redirect('client_list')
+    client = get_object_or_404(Client, pk=pk)
+    client.delete()
+    messages.success(request, 'project has been deleted successfully')
+    return redirect('client-list')
 
 
