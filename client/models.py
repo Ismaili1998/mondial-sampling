@@ -13,29 +13,26 @@ class Country(models.Model):
 
 class Client(models.Model):
     client_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
-    postal_code = models.CharField(max_length=20)
+    client_nbr = models.CharField(max_length=50,unique=True)
+    address = models.CharField(max_length=200,blank=True)
+    postal_code = models.CharField(max_length=20,blank=True)
     city = models.CharField(max_length=200)
     country = models.ForeignKey(Country,on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20)
     fax = models.CharField(max_length=20)
     mobile = models.CharField(max_length=20)
-    email1 = models.EmailField()
-    email2 = models.EmailField()
-    website = models.URLField()
-    internal_contact = models.CharField(max_length=200)
-    external_contact = models.CharField(max_length=200)
-    representative = models.CharField(max_length=200)
-    representative_1 = models.CharField(max_length=200)
-    representative_2 = models.CharField(max_length=200)
-    language = models.CharField(max_length=200, choices=[
-        ('English', 'English'),
-        ('German', 'German'),
-        ('French', 'French'),
-    ])
+    email1 = models.EmailField(unique=True)
+    email2 = models.EmailField(blank=True)
+    website = models.URLField(blank=True)
+    internal_contact = models.CharField(max_length=200,blank=True)
+    external_contact = models.CharField(max_length=200,blank=True)
+    representative = models.CharField(max_length=200,blank=True)
+    representative_1 = models.CharField(max_length=200,blank=True)
+    representative_2 = models.CharField(max_length=200,blank=True)
+    language = models.CharField(max_length=200)
     
-    credit_limit = models.FloatField()
-    remark = models.TextField()
+    credit_limit = models.FloatField(blank=True)
+    remark = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -12,10 +12,10 @@ def client_list(request):
 
 def client_detail(request, pk):
     client = get_object_or_404(Client, pk=pk)
-    clients = Client.objects.all()[:10]
     countries = Country.objects.all()
-    context = {'client':client,'clients':clients,'countries':countries}
-    return render(request, 'client_list.html', context)
+    page_name = 'update-client'
+    context = {'client':client,'countries':countries,'page':page_name}
+    return render(request, 'client.html', context)
 
 def client_create(request):
     if request.method == 'POST':
@@ -24,22 +24,36 @@ def client_create(request):
             form.save()
             messages.success(request, 'Client has been created successfully')
         else:
-            messages.error(request, 'An error occured ! please retry again ')
-    return redirect('client-list')
+            messages.error(request, 'An error occured ! please retry again')
+            for err in form.errors:
+                print(err)
+        return redirect('project-home')
+    
+    page_name = 'add-client'
+    countries = Country.objects.all()
+    nbr_clients = Client.objects.all().count()
+    client_nbr  = "C{0}".format(nbr_clients + 1)
+    context = {'page':page_name,
+               'countries':countries,
+               'client_nbr':client_nbr}
+    return render(request,'client.html',context)
 
 def client_edit(request, pk):
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'POST':
         form = ClientForm(request.POST, instance=client)
         if form.is_valid():
-            client = form.save()
-            messages.success(request, 'project has been modified successfully')
-            return redirect('client_detail', pk=client.pk)
+            form.save()
+            messages.success(request, 'Client has been modified successfully')
         else:
-            messages.error(request, 'an error occured !, please retry again ')
-    else:
-        form = ClientForm(instance=client)
-    return render(request, 'client_form.html', {'form': form})
+            messages.error(request, 'An error occured ! please retry again ')
+            for err in form.errors:
+                print(err)
+        return redirect('project-home')
+    countries = Country.objects.all()
+    page_name = 'update-client'
+    context = {'client':client,'countries':countries,'page':page_name}
+    return render(request, 'client.html', context)
 
 def client_delete(request, pk):
     client = get_object_or_404(Client, pk=pk)

@@ -1,104 +1,215 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-  <main class="container-fluid">
-    <div class="p-3 my-3 text-white bg-purple rounded shadow-sm">
-      <div class="lh-1">
-        <div class="row">
-          <div class="col-md-3">
-            <input type="text" id="searchProject" class="form-control form-control-sm typeahead" placeholder="chercher projet" />
-          </div>
-          <div class="col-md-2 offset-md-7">
-            <a class="btn btn-dark btn-sm">New Project</a>
+<main class="container-fluid">
+  <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
+    <div class="lh-1">
+      <div class="row">
+        <div class="col-md-3">
+          <input type="text" id="searchProject" class="form-control form-control-sm typeahead"
+            placeholder="search projet" value="{{ project.project_nbr }}" />
+        </div>
+        <div class="dropdown show col-md-2 offset-md-7">
+          <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Action
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{% url 'create-project' %}"> <i class="material-icons align-middle">add</i>
+              New project</a>
+            <a class="dropdown-item" data-bs-toggle="modal" href="#" data-bs-target="#Modal"
+              onclick="load_modal('Create client','{%  url "create-client" %}')"> <i
+                class="material-icons align-middle">add</i> New client</a>
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+              onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
+                class="material-icons align-middle">add</i> New supplier</a>
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+              onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#"> <i
+                class="material-icons align-middle">add</i> New article </a>
           </div>
         </div>
       </div>
     </div>
-    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-      <form method="POST" action="{% url 'create-project' %}">
-        {% csrf_token %}
-        {% include 'alert.html' %}
-        <div class="row">
-          <input type="hidden" name="project_nbr" value="p12313" />
-          <div class="col-md-4">
-            <div class="form-group row mt-2">
-              <label for="id_project_name" class="col-sm-3 col-form-label col-form-label-sm">Project name</label>
-              <div class="col-sm-9">
-                <input type="text" name="project_name" class="form-control form-control-sm" id="id_project_name"/>
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="email1" class="col-sm-3 col-form-label col-form-label-sm">Client number</label>
-              <div class="col-sm-9">
-                <select class="form-select form-select-sm" name="client" aria-label=".form-select-sm example">
-                  <option> Client number </option> 
-                  {% for client in clients %} 
-                      <option value="{{ client.id }}" {% if project.client.id == client.id %} selected {% endif %}>
-                        {{ client.id }}
-                      </option>
-                    {% endfor %} 
-                </select>
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="id_client_name" class="col-sm-3 col-form-label col-form-label-sm">Client Name</label>
-              <div class="col-sm-9">
-                <input type="text" class="form-control form-control-sm" id="id_client_name"/>
-              </div>
+  </div>
+  <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+    <form method="POST"
+      action="{% if page == 'add-project' %} {% url 'create-project' %} {% else %} {% url 'update-project' project.id %} {% endif %}">
+      {% csrf_token %}
+      {% include 'alert.html' %}
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group row">
+            <label for="id_project_nbr" class="col-sm-3 col-form-label col-form-label-sm">Project number</label>
+            <div class="col-sm-9">
+              <input type="text" name="project_nbr" class="form-control form-control-sm" id="id_project_nbr"
+                value="{{project_nbr}}{{project.project_nbr}}" required />
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group row">
-              <label for="client_ref" class="col-sm-3 col-form-label col-form-label-sm">Client Ref</label>
-              <div class="col-sm-9">
-                <input type="text" name="client_ref" class="form-control form-control-sm" id="client_ref" />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label for="our_ref" class="col-sm-3 col-form-label col-form-label-sm">Our Ref</label>
-              <div class="col-sm-9">
-                <input type="text" name="our_ref" class="form-control form-control-sm" id="our_ref" />
-              </div>
+          <div class="form-group row mt-2">
+            <label for="id_project_name" class="col-sm-3 col-form-label col-form-label-sm">Project name</label>
+            <div class="col-sm-9">
+              <input type="text" name="project_name" class="form-control form-control-sm" id="id_project_name"
+                value="{{project.project_name}}" required />
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group row">
-              <label for="desc" class="col-sm-3 col-form-label col-form-label-sm">Project description</label>
-              <div class="col-sm-9">
-                <textarea class="form-control" name="project_description" id="desc" rows="2"></textarea>
-              </div>
+          <div class="form-group row mt-2">
+            <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm">Client number</label>
+            <div class="col-sm-9">
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="client" required
+                id="client_nbr" aria-label=".form-select-sm example">
+                <option value=""> Client number </option>
+                {% for client in clients %}
+                <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif %}>
+                  {{ client.client_nbr }}
+                </option>
+                {% endfor %}
+              </select>
             </div>
-            <div class="form-group row mt-2">
-              <label for="to_do" class="col-sm-3 col-form-label col-form-label-sm">To do</label>
-              <div class="col-sm-9">
-                <textarea class="form-control" id="to_do" name="to_do" rows="2"></textarea>
-              </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="id_client_name" class="col-sm-3 col-form-label col-form-label-sm">Client name</label>
+            <div class="col-sm-9 d-flex">
+              <input type="text" disabled class="form-control form-control-sm" id="id_client_name"
+                value="{{project.client.client_name}}" />&nbsp;
+              <a class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
+                onclick="get_clientDetail('Client detail','{%  url "client-detail" 0 %}')" href="#"><i
+                  class="material-icons align-middle text-dark">visibility</i></a>
             </div>
           </div>
         </div>
-        <button type="submit" class="mt-2 btn btn-dark btn-sm">Save project</button>
-      </form>
-    </div>
-    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-      <h5>Project Articles</h5>
-      <table data-toggle="table" data-pagination="true" data-search="true" class="bg-body">
-        <thead>
-          <tr>
-            <th data-sortable="true" data-field="id">ID Article </th>
-            <th data-field="name">Article Name</th>
-            <th data-field="price">Price</th>
-            <th data-field="price">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>A</th>
-            <th>B</th>
-            <th>C</th>
-            <th></th>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+        <div class="col-md-4">
+          <div class="form-group row">
+            <label for="client_ref" class="col-sm-3 col-form-label col-form-label-sm">Client Ref</label>
+            <div class="col-sm-9">
+              <input type="text" name="client_ref" class="form-control form-control-sm" id="client_ref"
+                value="{{project.client_ref}}" required/>
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="our_ref" class="col-sm-3 col-form-label col-form-label-sm">Our Ref</label>
+            <div class="col-sm-9">
+              <input type="text" name="our_ref" class="form-control form-control-sm" id="our_ref"
+                value="{{project.our_ref}}" required/>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group row">
+            <label for="desc" class="col-sm-3 col-form-label col-form-label-sm">Project description</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" name="project_description" id="desc"
+                rows="2">{{project.project_description}}</textarea>
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label for="to_do" class="col-sm-3 col-form-label col-form-label-sm">To do</label>
+            <div class="col-sm-9">
+              <textarea class="form-control" id="to_do" name="to_do" rows="2">{{project.to_do}}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 d-flex justify-content-end">
+        <button type="submit" class="btn btn-dark btn-sm">
+          {% if page == 'add-project' %}
+          Save project
+          {% else %}
+          Save changes
+          {% endif %}
+        </button>&nbsp;
+        <a href="{% url 'project-home' %}" class="ml-2 btn btn-dark btn-sm">Refresh</a>
+      </div>
+    </form>
+  </div>
+  <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+    <strong class="text-info"> Project Articles </strong>
+    <table class="table table-sm mt-2 bg-white">
+      <thead>
+        <tr>
+          <th data-field="name">Article Name</th>
+          <th data-field="price">Article Number</th>
+          <th data-field="price">Supplier</th>
+          <th data-field="price">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in articles %}
+        <tr>
+          <td>{{ article.article_name }}</td>
+          <td>{{ article.article_nbr }}</td>
+          <td>{{ article.supplier.supplier_name }}</td>
+          <td class="d-flex justify-content-end">
+            <a href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
+              onclick="load_modal('Article detail','{%  url "update-article" article.id %}')"><i
+                class="material-icons">visibility</i></a>&nbsp;
+            <a href="{% url 'delete-article' article.id %}" class="text-danger"><i class="material-icons">delete</i></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+{% endblock %}
+{% block javascript %}
+
+<script type="text/javascript">
+
+  function load_modal(title, page_url) {
+    $('.modal-title').text(title);
+    $('.modal-body').load(page_url);
+    //$('#myModal').modal('show'); 
+  }
+
+  var client_id = "{{project.client.id}}";
+
+  function get_clientDetail(title,url){
+      if (client_id == 0)
+        title="No client chosen"
+      var url = url.replace('0', client_id);
+      load_modal(title,url)
+    }
+
+  
+  $(document).ready(function () {
+    $('#searchProject').autocomplete({
+                source: function (request, response) {
+                    $.getJSON("{% url 'get-projectsByKeyWord' %}",
+                    { keyword: request.term }, function (data) {
+                        // Map the project numbers to an array of objects with label and value properties
+                        var mappedData = $.map(data, function (item) {
+                            return {
+                                label: item,
+                                value: item
+                            };
+                        });
+                        response(mappedData);
+                    });
+                },
+                select: function (event, ui) {
+                    project_nbr = ui.item.value;
+                    var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
+                    window.location.href = url;
+                    return false;
+                }
+            });
+
+    let clients = []
+
+    {% for c in clients %}
+
+    client = { id: {{ c.id }} , client_name: '{{c.client_name}}'}
+    clients.push(client)
+
+    {% endfor %}
+    $('#client_nbr').change(function () {
+      client_id = $(this).val()
+      let client = clients.filter(clt => clt.id == client_id);
+      client = client[0]
+      $('#id_client_name').val(client.client_name)
+    });
+
+  });
+
+</script>
 {% endblock %}

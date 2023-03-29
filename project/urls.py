@@ -4,10 +4,20 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('',views.project_home,name='project-home'),
-    path('create_project',views.project_create,name='create-project'),
-    path('update_project',views.project_edit,name='update-project'),
-    path('delete_project',views.project_delete,name='delete-project'),
-    path('get_projectsByKeyWord',views.get_projectsByKeyWord,name='get-projectsByKeyWord'),
+    path('create-project',views.project_create,name='create-project'),
+    path('get-project/<str:project_nbr>',views.project_detail,name='project-detail'),
+    path('update-project/<str:pk>',views.project_edit,name='update-project'),
+    path('delete-project/<str:pk>',views.project_delete,name='delete-project'),
+    path('get-projectsByKeyWord',views.get_projectsByKeyWord,name='get-projectsByKeyWord'),
+
+
+    path('create-article',views.article_create,name='create-article'),
+    path('update-article/<str:pk>',views.article_edit,name='update-article'),
+    path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
+    path('delete-article/<str:pk>',views.article_delete,name='delete-article'),
+
+    path('create-supplier',views.supplier_create,name='create-supplier'),
+
 
 ]
 

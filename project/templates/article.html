@@ -1,0 +1,182 @@
+<form action="{% if page == 'add-article' %} {% url 'create-article' %} {% else %} {% url 'update-article' article.id %} {% endif %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label col-form-label-sm">Project</label>
+                <div class="col-sm-8">
+                    <select class="form-select form-select-sm" name="project" aria-label=".form-select-sm example">
+                        <option> Chose a project </option>
+                        {% for project in projects %}
+                        <option value="{{ project.id }}" {% if article.project.id == project.id %} selected {% endif %}>
+                            {{ project }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label class="col-sm-4 col-form-label col-form-label-sm">supplier</label>
+                <div class="col-sm-8">
+                    <select class="form-select form-select-sm" name="supplier" aria-label=".form-select-sm example">
+                        <option> Chose a supplier </option>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}" {% if article.supplier.id == supplier.id %} selected {% endif%}>
+                            {{ supplier }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_article_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Article number</label>
+                <div class="col-sm-8">
+                    <input type="text" name="article_nbr" class="form-control form-control-sm" id="id_article_nbr"
+                        value="{{article_nbr}}{{article.article_nbr}}" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_article_name" class="col-sm-4 col-form-label col-form-label-sm"> Article name</label>
+                <div class="col-sm-8">
+                    <input type="text" name="article_name" class="form-control form-control-sm" id="id_article_name"
+                        value="{{article.article_name}}" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label class="col-sm-4 col-form-label col-form-label-sm">Status</label>
+                <div class="col-sm-8">
+                    <select class="form-select form-select-sm" name="status" aria-label=".form-select-sm example">
+                        <option> Choisir un status </option>
+                        <option> A </option>
+                        <option> B </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_quantity" class="col-sm-4 col-form-label col-form-label-sm">Quantity</label>
+                <div class="col-sm-8">
+                    <input type="number" name="quantity" class="form-control form-control-sm" id="id_quantity"
+                        value="{{article.quantity}}" step="any" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
+                <div class="col-sm-8">
+                   <select class="form-select form-select-sm" name="unit" aria-label=".form-select-sm example">
+                        <option value=""> Chose an unit </option> 
+                        <option value="unit 1"> unit 1 </option>   
+                        <option value="unit 2"> unit 2 </option>     
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_purchase_price" class="col-sm-4 col-form-label col-form-label-sm">Purchase Price</label>
+                <div class="col-sm-8">
+                    <input type="number" name="purchase_price" class="form-control form-control-sm"
+                        id="id_purchase_price" value="{{article.purchase_price}}" step="any" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_selling_price" class="col-sm-4 col-form-label col-form-label-sm">Selling Price</label>
+                <div class="col-sm-8">
+                    <input type="number" name="selling_price" class="form-control form-control-sm" id="id_selling_price"
+                        value="{{article.selling_price}}" step="any" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_comment" class="col-sm-4 col-form-label col-form-label-sm">Comment
+                   </label>
+                <div class="col-sm-8">
+                    <textarea name="comment" class="form-control form-control-sm"
+                        rows="3"id="id_comment">{{article.comment}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group row">
+                <label for="id_description_fr" class="col-sm-4 col-form-label col-form-label-sm">Description
+                    (French)</label>
+                <div class="col-sm-8">
+                    <textarea name="description_fr" class="form-control form-control-sm"
+                        id="id_description_fr">{{article.description_fr}}</textarea>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_description_de" class="col-sm-4 col-form-label col-form-label-sm">Description
+                    (German)</label>
+                <div class="col-sm-8">
+                    <textarea name="description_de" class="form-control form-control-sm"
+                        id="id_description_de">{{article.description_de}}</textarea>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_description_en" class="col-sm-4 col-form-label col-form-label-sm">Description
+                    (English)</label>
+                <div class="col-sm-8">
+                    <textarea name="description_en" class="form-control form-control-sm"
+                        id="id_description_en">{{article.description_en}}</textarea>
+                </div>
+            </div>
+            <fieldset class="border p-1 mt-2 rounded">
+                <h6>Exportation</h6>
+                <div class="form-group row">
+                    <label for="id_net_weight" class="col-sm-4 col-form-label col-form-label-sm">Net Weight</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="net_weight" class="form-control form-control-sm" id="id_net_weight"
+                            value="{{article.net_weight}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_customs_tariff" class="col-sm-4 col-form-label col-form-label-sm">HS-code</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="customs_tariff" class="form-control form-control-sm" id="id_customs_tariff"
+                            value="{{article.customs_tariff}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_customs_description" class="col-sm-4 col-form-label col-form-label-sm"> Customs description </label>
+                    <div class="col-sm-8">
+                        <textarea name="customs_description" class="form-control form-control-sm"
+                            id="id_customs_description">{{article.customs_description}}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-dark btn-sm"> 
+            {% if page == 'add-article' %} Save article
+            {% else %} Save changes 
+            {% endif %}
+        </button>
+    </div>
+</form>
+<script>
+
+    $(document).ready(function () {
+        $('#id_description_fr').blur(function() {
+            let frenchText = $(this).val();
+            
+            if (frenchText.length == 0)
+            {
+                $('#id_description_en').val('');
+                $('#id_description_de').val('');
+                return     
+            }
+
+            // Make an API call to translate the French word to English
+            $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|en', function (response) {
+                var englishTranslation = response.responseData.translatedText;
+                $('#id_description_en').val(englishTranslation);
+            });
+
+            // Make an API call to translate the French word to German
+            $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|de', function (response) {
+                var germanTranslation = response.responseData.translatedText;
+                $('#id_description_de').val(germanTranslation);
+            });
+
+        });
+    });
+
+</script>

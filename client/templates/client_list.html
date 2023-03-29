@@ -5,7 +5,7 @@
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
       <h5 class="mb-4">Espace client</h5>
       {% include 'alert.html' %}
-      <form method="POST" action="{% url 'client-create' %}">
+      <form method="POST" action="{% url 'create-client' %}">
         {% csrf_token %}
         <div class="row">
           <div class="col-md-4">
@@ -145,7 +145,7 @@
     </div>
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
       <strong>Clients list </strong>
-      <table data-toggle="table" data-pagination="true" data-search="true" class="bg-body">
+      <table class="table table-sm bg-white mt-2">
         <thead>
           <tr>
             <th>Clinet Name</th>
@@ -164,9 +164,9 @@
               <td>{{ client.address }}</td>
               <td>{{ client.fax }}</td>
               <td>{{ client.phone_number }}</td>
-              <td class="d-flex justify-content-around">
-                <a href="{% url 'client-detail' client.id %}"><i class="material-icons">visibility</i></a>
-                <a href="{% url 'client-delete' client.id %}"><i class="material-icons">delete</i></a>
+              <td class="d-flex justify-content-end">
+                <a href="{% url 'client-detail' client.id %}" class="text-info"><i class="material-icons">visibility</i></a>&nbsp;
+                <a href="{% url 'delete-client' client.id %}" class="text-danger"><i class="material-icons">delete</i></a>
              </td>
             </tr>
           {% endfor %}
