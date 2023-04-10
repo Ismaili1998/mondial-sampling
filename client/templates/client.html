@@ -7,28 +7,28 @@
                 <label for="id_client_nbr" class="col-sm-4 col-form-label col-form-label-sm">Client Number</label>
                 <div class="col-sm-8">
                     <input type="text" name="client_nbr" class="form-control form-control-sm" id="id_client_nbr"
-                        value="{{client_nbr}}{{client.client_nbr}}" required/>
+                        value="{{client_nbr}}{{client.client_nbr}}" min="2" max="20"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_client_name" class="col-sm-4 col-form-label col-form-label-sm">Client Name</label>
                 <div class="col-sm-8">
                     <input type="text" name="client_name" class="form-control form-control-sm" id="id_client_name"
-                        value="{{client.client_name}}" required/>
+                        value="{{client.client_name}}" min="2" max="150"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_address" class="col-sm-4 col-form-label col-form-label-sm">Address</label>
                 <div class="col-sm-8">
                     <input type="text" name="address" class="form-control form-control-sm" id="id_address"
-                        value="{{client.address}}" />
+                        value="{{client.address}}"  min="2" max="200"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_postal_code" class="col-sm-4 col-form-label col-form-label-sm">Postal Code</label>
                 <div class="col-sm-8">
                     <input type="text" name="postal_code" class="form-control form-control-sm" id="id_postal_code"
-                        value="{{client.postal_code}}" />
+                        value="{{client.postal_code}}" min="2" max="50" />
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -48,16 +48,19 @@
                 <label for="id_city" class="col-sm-4 col-form-label col-form-label-sm">City</label>
                 <div class="col-sm-8">
                     <input type="text" name="city" class="form-control form-control-sm" id="id_city"
-                        value="{{client.address}}" />
+                        value="{{client.address}}"  min="2" max="100"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="language" class="col-sm-4 col-form-label col-form-label-sm">Language</label>
                 <div class="col-sm-8">
                     <select name="language" class="form-select form-select-sm" id="language">
-                        <option value="English">English</option>
-                        <option value="German">German</option>
-                        <option value="French">French</option>
+                        <option value=""> Chose a language </option>
+                        {% for language in languages %}
+                        <option value="{{language.id }}" {% if client.language.id == language.id %} selected {% endif %}>
+                            {{ language }}
+                        </option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -65,21 +68,21 @@
                 <label for="id_fax" class="col-sm-4 col-form-label col-form-label-sm">Fax</label>
                 <div class="col-sm-8">
                     <input type="text" name="fax" class="form-control form-control-sm" id="id_fax"
-                        value="{{client.fax}}" />
+                        value="{{client.fax}}"  min="2" max="50"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="id_phone" class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
+                <label for="id_phone1" class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
                 <div class="col-sm-8">
-                    <input type="text" name="phone_number" class="form-control form-control-sm" id="id_phone"
-                        value="{{client.phone_number}}" />
+                    <input type="text" name="phone_number1" class="form-control form-control-sm" id="id_phone1"
+                        value="{{client.phone_number1}}"  min="8" max="20"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="id_mobile" class="col-sm-4 col-form-label col-form-label-sm">Mobile</label>
+                <label for="id_phone2" class="col-sm-4 col-form-label col-form-label-sm">Mobile</label>
                 <div class="col-sm-8">
-                    <input type="text" name="mobile" class="form-control form-control-sm" id="id_mobile"
-                        value="{{client.mobile}}" />
+                    <input type="text" name="mobile" class="form-control form-control-sm" id="id_phone2"
+                        value="{{client.phone_number2}}"  min="8" max="20"/>
                 </div>
             </div>
         </div>

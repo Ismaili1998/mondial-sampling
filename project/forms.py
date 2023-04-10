@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, Supplier, Article
+from .models import Project, Supplier, Article,QuoteRequest
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,8 @@ class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
         exclude = ['created_at', 'updated_at']
+
+class QuoteRequestForm(forms.ModelForm):
+    class Meta:
+        model = QuoteRequest
+        fields = ['suppliers']

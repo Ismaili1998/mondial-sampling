@@ -16,7 +16,11 @@ urlpatterns = [
     path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
     path('delete-article/<str:pk>',views.article_delete,name='delete-article'),
 
+    path('create-commercial-offer',views.commercial_offer_create,name='create-commercial-offer'),
+
     path('create-supplier',views.supplier_create,name='create-supplier'),
+
+    path('manage-quoteRequest/<str:pk>',views.manage_quoteRequest,name='manage-quoteRequest'),
 
 
 ]

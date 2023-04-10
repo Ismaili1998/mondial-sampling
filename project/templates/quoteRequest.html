@@ -1,0 +1,84 @@
+<form method="POST" action="{% url 'manage-quoteRequest' article.id %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-8">
+            <input type="text" id="searchSupplier" class="form-control form-control-sm" placeholder="Search...">
+            <table class="table table-sm bg-white mt-2" id="suppliers-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Supplier Name</th>
+                        <th>Country</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" {% if supplier in article.quoteRequest.suppliers.all %}
+                                    checked {% endif %} type="checkbox" value="{{supplier.id}}">
+                            </div>
+                        </td>
+                        <td>{{ supplier.supplier_name}} </td>
+                        <td>{{ supplier.country}} </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-4 mt-1">
+            <div class="form-group">
+                <label for="selected-suppliers">Suppliers:</label>
+                <select id="selected-suppliers" name="suppliers" multiple class="form-control">
+                    {% for supplier in article.quoteRequest.suppliers.all %}
+                    <option selected value="{{supplier.id}}"> {{ supplier.supplier_name }} {{ supplier.country }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-dark btn-sm">
+            {% if page == 'add-quoteRequest' %} Save quoteRequest
+            {% else %} Save changes
+            {% endif %}
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        // listen for changes to the checkboxes
+        $('input[type=checkbox]').change(function () {
+            var selectedSuppliers = $('#selected-suppliers');
+            // remove all existing options
+            selectedSuppliers.empty();
+            // iterate over all checked checkboxes
+            $('input[type=checkbox]:checked').each(function () {
+                // add a new option for each checked row
+                var option = $('<option>').val($(this).val()).text($(this).closest('tr').text()).prop('selected', true);
+                selectedSuppliers.append(option);
+            });
+        });
+
+        var searchInput = $('#searchSupplier');
+        // Add an event listener for input changes
+        searchInput.on('input', function () {
+            // Get the value of the input
+            var searchText = $(this).val().toLowerCase();
+            // Loop through each row in the table
+            $('#suppliers-table tr td').each(function () {
+                // Get the text content of the row
+                var rowText = $(this).text().toLowerCase();
+                // Show or hide the row based on whether it contains the search text
+                if (rowText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>

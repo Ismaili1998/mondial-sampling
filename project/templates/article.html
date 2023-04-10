@@ -43,16 +43,6 @@
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label class="col-sm-4 col-form-label col-form-label-sm">Status</label>
-                <div class="col-sm-8">
-                    <select class="form-select form-select-sm" name="status" aria-label=".form-select-sm example">
-                        <option> Choisir un status </option>
-                        <option> A </option>
-                        <option> B </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
                 <label for="id_quantity" class="col-sm-4 col-form-label col-form-label-sm">Quantity</label>
                 <div class="col-sm-8">
                     <input type="number" name="quantity" class="form-control form-control-sm" id="id_quantity"
@@ -63,9 +53,12 @@
                 <label for="id_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
                 <div class="col-sm-8">
                    <select class="form-select form-select-sm" name="unit" aria-label=".form-select-sm example">
-                        <option value=""> Chose an unit </option> 
-                        <option value="unit 1"> unit 1 </option>   
-                        <option value="unit 2"> unit 2 </option>     
+                        <option> Chose an unit </option>
+                        {% for unit in units %}
+                        <option value="{{ unit.id }}" {% if article.unit.id == unit.id %} selected {% endif%}>
+                            {{ unit }}
+                        </option>
+                        {% endfor %}     
                     </select>
                 </div>
             </div>

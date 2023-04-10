@@ -59,7 +59,7 @@
                 id="client_nbr" aria-label=".form-select-sm example">
                 <option value=""> Client number </option>
                 {% for client in clients %}
-                <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif %}>
+                <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif%}>
                   {{ client.client_nbr }}
                 </option>
                 {% endfor %}
@@ -72,7 +72,7 @@
               <input type="text" disabled class="form-control form-control-sm" id="id_client_name"
                 value="{{project.client.client_name}}" />&nbsp;
               <a class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
-                onclick="get_clientDetail('Client detail','{%  url "client-detail" 0 %}')" href="#"><i
+                onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
                   class="material-icons align-middle text-dark">visibility</i></a>
             </div>
           </div>
@@ -82,14 +82,14 @@
             <label for="client_ref" class="col-sm-3 col-form-label col-form-label-sm">Client Ref</label>
             <div class="col-sm-9">
               <input type="text" name="client_ref" class="form-control form-control-sm" id="client_ref"
-                value="{{project.client_ref}}" required/>
+                value="{{project.client_ref}}" required />
             </div>
           </div>
           <div class="form-group row mt-2">
             <label for="our_ref" class="col-sm-3 col-form-label col-form-label-sm">Our Ref</label>
             <div class="col-sm-9">
               <input type="text" name="our_ref" class="form-control form-control-sm" id="our_ref"
-                value="{{project.our_ref}}" required/>
+                value="{{project.our_ref}}" required />
             </div>
           </div>
         </div>
@@ -123,31 +123,69 @@
   </div>
   <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
     <strong class="text-info"> Project Articles </strong>
-    <table class="table table-sm mt-2 bg-white">
-      <thead>
-        <tr>
-          <th data-field="name">Article Name</th>
-          <th data-field="price">Article Number</th>
-          <th data-field="price">Supplier</th>
-          <th data-field="price">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for article in articles %}
-        <tr>
-          <td>{{ article.article_name }}</td>
-          <td>{{ article.article_nbr }}</td>
-          <td>{{ article.supplier.supplier_name }}</td>
-          <td class="d-flex justify-content-end">
-            <a href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
-              onclick="load_modal('Article detail','{%  url "update-article" article.id %}')"><i
-                class="material-icons">visibility</i></a>&nbsp;
-            <a href="{% url 'delete-article' article.id %}" class="text-danger"><i class="material-icons">delete</i></a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="row">
+      <div class="col-md-8">
+        <table class="table table-sm mt-3 bg-white">
+          <thead>
+            <tr>
+              <th> Article Name </th>
+              <th> Article Number </th>
+              <th> Supplier </th>
+              <th> Action </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for article in articles %}
+            <tr>
+              <td>{{ article.article_name }}</td>
+              <td>{{ article.article_nbr }}</td>
+              <td>{{ article.supplier.supplier_name }}</td>
+              <td class="d-flex justify-content-end">
+                <a class="btn btn-sm btn-default" href="#" role="button" id="dropdownMenuLink"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="material-icons align-middle"> more_vert </i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+                    onclick="load_modal('Create quote Request','{%  url "manage-quoteRequest" article.id %}')" href="#"> <i
+                      class="material-icons align-middle">add</i> quote Request </a>
+                  <a class="dropdown-item" href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
+                    onclick="load_modal('Article detail','{%  url "update-article" article.id %}')"><i
+                      class="material-icons">visibility</i></a>
+                  <a class="dropdown-item" href="{% url 'delete-article' article.id %}" class="text-danger"><i
+                      class="material-icons">delete</i></a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4">
+        <table class="table table-sm mt-3 bg-white">
+          <thead>
+            <tr>
+              <th>Request Number</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for article in articles %}
+              {% for supplier in article.quoteRequest.suppliers.all %}
+              <tr>
+                <td>{{ article.quoteRequest.request_nbr }}-N{{ forloop.counter }}</td>
+                <td class="d-flex justify-content-end">
+                <a href="{% url 'create-commercial-offer' %}" download>
+                    <i class="material-icons">file_download</i>
+                </a>
+                </td>
+              </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </main>
 {% endblock %}
@@ -162,46 +200,43 @@
   }
 
   var client_id = "{{project.client.id}}";
+  function get_clientDetail(title, url) {
+    if (client_id == 0)
+      title = "No client chosen"
+    var url = url.replace('0', client_id);
+    load_modal(title, url)
+  }
 
-  function get_clientDetail(title,url){
-      if (client_id == 0)
-        title="No client chosen"
-      var url = url.replace('0', client_id);
-      load_modal(title,url)
-    }
 
-  
   $(document).ready(function () {
     $('#searchProject').autocomplete({
-                source: function (request, response) {
-                    $.getJSON("{% url 'get-projectsByKeyWord' %}",
-                    { keyword: request.term }, function (data) {
-                        // Map the project numbers to an array of objects with label and value properties
-                        var mappedData = $.map(data, function (item) {
-                            return {
-                                label: item,
-                                value: item
-                            };
-                        });
-                        response(mappedData);
-                    });
-                },
-                select: function (event, ui) {
-                    project_nbr = ui.item.value;
-                    var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
-                    window.location.href = url;
-                    return false;
-                }
+      source: function (request, response) {
+        $.getJSON("{% url 'get-projectsByKeyWord' %}",
+          { keyword: request.term }, function (data) {
+            // Map the project numbers to an array of objects with label and value properties
+            var mappedData = $.map(data, function (item) {
+              return {
+                label: item,
+                value: item
+              };
             });
+            response(mappedData);
+          });
+      },
+      select: function (event, ui) {
+        project_nbr = ui.item.value;
+        var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
+        window.location.href = url;
+        return false;
+      }
+    });
 
     let clients = []
-
     {% for c in clients %}
-
-    client = { id: {{ c.id }} , client_name: '{{c.client_name}}'}
-    clients.push(client)
-
+      client = { id: '{{c.id}}', client_name: '{{c.client_name}}'}
+      clients.push(client)
     {% endfor %}
+
     $('#client_nbr').change(function () {
       client_id = $(this).val()
       let client = clients.filter(clt => clt.id == client_id);

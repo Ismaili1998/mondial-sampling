@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Client, Country
+from .models import Client, Country, Language
 from .forms import ClientForm
 
 def client_list(request):
@@ -31,11 +31,13 @@ def client_create(request):
     
     page_name = 'add-client'
     countries = Country.objects.all()
+    languages = Language.objects.all()
     nbr_clients = Client.objects.all().count()
     client_nbr  = "C{0}".format(nbr_clients + 1)
     context = {'page':page_name,
                'countries':countries,
-               'client_nbr':client_nbr}
+               'client_nbr':client_nbr,
+               'languages':languages}
     return render(request,'client.html',context)
 
 def client_edit(request, pk):
@@ -52,7 +54,11 @@ def client_edit(request, pk):
         return redirect('project-home')
     countries = Country.objects.all()
     page_name = 'update-client'
-    context = {'client':client,'countries':countries,'page':page_name}
+    languages = Language.objects.all()
+    context = {'client':client,
+               'countries':countries,
+               'languages':languages,
+               'page':page_name}
     return render(request, 'client.html', context)
 
 def client_delete(request, pk):

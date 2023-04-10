@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'ESS_MONDIAL.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ESS_MONDIAL_UPDATE',
+        'NAME': 'ESS_MONDIAL',
         'USER': 'root',
         'PASSWORD': 'toto',
         'HOST':'localhost',
