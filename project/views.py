@@ -18,19 +18,6 @@ def project_home(request):
                'project_nbr':project_nbr}
     return render(request, 'project_home.html',context)
 
-def project_detail(request, project_nbr):
-    project = get_object_or_404(Project, project_nbr = project_nbr)
-    clients =Client.objects.all()
-    articles = project.article_set.all()
-    quoteRequests = QuoteRequest.objects.all()
-    page_name = 'update-project'
-    context = {'project':project,
-               'clients':clients, 
-               'page':page_name,
-               'articles':articles,
-               'quoteRequests':quoteRequests}
-    return render(request, 'project_home.html', context)
-
 def project_create(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -151,7 +138,16 @@ def supplier_create(request):
     countries = Country.objects.all()
     page_name = 'add-supplier'
     context = {'countries':countries,'page':page_name}
-    return render(request, 'supplier.html',context) 
+    return render(request, 'supplier.html',context)
+
+def search_supplier(request):
+    if request.method == 'GET':
+        # Get the keyword from the request
+        keyword = request.GET.get('keyword', '')  
+        # Search for suppliers with name containing the keyword
+        suppliers = Supplier.objects.filter(name__icontains=keyword)  
+        return render(request, 'supplier/search.html', {'suppliers': suppliers, 'keyword': keyword})
+
 
 #======================= quoteRequest area ====================================#
 def manage_quoteRequest(request, pk):

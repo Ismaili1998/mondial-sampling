@@ -69,7 +69,7 @@
             // Get the value of the input
             var searchText = $(this).val().toLowerCase();
             // Loop through each row in the table
-            $('#suppliers-table tr td').each(function () {
+            $('#suppliers-table tr').each(function () {
                 // Get the text content of the row
                 var rowText = $(this).text().toLowerCase();
                 // Show or hide the row based on whether it contains the search text
