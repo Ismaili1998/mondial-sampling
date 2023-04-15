@@ -18,6 +18,17 @@ def project_home(request):
                'project_nbr':project_nbr}
     return render(request, 'project_home.html',context)
 
+
+def project_detail(request, project):
+    clients =Client.objects.all()
+    articles = project.article_set.all()
+    page_name = 'update-project'
+    context = {'project':project,
+               'clients':clients, 
+               'page':page_name,
+               'articles':articles}
+    return render(request, 'project_home.html', context)
+
 def project_create(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -39,9 +50,8 @@ def project_edit(request, pk):
             messages.success(request, 'Project has been modified successfully')
         else:
             messages.error(request, 'An error occured, please retry')
-    else:
-        form = ProjectForm(instance=project)
-    return redirect('project-detail', project.project_nbr)
+            
+    return redirect('project-detail', project)
 
 
 def project_delete(request, pk):
