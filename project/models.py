@@ -1,23 +1,7 @@
 from django.db import models
 from client.models import Client
 from client.models import Country
-
-class Project(models.Model):
-    project_name = models.CharField(max_length=255)
-    project_nbr = models.CharField(max_length=20, unique=True)
-    client = models.ForeignKey(Client,on_delete=models.PROTECT)
-    client_ref = models.CharField(max_length=255)
-    our_ref = models.CharField(max_length=255)
-    project_description = models.TextField(blank=True,max_length=500)
-    to_do = models.TextField(blank=True,max_length=500)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'project'
-
-    def __str__(self):
-        return self.project_name
+from client.models import Language
 
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=100)
@@ -29,6 +13,7 @@ class Supplier(models.Model):
     fax = models.CharField(max_length=20,blank=True)
     email = models.EmailField(max_length=254,unique=True)
     website = models.URLField(max_length=200,blank=True)
+    language = models.ForeignKey(Language,on_delete=models.PROTECT,null=True,blank=True)
     supplier_representative = models.CharField(max_length=100,blank=True)
     delivery_type = models.CharField(max_length=100,blank=True)
     internal_representative = models.CharField(max_length=100,blank=True)
@@ -42,14 +27,7 @@ class Supplier(models.Model):
     
     def __str__(self):
         return self.supplier_name
-
-class QuoteRequest(models.Model):
-    request_nbr = models.CharField(max_length=20,unique=True,blank=True)
-    suppliers = models.ManyToManyField('Supplier',blank=True)
-
-    class Meta:
-        db_table = 'quoteRequest'
-
+    
 class Unit(models.Model):
     unit_name = models.CharField(max_length=50,unique=True)
 
@@ -60,9 +38,7 @@ class Unit(models.Model):
         db_table = 'unit'
               
 class Article(models.Model):
-    project = models.ForeignKey(Project,on_delete=models.PROTECT)
     supplier = models.ForeignKey(Supplier,on_delete=models.PROTECT)
-    quoteRequest = models.OneToOneField(QuoteRequest,on_delete=models.CASCADE,blank=True,null=True)
     article_name = models.CharField(max_length=50)
     article_nbr = models.CharField(max_length=20)
     description_de = models.TextField(blank=True)
@@ -86,7 +62,42 @@ class Article(models.Model):
     class Meta:
         db_table = 'article'
 
+    def get_suppliers(self):
+        return self.quoterequest_set.values_list('supplier', flat=True)
 
+class QuoteRequest(models.Model):
+    request_nbr = models.CharField(max_length=20,unique=True,blank=True)
+    articles = models.ManyToManyField(Article)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+
+    class Meta:
+        
+        db_table = 'quoteRequest'
+
+    def get_description(self):
+        if self.supplier.language == 'French':
+            return self.article.description_fr
+        elif self.supplier.language == 'English':
+            return self.article.description_en
+        return self.article.description_de
+
+class Project(models.Model):
+    project_name = models.CharField(max_length=255)
+    project_nbr = models.CharField(max_length=20, unique=True)
+    client = models.ForeignKey(Client,on_delete=models.PROTECT)
+    articles = models.ManyToManyField(Article, related_name='projects')
+    client_ref = models.CharField(max_length=255)
+    our_ref = models.CharField(max_length=255)
+    project_description = models.TextField(blank=True,max_length=500)
+    to_do = models.TextField(blank=True,max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'project'
+
+    def __str__(self):
+        return self.project_name
 # class CommercialOffer(models.Model):
 #     pass
 

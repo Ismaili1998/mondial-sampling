@@ -22,21 +22,7 @@
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
 </head>
 <body class="bg-body">
-  <div class="nav-scroller bg-body shadow-sm">
-    <nav class="nav nav-underline" aria-label="Secondary navigation">
-      <a class="nav-link active" aria-current="page" href="{% url 'project-home'%}"> Projects </a>
-      <a class="nav-link" href="{% url 'client-list' %}"> Clients </a>
-      {% comment %}
-      <a class="nav-link" href="#">Explore</a>
-      <a class="nav-link" href="#">Suggestions</a>
-      <a class="nav-link" href="#">Link</a>
-      <a class="nav-link" href="#">Link</a>
-      <a class="nav-link" href="#">Link</a>
-      <a class="nav-link" href="#">Link</a>
-      <a class="nav-link" href="#">Link</a> {% endcomment %}
-    </nav>
-  </div>
-
+ 
   {% block content %}
 
   {% endblock %}

@@ -15,13 +15,15 @@ urlpatterns = [
     path('update-article/<str:pk>',views.article_edit,name='update-article'),
     path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
     path('delete-article/<str:pk>',views.article_delete,name='delete-article'),
+    path('get-articlesByKeyWord',views.get_articlesByKeyWord,name='get-articlesByKeyWord'),
+    path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
+
 
     path('create-commercial-offer',views.commercial_offer_create,name='create-commercial-offer'),
 
     path('create-supplier',views.supplier_create,name='create-supplier'),
 
-    path('manage-quoteRequest/<str:pk>',views.manage_quoteRequest,name='manage-quoteRequest'),
-
+    path('manage-quoteRequest/<str:project_pk>/<str:article_pk>/', views.manage_quoteRequest, name='manage-quoteRequest'),
 
 ]
 

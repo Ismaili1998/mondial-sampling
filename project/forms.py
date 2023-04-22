@@ -19,4 +19,4 @@ class ArticleForm(forms.ModelForm):
 class QuoteRequestForm(forms.ModelForm):
     class Meta:
         model = QuoteRequest
-        fields = ['suppliers']
+        fields = ['articles']

@@ -89,7 +89,7 @@
             <label for="our_ref" class="col-sm-3 col-form-label col-form-label-sm">Our Ref</label>
             <div class="col-sm-9">
               <input type="text" name="our_ref" class="form-control form-control-sm" id="our_ref"
-                value="{{project.our_ref}}" required />
+                value="{{project.our_ref}}{{project_nbr}}" required />
             </div>
           </div>
         </div>
@@ -122,24 +122,41 @@
     </form>
   </div>
   <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-    <strong class="text-info"> Project Articles </strong>
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-4">
+        <strong class="text-info">Project Articles</strong>
+      </div>
+      <div class="col-md-2">
+        <form method="POST" action="{% url 'add-article-to-project' %}">
+          <div class="input-group">
+              {%  csrf_token %}
+              <input type="hidden" name="project_nbr" value="{{ project.project_nbr }}" />
+              <input type="text"  name="article_nbr" id="searchArticle" class="form-control form-control-sm typeahead" placeholder="Search Article" />
+              <div class="input-group-append">
+                <button class="btn btn-sm btn-dark" type="submit">Add to project</button>
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
         <table class="table table-sm mt-3 bg-white">
           <thead>
             <tr>
-              <th> Article Name </th>
+              <th>  </th>
               <th> Article Number </th>
-              <th> Supplier </th>
+              <th> Description </th>
               <th> Action </th>
             </tr>
           </thead>
           <tbody>
             {% for article in articles %}
             <tr>
+              <td><input type="checkbox" class="form-check-input" name="articles" value="{{ article.pk }}"></td>
               <td>{{ article.article_name }}</td>
               <td>{{ article.article_nbr }}</td>
-              <td>{{ article.supplier.supplier_name }}</td>
+              <td> {{ article.description_fr }} </td>
               <td class="d-flex justify-content-end">
                 <a class="btn btn-sm btn-default" href="#" role="button" id="dropdownMenuLink"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -147,7 +164,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                   <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
-                    onclick="load_modal('Create quote Request','{%  url "manage-quoteRequest" article.id %}')" href="#"> <i
+                    onclick="load_modal('Create quote Request','{%   url 'manage-quoteRequest' project.id article.id %}')" href="#"> <i
                       class="material-icons align-middle">add</i> quote Request </a>
                   <a class="dropdown-item" href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
                     onclick="load_modal('Article detail','{%  url "update-article" article.id %}')"><i
@@ -161,19 +178,21 @@
           </tbody>
         </table>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <table class="table table-sm mt-3 bg-white">
           <thead>
             <tr>
               <th>Request Number</th>
+              <th>Description</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {% for article in articles %}
-              {% for supplier in article.quoteRequest.suppliers.all %}
+              {% for quoteRequest in article.quoterequest_set.all %}
               <tr>
-                <td>{{ article.quoteRequest.request_nbr }}-N{{ forloop.counter }}</td>
+                <td>{{ quoteRequest.request_nbr }}</td>
+                <td>{{ quoteRequest.get_description }}</td>
                 <td class="d-flex justify-content-end">
                 <a href="{% url 'create-commercial-offer' %}" download>
                     <i class="material-icons">file_download</i>
@@ -207,8 +226,6 @@
     load_modal(title, url)
   }
 
-
-  $(document).ready(function () {
     $('#searchProject').autocomplete({
       source: function (request, response) {
         $.getJSON("{% url 'get-projectsByKeyWord' %}",
@@ -228,6 +245,23 @@
         var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
         window.location.href = url;
         return false;
+      }
+    });
+    // search articles 
+    $(document).ready(function () {
+    $('#searchArticle').autocomplete({
+      source: function (request, response) {
+        $.getJSON("{% url 'get-articlesByKeyWord' %}",
+          { keyword: request.term }, function (data) {
+            // Map the article numbers to an array of objects with label and value properties
+            var mappedData = $.map(data, function (item) {
+              return {
+                label: item,
+                value: item
+              };
+            });
+            response(mappedData);
+          });
       }
     });
 
