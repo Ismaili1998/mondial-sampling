@@ -9,6 +9,11 @@ urlpatterns = [
     path('update-project/<str:pk>',views.project_edit,name='update-project'),
     path('delete-project/<str:pk>',views.project_delete,name='delete-project'),
     path('get-projectsByKeyWord',views.get_projectsByKeyWord,name='get-projectsByKeyWord'),
+    path('upload-file-to-project/<str:project_pk>',views.upload_file_to_project,name='upload-file-to-project'),
+    path('download-file/<str:file_pk>',views.download_file,name='download-file'),
+
+
+
 
 
     path('create-article',views.article_create,name='create-article'),
@@ -19,11 +24,15 @@ urlpatterns = [
     path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
 
 
-    path('create-commercial-offer',views.commercial_offer_create,name='create-commercial-offer'),
 
     path('create-supplier',views.supplier_create,name='create-supplier'),
 
-    path('manage-quoteRequest/<str:project_pk>/<str:article_pk>/', views.manage_quoteRequest, name='manage-quoteRequest'),
+    path('create-quoteRequest/<str:project_pk>', views.create_quoteRequest, name='create-quoteRequest'),
+    path('create-quoteRequest-pdfReport/<str:request_pk>', views.create_quoteRequest_pdfReport, name='create-quoteRequest-pdfReport'),
+
+    path('create-commercialOffer/<str:project_pk>', views.create_commercialOffer, name='create-commercialOffer'),
+    path('update-commercialOffer/<str:pk>', views.update_commercialOffer, name='update-commercialOffer'),
+    path('create-commercialOffer-pdfReport/<str:offer_pk>/', views.create_commercialOffer_pdfReport, name='create-commercialOffer-pdfReport'),
 
 ]
 

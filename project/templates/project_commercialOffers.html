@@ -1,0 +1,33 @@
+<table class="table table-sm mt-3 bg-white">
+    <thead>
+        <tr>
+            <th>Offer Number</th>
+            <th>Client</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for offer in project.commercialoffer_set.all %}
+        <tr>
+            <td>{{ offer.offer_nbr }}</td>
+            <td>
+                {{ offer.project.client }}
+            </td>
+            <td class="d-flex justify-content-end">
+                <a class="btn btn-sm btn-default" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons align-middle"> more_vert </i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
+                        onclick="load_modal('Article detail','{%  url "update-commercialOffer" offer.id %}')"><i class="material-icons">visibility</i></a>
+                    <a class="dropdown-item" onclick="load_modal('Generate pdf','{%  url "create-commercialOffer-pdfReport" offer.id %}')"
+                        data-bs-toggle="modal" href="#" data-bs-target="#Modal">
+                        <i class="material-icons text-info">picture_as_pdf</i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

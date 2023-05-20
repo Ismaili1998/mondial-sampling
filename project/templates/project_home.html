@@ -1,5 +1,4 @@
 {% extends 'main.html' %}
-{% load static %}
 {% block content %}
 <main class="container-fluid">
   <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
@@ -32,7 +31,7 @@
     </div>
   </div>
   <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-    <form method="POST"
+    <form method="POST" enctype="multipart/form-data"
       action="{% if page == 'add-project' %} {% url 'create-project' %} {% else %} {% url 'update-project' project.id %} {% endif %}">
       {% csrf_token %}
       {% include 'alert.html' %}
@@ -59,9 +58,9 @@
                 id="client_nbr" aria-label=".form-select-sm example">
                 <option value=""> Client number </option>
                 {% for client in clients %}
-                <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif%}>
-                  {{ client.client_nbr }}
-                </option>
+                  <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif%}>
+                    {{ client.client_nbr }}
+                  </option>
                 {% endfor %}
               </select>
             </div>
@@ -109,6 +108,26 @@
           </div>
         </div>
       </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div id="dropzone" class="mt-2">
+            <div class="dropdown">
+              <button class="btn btn-sm btn-danger dropdown-toggle" type="button" id="project-documents-dropdown"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons align-middle">description</i>
+                See Project documents
+              </button>
+              <div class="dropdown-menu" aria-labelledby="project-documents-dropdown">
+                {% for project_file in project.file_set.all %}
+                <a class="dropdown-item" href="{% url 'download-file' project_file.id %}" target="_blank">
+                  {{project_file.file.name }} </a>
+                {% endfor %}
+              </div>
+           </div>
+            <p>Drag and drop files here to upload.</p>
+          </div>
+        </div>
+      </div>
       <div class="mt-3 d-flex justify-content-end">
         <button type="submit" class="btn btn-dark btn-sm">
           {% if page == 'add-project' %}
@@ -121,103 +140,67 @@
       </div>
     </form>
   </div>
-  <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-    <div class="row">
-      <div class="col-md-4">
-        <strong class="text-info">Project Articles</strong>
-      </div>
-      <div class="col-md-2">
-        <form method="POST" action="{% url 'add-article-to-project' %}">
-          <div class="input-group">
-              {%  csrf_token %}
-              <input type="hidden" name="project_nbr" value="{{ project.project_nbr }}" />
-              <input type="text"  name="article_nbr" id="searchArticle" class="form-control form-control-sm typeahead" placeholder="Search Article" />
-              <div class="input-group-append">
-                <button class="btn btn-sm btn-dark" type="submit">Add to project</button>
-              </div>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <table class="table table-sm mt-3 bg-white">
-          <thead>
-            <tr>
-              <th>  </th>
-              <th> Article Number </th>
-              <th> Description </th>
-              <th> Action </th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for article in articles %}
-            <tr>
-              <td><input type="checkbox" class="form-check-input" name="articles" value="{{ article.pk }}"></td>
-              <td>{{ article.article_name }}</td>
-              <td>{{ article.article_nbr }}</td>
-              <td> {{ article.description_fr }} </td>
-              <td class="d-flex justify-content-end">
-                <a class="btn btn-sm btn-default" href="#" role="button" id="dropdownMenuLink"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="material-icons align-middle"> more_vert </i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
-                    onclick="load_modal('Create quote Request','{%   url 'manage-quoteRequest' project.id article.id %}')" href="#"> <i
-                      class="material-icons align-middle">add</i> quote Request </a>
-                  <a class="dropdown-item" href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
-                    onclick="load_modal('Article detail','{%  url "update-article" article.id %}')"><i
-                      class="material-icons">visibility</i></a>
-                  <a class="dropdown-item" href="{% url 'delete-article' article.id %}" class="text-danger"><i
-                      class="material-icons">delete</i></a>
+  {% if page == 'update-project' %}
+    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+      <div class="row">
+        <div class="col-md-4">
+          <strong class="text-info">Project Articles</strong>
+        </div>
+        <div class="col-md-2">
+          <form method="POST" action="{% url 'add-article-to-project' %}">
+            <div class="input-group">
+                {%  csrf_token %}
+                <input type="hidden" name="project_nbr" value="{{ project.project_nbr }}" />
+                <input type="text"  name="article_nbr" id="searchArticle" class="form-control form-control-sm typeahead" placeholder="Search Article" />
+                <div class="input-group-append">
+                  <button class="btn btn-sm btn-dark" type="submit">Add to project</button>
                 </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-1">
+          <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+            onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#">
+            <i class="material-icons align-middle">add</i> New article
+          </a>
+        </div>
+        <div class="col-md-3 offset-2">
+          <div class="btn-group" role="group" aria-label="Button group">
+              <button class="btn btn-sm btn-secondary size-12" data-bs-toggle="modal" data-bs-target="#Modal"
+                  onclick="load_modal('Create quote Request','{% url 'create-quoteRequest' project.id %}')">
+                  <i class="material-icons align-middle">add</i> New Quote request
+              </button>
+              <button class="btn btn-sm btn-secondary size-12" data-bs-toggle="modal" data-bs-target="#Modal"
+                  id ="new-commercialOffer">
+                  <i class="material-icons align-middle">add</i> New Commercial offer
+              </button>
+          </div>
+        </div>
       </div>
-      <div class="col-md-6">
-        <table class="table table-sm mt-3 bg-white">
-          <thead>
-            <tr>
-              <th>Request Number</th>
-              <th>Description</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for article in articles %}
-              {% for quoteRequest in article.quoterequest_set.all %}
-              <tr>
-                <td>{{ quoteRequest.request_nbr }}</td>
-                <td>{{ quoteRequest.get_description }}</td>
-                <td class="d-flex justify-content-end">
-                <a href="{% url 'create-commercial-offer' %}" download>
-                    <i class="material-icons">file_download</i>
-                </a>
-                </td>
-              </tr>
-              {% endfor %}
-            {% endfor %}
-          </tbody>
-        </table>
+      <div class="row">
+          <div class="col-md-6">
+            {% include 'project_articles.html' with project=project%}
+          </div>
+          <div class="col-md-6">
+            {% include  'project_quoteRequests.html' %}
+            {% include  'project_commercialOffers.html' %}
+          </div>
       </div>
     </div>
-  </div>
+  {% endif %}
 </main>
 {% endblock %}
+
 {% block javascript %}
+
+
 
 <script type="text/javascript">
 
   function load_modal(title, page_url) {
     $('.modal-title').text(title);
     $('.modal-body').load(page_url);
-    //$('#myModal').modal('show'); 
   }
-
   var client_id = "{{project.client.id}}";
   function get_clientDetail(title, url) {
     if (client_id == 0)
@@ -226,29 +209,29 @@
     load_modal(title, url)
   }
 
-    $('#searchProject').autocomplete({
-      source: function (request, response) {
-        $.getJSON("{% url 'get-projectsByKeyWord' %}",
-          { keyword: request.term }, function (data) {
-            // Map the project numbers to an array of objects with label and value properties
-            var mappedData = $.map(data, function (item) {
-              return {
-                label: item,
-                value: item
-              };
-            });
-            response(mappedData);
+  $('#searchProject').autocomplete({
+    source: function (request, response) {
+      $.getJSON("{% url 'get-projectsByKeyWord' %}",
+        { keyword: request.term }, function (data) {
+          // Map the project numbers to an array of objects with label and value properties
+          var mappedData = $.map(data, function (item) {
+            return {
+              label: item,
+              value: item
+            };
           });
-      },
-      select: function (event, ui) {
-        project_nbr = ui.item.value;
-        var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
-        window.location.href = url;
-        return false;
-      }
-    });
-    // search articles 
-    $(document).ready(function () {
+          response(mappedData);
+        });
+    },
+    select: function (event, ui) {
+      project_nbr = ui.item.value;
+      var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
+      window.location.href = url;
+      return false;
+    }
+  });
+  // search articles 
+  $(document).ready(function () {
     $('#searchArticle').autocomplete({
       source: function (request, response) {
         $.getJSON("{% url 'get-articlesByKeyWord' %}",
@@ -265,10 +248,19 @@
       }
     });
 
+    // Get references to the "check-all" checkbox and all the other checkboxes in the table
+    const $checkAll = $('#check-all');
+    const $articleCheckboxes = $('#articles-table tbody input[type=checkbox]');
+    // Add a click event listener to the "check-all" checkbox
+    $checkAll.on('click', () => {
+      // Set the "checked" property of all the other checkboxes to the same value as the "check-all" checkbox
+      $articleCheckboxes.prop('checked', $checkAll.prop('checked'));
+    });
+
     let clients = []
     {% for c in clients %}
-      client = { id: '{{c.id}}', client_name: '{{c.client_name}}'}
-      clients.push(client)
+    client = { id: '{{c.id}}', client_name: '{{c.client_name}}' }
+    clients.push(client)
     {% endfor %}
 
     $('#client_nbr').change(function () {
@@ -278,7 +270,84 @@
       $('#id_client_name').val(client.client_name)
     });
 
+    // adding files to project 
+
+    // Get the dropzone element
+    var dropzone = $('#dropzone');
+
+    // Add event listeners for dragenter and dragover events
+    dropzone.on('dragenter dragover', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      dropzone.addClass('dragover');
+    });
+
+    // Add event listeners for dragleave and drop events
+    dropzone.on('dragleave drop', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      dropzone.removeClass('dragover');
+    });
+
+    // Add event listener for drop event
+    dropzone.on('drop', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      dropzone.removeClass('dragover');
+
+      // Create a new FormData object
+      var formData = new FormData();
+
+      // Add the files to the FormData object
+      $.each(event.originalEvent.dataTransfer.files, function (index, file) {
+        formData.append('files', file);
+      });
+
+      // Send the files to the server using AJAX
+      $.ajax({
+        url: '{% url "upload-file-to-project" 0 %}',
+        type: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          alert("file has been added successfully")
+        }
+      });
+    });
+
+    $('#fileList').toggle();
+    $('.file-list-toggle-icon').click(function (e) {
+      e.preventDefault();
+      $('#fileList').toggle();
+    });
+
+      $('#new-commercialOffer').click(function() {
+      // Array to store the IDs of checked articles
+      var selectedArticles = [];
+      // Iterate over the checked checkboxes in the table
+      $('#articles-table tbody input:checked').each(function() {
+        selectedArticles.push($(this).val());
+      });
+      
+      if (selectedArticles.length == 0)
+      {
+        $('.modal-title').text("select at least one article !");
+        return
+      }
+      var url = '{% url "create-commercialOffer" project.id %}?';
+      var queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
+      url += queryParam;
+      alert(url)
+      load_modal('Create Commercial offer', url);
+       
+    });
+
   });
 
+
+
 </script>
+
 {% endblock %}

@@ -1,0 +1,26 @@
+<table class="table table-sm mt-3 bg-white">
+    <thead>
+        <tr>
+            <th>Request Number</th>
+            <th>Supplier</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for quoteRequest in project.quoterequest_set.all %}
+            <tr>
+                <td>{{ quoteRequest.request_nbr }}</td>
+                <td>
+                {{ quoteRequest.supplier }}
+                - ({{ quoteRequest.supplier.language }})
+                </td>
+                <td class="d-flex justify-content-end">
+                    <a onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
+                    data-bs-toggle="modal" href="#" data-bs-target="#Modal">
+                        <i class="material-icons">picture_as_pdf</i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,95 @@
+{% load static %}
+<div class="container-fluid">
+    <div class="item-to-print">
+        <!-- Header, logo section -->
+        <div class="row">
+            <div class="col-12">
+                <img src="{% static 'img/pdf_header.png' %}" class="img-fluid" alt="Header Image">
+            </div>
+        </div>
+        <!-- Contact section -->
+        <table class="table table-borderless mt-4 size-13">
+            <tr>
+                <td class="text-left">
+                    {{ quoteRequest.supplier }} <br />
+                    {{ quoteRequest.supplier.country.country_name_fr }} <br />
+                    Phone :{{ quoteRequest.supplier.phone_number }} <br />
+                    Email :{{ quoteRequest.supplier.email }} <br />
+                    Fax :{{ quoteRequest.supplier.fax }}
+                </td>
+                <td class="text-center">
+                    <h4 > INQUIRY: <br/> {{ quoteRequest.request_nbr }} </h4>
+                </td>
+                <td class="text-left">
+                        Responsable:<br/>
+                        Mr. Moez Ben‐Khemis <br/>
+                        Phone :00843232323 <br/>
+                        Email :azura@gmail.com <br/>
+                </td>
+            </tr>
+        </table>
+        <div class="row mt-4">
+            <p> {{quoteRequest.get_greeting_text}} <br/> {{quoteRequest.get_controlling_idea_text}} </p>
+            <p contentEditable="true"> Free text to edit here </p>
+        </div>
+        <!-- Body section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <table class="table table-sm">
+                    <thead>
+                        <tr class="size-12">
+                            <th>Pos</th>
+                            <th>Article Nr</th>
+                            <th>Designation</th>
+                            <th>Qte</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for article in quoteRequest.articles.all %}
+                        <tr>
+                            <td> {{ forloop.counter }} </td>
+                            <td> {{ article.article_nbr }} </td>
+                            <td style="font-size:12px;max-width: 250px;"> 
+                                <pre>{{ article.get_description }}</pre>
+                            </td>
+                            <td> {{ article.quantity }} {{ article.article_unit }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Footer section -->
+        <div class="row mt-3" contentEditable="true">
+            <div class="col-12">
+                <p class="text-left size-12">
+                    {% for phrase in quoteRequest.get_infos_text %}
+                        {{  phrase }} <br/>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <p class="text-left size-14"> {{ quoteRequest.get_signature_text }} <br/> ESS-Mondial GmbH </p>
+            </div>
+        </div>
+    </div>
+    <button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
+    <button onclick="printPageAndSendEmail()" class="mt-2 btn btn-dark btn-sm"> send Email</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    
+    function printPage() {
+        var printContent = document.querySelector('.item-to-print');
+        var originalBody = document.body.innerHTML;
+        document.body.innerHTML = printContent.outerHTML;
+        window.print();
+        document.body.innerHTML = originalBody;
+    }
+
+    function printPageAndSendEmail() {
+        
+    }
+</script>

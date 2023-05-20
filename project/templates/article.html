@@ -1,33 +1,7 @@
 <form action="{% if page == 'add-article' %} {% url 'create-article' %} {% else %} {% url 'update-article' article.id %} {% endif %}" method="POST">
     {% csrf_token %}
     <div class="row">
-        <div class="col-md-6">
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label col-form-label-sm">Project</label>
-                <div class="col-sm-8">
-                    <select class="form-select form-select-sm" name="project" aria-label=".form-select-sm example">
-                        <option> Chose a project </option>
-                        {% for project in projects %}
-                        <option value="{{ project.id }}" {% if article.project.id == project.id %} selected {% endif %}>
-                            {{ project }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label class="col-sm-4 col-form-label col-form-label-sm">supplier</label>
-                <div class="col-sm-8">
-                    <select class="form-select form-select-sm" name="supplier" aria-label=".form-select-sm example">
-                        <option> Chose a supplier </option>
-                        {% for supplier in suppliers %}
-                        <option value="{{ supplier.id }}" {% if article.supplier.id == supplier.id %} selected {% endif%}>
-                            {{ supplier }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+        <div class="col-md-4">
             <div class="form-group row mt-2">
                 <label for="id_article_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Article number</label>
                 <div class="col-sm-8">
@@ -50,13 +24,13 @@
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="id_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
+                <label for="id_article_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
                 <div class="col-sm-8">
-                   <select class="form-select form-select-sm" name="unit" aria-label=".form-select-sm example">
+                   <select class="form-select form-select-sm" id="id_article_unit" name="article_unit" aria-label=".form-select-sm example">
                         <option> Chose an unit </option>
-                        {% for unit in units %}
-                        <option value="{{ unit.id }}" {% if article.unit.id == unit.id %} selected {% endif%}>
-                            {{ unit }}
+                        {% for article_unit in article_units %}
+                        <option value="{{ article_unit.id }}" {% if article.article_unit.id == article_unit.id %} selected {% endif%}>
+                            {{ article_unit }}
                         </option>
                         {% endfor %}     
                     </select>
@@ -74,40 +48,6 @@
                 <div class="col-sm-8">
                     <input type="number" name="selling_price" class="form-control form-control-sm" id="id_selling_price"
                         value="{{article.selling_price}}" step="any" />
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="id_comment" class="col-sm-4 col-form-label col-form-label-sm">Comment
-                   </label>
-                <div class="col-sm-8">
-                    <textarea name="comment" class="form-control form-control-sm"
-                        rows="3"id="id_comment">{{article.comment}}</textarea>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group row">
-                <label for="id_description_fr" class="col-sm-4 col-form-label col-form-label-sm">Description
-                    (French)</label>
-                <div class="col-sm-8">
-                    <textarea name="description_fr" rows="5" class="form-control form-control-sm"
-                        id="id_description_fr">{{article.description_fr}}</textarea>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="id_description_de" class="col-sm-4 col-form-label col-form-label-sm">Description
-                    (German)</label>
-                <div class="col-sm-8">
-                    <textarea name="description_de" class="form-control form-control-sm"
-                        id="id_description_de">{{article.description_de}}</textarea>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="id_description_en" class="col-sm-4 col-form-label col-form-label-sm">Description
-                    (English)</label>
-                <div class="col-sm-8">
-                    <textarea name="description_en" class="form-control form-control-sm"
-                        id="id_description_en">{{article.description_en}}</textarea>
                 </div>
             </div>
             <fieldset class="border p-1 mt-2 rounded">
@@ -134,6 +74,40 @@
                     </div>
                 </div>
             </fieldset>
+            <div class="form-group row mt-2">
+                <label for="id_comment" class="col-sm-4 col-form-label col-form-label-sm">Comment
+                   </label>
+                <div class="col-sm-8">
+                    <textarea name="comment" class="form-control form-control-sm"
+                        rows="4" id="id_comment">{{article.comment}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group row">
+                <label for="id_description_fr" class="col-sm-2 col-form-label col-form-label-sm">Description
+                    (French)</label>
+                <div class="col-sm-10">
+                    <textarea name="description_fr" rows="12" class="form-control form-control-sm"
+                        id="id_description_fr">{{article.description_fr}}</textarea>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_description_de" class="col-sm-2 col-form-label col-form-label-sm">Description
+                    (German)</label>
+                <div class="col-sm-10">
+                    <textarea name="description_de" class="form-control form-control-sm"
+                        rows="12" id="id_description_de">{{article.description_de}}</textarea>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_description_en" class="col-sm-2 col-form-label col-form-label-sm">Description
+                    (English)</label>
+                <div class="col-sm-10">
+                    <textarea name="description_en" class="form-control form-control-sm"
+                        rows="8" id="id_description_en">{{article.description_en}}</textarea>
+                </div>
+            </div>
         </div>
     </div>
     <div class="mt-4 d-flex justify-content-end">

@@ -1,0 +1,205 @@
+<div class="container-fluid">
+    <form
+        action="{% if page == 'add-commercialOffer'%} {% url 'create-commercialOffer' project.id %} {% else %} {% url 'update-commercialOffer' commercialOffer.id %} {% endif %}"
+        method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group row col-md-4 col-lg-3">
+                <label for="margin" class="col-sm-4 col-form-label col-form-label-sm"> <strong> Margin </strong></label>
+                <div class="col-sm-8">
+                    <input type="number" placeholder="margin in %" name="margin" class="form-control form-control-sm"
+                        id="margin" />
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <table class="table table-sm bg-white size-13" id="offer-articles-table">
+                <thead>
+                    <tr class="size-13">
+                        <th>Article nbr</th>
+                        <th>Description </th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th>Purchase price </th>
+                        <th>Selling price </th>
+                        <th>Total Purchase price </th>
+                        <th>Total Selling price </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in articles %}
+                    <tr>
+                        <td> {{article.article_nbr}} </td>
+                        <td> {{article.get_description}} </td>
+                        <td class="article-quantity"> {{article.quantity}} </td>
+                        <td> {{article.article_unit}} </td>
+                        <td class="purchase-price"> {{article.purchase_price}} </td>
+                        <td class="selling-price"> </td>
+                        <td class="total_purchase"></td>
+                        <td class="total_selling"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="d-none">
+                    <input type="hidden" name="project" value="{{project.id}}{{commercialOffer.project.id}}" />
+                    <select name="articles">
+                        {% for article in articles %}
+                        <option value="{{ article.id }}" selected></option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_offer_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Offer Number </label>
+                    <div class="col-sm-8">
+                        <input type="text" name="offer_nbr" class="form-control form-control-sm" id="id_offer_nbr"
+                            value="{{commercialOffer.offer_nbr}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_number_of_days" class="col-sm-4 col-form-label col-form-label-sm"> Number of
+                        days</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="duration_in_days" class="form-control form-control-sm"
+                            id="id_number_of_days" value="{{commercialOffer.duration_in_days}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_validity_date" class="col-sm-4 col-form-label col-form-label-sm"> Validity date
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="date" name="validity_date" class="form-control form-control-sm"
+                            id="id_validity_date" value="{{commercialOffer.validity_date|date:'Y-m-d'}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="transport" class="col-sm-4 col-form-label col-form-label-sm"> Transport mode
+                    </label>
+                    <div class="col-sm-8">
+                        <select name="transport" class="form-select form-select-sm" id="transport">
+                            <option value=""> Chose a transport mode</option>
+                            {% for transport in transports %}
+                            <option value="{{transport.id }}" {% if commercialOffer.transport.id == transport.id %} selected {% endif %}>
+                                {{ transport}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="payment" class="col-sm-4 col-form-label col-form-label-sm">Payment mode</label>
+                    <div class="col-sm-8">
+                        <select name="payment" class="form-select form-select-sm" id="payment">
+                            <option value="">Choose a payment mode</option>
+                            {% for payment in payments %}
+                            <option value="{{ payment.id }}" {% if commercialOffer.payment.id == payment.id %} selected {% endif %}>
+                                {{ payment }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="destination" class="col-sm-4 col-form-label col-form-label-sm">Destination</label>
+                    <div class="col-sm-8">
+                        <select name="destination" class="form-select form-select-sm" id="destination">
+                            <option value="">Choose a destination</option>
+                            {% for destination in destinations %}
+                            <option value="{{ destination.id }}" {% if commercialOffer.destination.id == destination.id %} selected {% endif %}>
+                                {{ destination }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">delivery duration</label>
+                    <div class="col-sm-8 row">
+                        <div class="col-sm-4">
+                            <input type="text" name="delivery_time_interval" class="form-control form-control-sm"
+                                value="{{commercialOffer.delivery_time_interval}}" placeholder="duration"/>
+                        </div>
+                        <div class="col-sm-8">
+                            <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
+                                <option value="">Choose a time unit</option>
+                                {% for timeUnit in timeUnits %}
+                                <option value="{{ timeUnit.id }}" {% if commercialOffer.delivery_time_unit.id == timeUnit.id %} selected {%endif %}>
+                                    {{ timeUnit }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group row mt-2">
+                    <label for="id_customs_fee" class="col-sm-4 col-form-label col-form-label-sm">Customs Fees</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="customs_fee" class="form-control form-control-sm"
+                            id="id_customs_fee" value="{{commercialOffer.customs_fee}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_transport_fee" class="col-sm-4 col-form-label col-form-label-sm">Transport
+                        Fees</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="transport_fee" class="form-control form-control-sm"
+                            id="id_transport_fee" value="{{commercialOffer.transport_fee}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="total_fee" class="col-sm-4 col-form-label col-form-label-sm">Total
+                        Customs
+                        Fees</label>
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control form-control-sm"
+                            id="total_fee" value="{{commercialOffer.total_customs_fee}}" step="any" />
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end">
+                <button type="submit" class="btn btn-dark btn-sm">
+                    {% if page == 'add-commercialOffer' %} Save commercial Offer
+                    {% else %} Save changes
+                    {% endif %}
+                </button>
+            </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+        // Recalculate on margin change
+        $('#margin').on('input', function () {
+            let sum_total_selling = 0;
+            var margin = parseFloat($('#margin').val()) / 100;
+            if (!margin)
+                return
+            let sellingPrice = 0
+            let purchasePrice = 0
+            let totalSelling = 0
+            let articleQuantity = 0
+            let row = NaN
+            $('#offer-articles-table tbody tr').each(function () {
+                row = $(this);
+                articleQuantity = parseInt(row.find('.article-quantity').text());
+                purchasePrice = parseFloat(row.find('.purchase-price').text());
+
+                sellingPrice = purchasePrice + (margin * purchasePrice);
+                totalPurchase = purchasePrice * articleQuantity;
+                totalSelling = sellingPrice * articleQuantity;
+                sum_total_selling += totalSelling
+
+                row.find('.selling-price').text(sellingPrice.toFixed(2));
+                row.find('.total_purchase').text(totalSelling.toFixed(2));
+                row.find('.total_purchase').text(totalPurchase.toFixed(2));
+                row.find('.total_selling').text(totalSelling.toFixed(2));
+
+            });
+        });
+    });
+
+</script>

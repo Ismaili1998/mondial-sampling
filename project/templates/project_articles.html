@@ -1,0 +1,37 @@
+
+<table class="table table-sm mt-3 bg-white" id="articles-table">
+  <thead>
+    <tr>
+      <th> 
+        <input type="checkbox" class="form-check-input bg-secondary" id="check-all">
+      </th>
+      <th> Article Name </th>
+      <th> pos </th>
+      <th> Article Number </th>
+      <th> Action </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for article in articles %}
+    <tr>
+      <td><input type="checkbox" class="form-check-input" name="articles" value="{{ article.id }}"></td>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ article.article_name }}</td>
+      <td>{{ article.article_nbr }}</td>
+      <td class="d-flex justify-content-end">
+        <a class="btn btn-sm btn-default" href="#" role="button" id="dropdownMenuLink"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="material-icons align-middle"> more_vert </i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <a class="dropdown-item" href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
+            onclick="load_modal('Article detail','{%  url "update-article" article.id %}')"><i
+              class="material-icons">visibility</i></a>
+          <a class="dropdown-item" href="{% url 'delete-article' article.id %}" class="text-danger"><i
+              class="material-icons">delete</i></a>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

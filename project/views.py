@@ -1,16 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import ProjectForm, SupplierForm, ArticleForm, QuoteRequestForm
-from .models import Project, Supplier, Article, QuoteRequest, Unit
+from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm
+from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Payment, Transport, Destination
 from client.models import Client, Country, Language
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import io
-from django.http import FileResponse
-from reportlab.pdfgen import canvas
 from django.conf import settings
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import utils
+from django.views.static import serve
+from django.http import Http404
+
 
 def project_home(request):
     clients = Client.objects.all()
@@ -71,6 +70,29 @@ def get_projectsByKeyWord(request):
     projects = Project.objects.filter(project_nbr__icontains=keyword).values_list('project_nbr', flat=True)
     return JsonResponse(list(projects), safe=False)
 
+@csrf_exempt
+def upload_file_to_project(request, project_pk):
+    project = get_object_or_404(Project, id=project_pk)
+    if request.method == 'POST' and request.FILES:
+        files = request.FILES.getlist('files')
+        filenames = []
+        for file in files:
+            project_file = File(project=project,
+                                       file=file,
+                                       description="ici")
+            project_file.save()
+            filenames.append(project_file.file.name)
+        return JsonResponse({'filenames': filenames})
+    else:
+        return JsonResponse({'error': 'Invalid request'})
+
+def download_file(request, file_pk):
+    try:
+        project_file = File.objects.get(id=file_pk)
+    except File.DoesNotExist:
+        raise Http404
+    # Use Django's built-in `serve()` view to return the file
+    return serve(request, project_file.file.name, document_root=settings.MEDIA_ROOT)
 #======================= Article area ====================================#
 def article_create(request):
     if request.method == 'POST':
@@ -86,13 +108,13 @@ def article_create(request):
     
     projects = Project.objects.all()
     suppliers = Supplier.objects.all()
-    units = Unit.objects.all()
+    article_units = ArticleUnit.objects.all()
     article_nbr = Article.objects.all().count()
     article_nbr = "A{0}".format(article_nbr)
     page_name = 'add-article'
     context = {'projects':projects, 
                'suppliers':suppliers,
-               'units':units,
+               'article_units':article_units,
                'article_nbr':article_nbr,
                'page':page_name}
     return render(request, 'article.html',context)
@@ -120,7 +142,7 @@ def article_edit(request, pk):
     page_name = 'update-article'
     projects = Project.objects.all()
     suppliers = Supplier.objects.all()
-    units = Unit.objects.all()
+    units = ArticleUnit.objects.all()
     context = {'article':article, 
                'projects':projects, 
                'suppliers':suppliers,
@@ -184,64 +206,117 @@ def search_supplier(request):
 
 
 #======================= quoteRequest area ====================================#
-def manage_quoteRequest(request,project_pk,article_pk):
+def create_quoteRequest(request,project_pk):
     project = get_object_or_404(Project, pk=project_pk)
-    article = get_object_or_404(Article, pk=article_pk)
     if request.method == 'POST':
-        client = project.client
-        abbr = client.country.abbreviation
         project_nbr = project.project_nbr
-        checked_suppliers_ids = request.POST.getlist('suppliers')
-        for supplier_id in checked_suppliers_ids:
-            try:
-                quote_request = QuoteRequest.objects.get(article=article, supplier_id=supplier_id)
-                quote_request.request_nbr = 'new_request_number'  # Update with your desired values
-                quote_request.save()
-            except QuoteRequest.DoesNotExist:
-                # Create new QuoteRequest
-                quote_request = QuoteRequest(article=article, supplier_id=supplier_id, request_nbr='request_number')
-                quote_request.save()
-        for index,supplier in enumerate(checked_suppliers,1):
-            request_nbr  = "{0}{1}N{2}-{3}{4}".format(project_nbr,article.article_nbr,index,abbr,client.client_nbr)
-            quoteRequest = QuoteRequest(supplier=supplier,
-                                   article=article,
-                                   request_nbr=request_nbr)
-            quoteRequest.save()
-        messages.success(request, 'Quote request has been created successfully')
+        articles = request.POST.getlist('articles')
+        suppliers = request.POST.getlist('suppliers')
+        last_quotRequest = QuoteRequest.objects.order_by('id').last()
+        if last_quotRequest:
+            request_id = last_quotRequest.id + 1
+        else:
+            request_id = 1
+        try:
+            for index,supplier_id in enumerate(suppliers,1):
+                supplier = Supplier.objects.get(id=supplier_id)
+                # if not QuoteRequest.objects.filter(project=project, 
+                #                                 supplier=supplier, 
+                #                                 articles__in=articles).exists():
+                last_quotRequest = QuoteRequest.objects.order_by('id').last()
+                request_nbr = "R{0}/{1}-N{2}-{3}{4}".format(request_id,
+                                                    project_nbr,
+                                                    index,
+                                                    project.client.country.abbreviation,
+                                                    project.client.client_nbr)
+                quoteRequest = QuoteRequest.objects.create(project = project,
+                                                        supplier=supplier,
+                                                        request_nbr=request_nbr)
+                quoteRequest.articles.set(articles)
+                request_id+=1
+            messages.success(request, 'Quote request has been created successfully')
+        except:
+                messages.error(request, 'An error occured please retry !')
+
         return redirect('project-detail',project_nbr)
     
     suppliers = Supplier.objects.all()
-    context = {'project':project,'article':article,'suppliers':suppliers}
+    context = {'project':project,'suppliers':suppliers}
     return render(request, 'quoteRequest.html',context) 
 
+def create_quoteRequest_pdfReport(request, request_pk):
+    quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)
+    context = {'quoteRequest':quoteRequest}
+    return render(request, 'quoteRequest_pdf.html', context)
 
-def commercial_offer_create(request):
-    # Create a file-like buffer to receive PDF data.
-    buffer = io.BytesIO()
-    # Create the PDF object, using the buffer as its "file."
-    p = canvas.Canvas(buffer, pagesize=A4)
-    # Construct the absolute file path to the PNG image file
-    img_path = settings.BASE_DIR / 'static' / 'img' / 'pdf_header.png'
-    img = utils.ImageReader(str(img_path))
-    # Get the page width and height
-    page_width, page_height = A4
-    # Calculate the aspect ratio of the image
-    img_aspect_ratio = img.getSize()[0] / img.getSize()[1]
-    # Calculate the width and height of the image to fit the page width
-    img_width = page_width
-    img_height = img_width / img_aspect_ratio
-    # Calculate the position of the image at the top center of the page
-    x = (page_width - img_width) / 2
-    y = page_height - img_height
-    # Draw the image on the PDF
-    p.drawImage(img, x, y, img_width, img_height)
-    # Draw other content on the PDF
-    p.setFontSize(24)
-    p.drawCentredString(page_width / 2, y - 50, "Anstellungsvertrag")
-    # Close the PDF object cleanly, and we're done.
-    p.showPage()
-    p.save()
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
-    buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='demande_devis.pdf')
+
+#======================= Commercial offer area ====================================#
+def create_commercialOffer(request,project_pk):
+    project = get_object_or_404(Project, id=project_pk)
+    if request.method == 'POST':
+        form = CommercialOfferForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Commercial offer has been created successfully')
+            return redirect('project-detail', project.project_nbr)
+        else:
+            errors = form.errors.as_data()
+            for field, error_list in errors.items():
+                for error in error_list:
+                    # Print or log the error details
+                    print(f"Field: {field}, Error: {error.message}")
+            messages.error(request, 'An error occured, please retry')
+            return redirect('project-detail', project.project_nbr)
+        
+    article_ids = request.GET.getlist('articles[]')
+    try:
+        articles = Article.objects.filter(id__in=article_ids)
+    except Article.DoesNotExist:
+            messages.error(request, 'An error occured, please retry') 
+            return redirect('project-detail', project.project_nbr) 
+
+    timeUnits = TimeUnit.objects.all()
+    payments = Payment.objects.all()
+    transports = Transport.objects.all()
+    destinations = Destination.objects.all()
+    context = {'project':project,
+               'timeUnits':timeUnits,
+               'payments':payments,
+               'transports':transports,
+               'destinations':destinations,
+               'page':'add-commercialOffer',
+               'articles':articles}
+    return render(request, 'commercialOffer.html',context) 
+
+def update_commercialOffer(request,pk):
+    commercialOffer = get_object_or_404(CommercialOffer, id=pk)
+    if request.method == 'POST':
+        project = commercialOffer.project
+        form = CommercialOfferForm(request.POST,instance=commercialOffer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Commercial offer has been created successfully')
+        else:
+            for err in form.errors:
+                print(err)
+            messages.error(request, 'An error occured, please retry')
+        return redirect('project-detail', project.project_nbr)
+    
+    timeUnits = TimeUnit.objects.all()
+    payments = Payment.objects.all()
+    transports = Transport.objects.all()
+    destinations = Destination.objects.all()
+    context = {'commercialOffer':commercialOffer,
+               'timeUnits':timeUnits,
+               'payments':payments,
+               'transports':transports,
+               'destinations':destinations,
+               'page':'update-commercialOffer',
+               'articles':commercialOffer.articles.all()}
+    return render(request, 'commercialOffer.html',context) 
+
+def create_commercialOffer_pdfReport(request, offer_pk):
+    commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
+    context = {'commercialOffer':commercialOffer}
+    return render(request, 'commercialOffer_pdf.html', context)
+
