@@ -1,6 +1,6 @@
 {% load static %}
 <div class="container-fluid">
-    <div class="item-to-print">
+    <div class="item-to-print font-arial">
         <!-- Header, logo section -->
         <div class="row">
             <div class="col-12">
@@ -76,20 +76,13 @@
         </div>
     </div>
     <button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
-    <button onclick="printPageAndSendEmail()" class="mt-2 btn btn-dark btn-sm"> send Email</button>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-    
     function printPage() {
         var printContent = document.querySelector('.item-to-print');
         var originalBody = document.body.innerHTML;
         document.body.innerHTML = printContent.outerHTML;
         window.print();
         document.body.innerHTML = originalBody;
-    }
-
-    function printPageAndSendEmail() {
-        
     }
 </script>

@@ -19,4 +19,4 @@ class ArticleForm(forms.ModelForm):
 class CommercialOfferForm(forms.ModelForm):
     class Meta:
         model = CommercialOffer
-        fields = '__all__'
+        exclude = ['offer_nbr']

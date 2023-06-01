@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Client, Country, Language
+from .models import Client, Country, Language, Transport, Payment
 from .forms import ClientForm
 
 def client_list(request):

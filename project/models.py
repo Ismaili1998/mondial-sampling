@@ -1,7 +1,5 @@
 from django.db import models
-from client.models import Client
-from client.models import Country
-from client.models import Language
+from client.models import Client, Country, Language, Payment, Transport, Currency
 import datetime
 
 class Supplier(models.Model):
@@ -175,23 +173,7 @@ class QuoteRequest(models.Model):
             return "Mit freundlichen Grüßen"
         else:
             return "Meilleures Salutations"
-
-class Payment(models.Model):
-    mode = models.CharField(max_length=150)
-    class Meta:
-        db_table = 'payment'
-    def __str__(self) -> str:
-        return self.mode 
-
-class Transport(models.Model):
-    mode = models.CharField(max_length=150) 
-    class Meta:
-        db_table = 'transport'
-    
-    def __str__(self) -> str:
-        return self.mode
-
-
+        
 class Destination(models.Model):
     destination_name = models.CharField(max_length=150)
     class Meta:
@@ -212,6 +194,8 @@ class TimeUnit(models.Model):
 class CommercialOffer(models.Model):
     offer_nbr = models.CharField(max_length=20) 
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, )
+    margin = models.IntegerField()
     transport = models.ForeignKey(Transport,on_delete=models.PROTECT)
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT)
     destination = models.ForeignKey(Destination,on_delete=models.PROTECT)
@@ -229,22 +213,41 @@ class CommercialOffer(models.Model):
     def __str__(self):
         return self.offer_nbr
     
+    def get_articles(self):
+        articles = []
+        for article in self.articles.all():
+            article.selling_price = round(self.margin * article.purchase_price,2)
+            article.total_selling_price = round(article.quantity * article.selling_price, 2)
+            articles.append(article)
+        return articles
+    
     def get_total_purchase(self):
         total_purchase = 0
-        for article in self.articles:
-            total_purchase += article.quantity * article.purchase
+        for article in self.articles.all():
+            total_purchase += article.quantity * article.purchase_price
+        return round(total_purchase,2)
 
     def get_total_selling(self):
-        total_selling = 0
-        for article in self.articles:
-            total_selling += article.quantity * article.selling_price
+        total_selling = self.get_total_purchase() + self.get_total_purchase() * self.margin 
+        return round(total_selling,2)
+
+    def get_total_fee(self):
+        return self.transport_fee + self.customs_fee
+
+    def get_total_selling_withFee(self):
+        return self.get_total_selling() + self.get_total_fee()
+    
+    def get_profit(self):
+        return self.get_total_selling() - self.get_total_purchase()
+    
+    def get_net_profit(self):
+        return self.get_total_selling_withFee() - self.get_total_purchase()
     
     def get_validate_date(self):
         current_date = datetime.date.today()
         future_date = current_date + datetime.timedelta(days=self.duration_in_days)
         return future_date 
-
-
+    
     def get_greeting_text(self):
         language_code = self.project.client.language.language_code
         if language_code == "en":
@@ -253,7 +256,7 @@ class CommercialOffer(models.Model):
             return "Sehr geehrte,"
         else:
             return "Messieurs,"
-    
+        
     def get_controlling_idea_text(self):
         language_code = self.project.client.language.language_code
         if language_code == "en":

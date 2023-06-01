@@ -8,6 +8,7 @@
                 <label for="margin" class="col-sm-4 col-form-label col-form-label-sm"> <strong> Margin </strong></label>
                 <div class="col-sm-8">
                     <input type="number" placeholder="margin in %" name="margin" class="form-control form-control-sm"
+                        value="{{ commercialOffer.margin }}"
                         id="margin" />
                 </div>
             </div>
@@ -33,12 +34,17 @@
                         <td> {{article.get_description}} </td>
                         <td class="article-quantity"> {{article.quantity}} </td>
                         <td> {{article.article_unit}} </td>
-                        <td class="purchase-price"> {{article.purchase_price}} </td>
-                        <td class="selling-price"> </td>
-                        <td class="total_purchase"></td>
-                        <td class="total_selling"></td>
+                        <td class="purchase-price"> {{article.purchase_price }} </td>
+                        <td class="selling-price "> </td>
+                        <td class="total-purchase"></td>
+                        <td class="total-selling"></td>
                     </tr>
                     {% endfor %}
+                    <tfoot>
+                        <td colspan="6"></td>
+                        <td >Total achat = <strong class="sum-total-purchase"></strong></td>
+                        <td>Total Selling = <strong  class="sum-total-selling"></strong></td>
+                    </tfoot>
                 </tbody>
             </table>
         </div>
@@ -46,18 +52,11 @@
             <div class="col-md-6">
                 <div class="d-none">
                     <input type="hidden" name="project" value="{{project.id}}{{commercialOffer.project.id}}" />
-                    <select name="articles">
+                    <select name="articles" multiple>
                         {% for article in articles %}
                         <option value="{{ article.id }}" selected></option>
                         {% endfor %}
                     </select>
-                </div>
-                <div class="form-group row mt-2">
-                    <label for="id_offer_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Offer Number </label>
-                    <div class="col-sm-8">
-                        <input type="text" name="offer_nbr" class="form-control form-control-sm" id="id_offer_nbr"
-                            value="{{commercialOffer.offer_nbr}}" />
-                    </div>
                 </div>
                 <div class="form-group row mt-2">
                     <label for="id_number_of_days" class="col-sm-4 col-form-label col-form-label-sm"> Number of
@@ -137,27 +136,45 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group row mt-2">
-                    <label for="id_customs_fee" class="col-sm-4 col-form-label col-form-label-sm">Customs Fees</label>
+                    <label for="customs_fee" class="col-sm-4 col-form-label col-form-label-sm">Customs Fees</label>
                     <div class="col-sm-8">
                         <input type="number" name="customs_fee" class="form-control form-control-sm"
-                            id="id_customs_fee" value="{{commercialOffer.customs_fee}}" step="any" />
+                            id="customs_fee" value="{{commercialOffer.customs_fee}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="id_transport_fee" class="col-sm-4 col-form-label col-form-label-sm">Transport
+                    <label for="transport_fee" class="col-sm-4 col-form-label col-form-label-sm">Transport
                         Fees</label>
                     <div class="col-sm-8">
                         <input type="number" name="transport_fee" class="form-control form-control-sm"
-                            id="id_transport_fee" value="{{commercialOffer.transport_fee}}" step="any" />
+                            id="transport_fee" value="{{commercialOffer.transport_fee}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="total_fee" class="col-sm-4 col-form-label col-form-label-sm">Total
-                        Customs
-                        Fees</label>
+                    <label for="ek-vk" class="col-sm-4 col-form-label col-form-label-sm"> EK - VK </label>
                     <div class="col-sm-8">
                         <input type="number" class="form-control form-control-sm"
-                            id="total_fee" value="{{commercialOffer.total_customs_fee}}" step="any" />
+                            id="ek-vk" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="rb-ek" class="col-sm-4 col-form-label col-form-label-sm"> RB - EK </label>
+                    <div class="col-sm-8">
+                        <input type="number" class="form-control form-control-sm"
+                            id="rb-ek"  step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="rb-ek" class="col-sm-4 col-form-label col-form-label-sm"> Currency </label>
+                    <div class="col-sm-8">
+                        <select name="currency" class="form-select form-select-sm">
+                            <option value="">Choose a currency</option>
+                            {% for currency in currencies %}
+                            <option value="{{ currency.id }}" {% if commercialOffer.currency.id == currency.id %} selected {%endif %}>
+                                {{ currency }}
+                            </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
             </div>
@@ -171,35 +188,101 @@
     </form>
 </div>
 <script>
-    $(document).ready(function () {
-        // Recalculate on margin change
-        $('#margin').on('input', function () {
-            let sum_total_selling = 0;
-            var margin = parseFloat($('#margin').val()) / 100;
-            if (!margin)
-                return
-            let sellingPrice = 0
-            let purchasePrice = 0
-            let totalSelling = 0
-            let articleQuantity = 0
-            let row = NaN
-            $('#offer-articles-table tbody tr').each(function () {
-                row = $(this);
-                articleQuantity = parseInt(row.find('.article-quantity').text());
-                purchasePrice = parseFloat(row.find('.purchase-price').text());
+$(document).ready(function () {
+    let isFirstExecution = true;
+    function calculate_sellingPrice() {
+        let margin = parseFloat($('#margin').val()) / 100;
 
-                sellingPrice = purchasePrice + (margin * purchasePrice);
-                totalPurchase = purchasePrice * articleQuantity;
-                totalSelling = sellingPrice * articleQuantity;
-                sum_total_selling += totalSelling
+        if (isNaN(margin) || margin < 0 || margin > 1) {
+            return;
+        }
 
-                row.find('.selling-price').text(sellingPrice.toFixed(2));
-                row.find('.total_purchase').text(totalSelling.toFixed(2));
-                row.find('.total_purchase').text(totalPurchase.toFixed(2));
-                row.find('.total_selling').text(totalSelling.toFixed(2));
+        let sellingPrice = 0;
+        let totalSelling = 0;
+        let articleQuantity = 0;
+        let row = NaN;
+        let sum_total_selling = 0;
 
-            });
+        $('#offer-articles-table tbody tr').each(function () {
+            row = $(this);
+            articleQuantity = parseInt(row.find('.article-quantity').text());
+            purchasePrice = parseFloat(row.find('.purchase-price').text());
+
+            sellingPrice = purchasePrice + (margin * purchasePrice);
+            totalSelling = sellingPrice * articleQuantity;
+            sum_total_selling += totalSelling;
+
+            row.find('.selling-price').text(formatNumber(sellingPrice));
+            row.find('.total-selling').text(formatNumber(totalSelling));
         });
+        // Add a new row to display the sum total selling
+        $('tfoot .sum-total-selling').text(formatNumber(sum_total_selling))
+        calculate_profit()
+      
+    }
+
+    function calculate_purchasePrice() {
+        let purchasePrice = 0;
+        let articleQuantity = 0;
+        let row = NaN;
+        let sum_total_purchase = 0;
+
+        $('#offer-articles-table tbody tr').each(function () {
+            row = $(this);
+            articleQuantity = parseInt(row.find('.article-quantity').text());
+            purchasePrice = parseFloat(row.find('.purchase-price').text());
+            totalPurchase = purchasePrice * articleQuantity;
+            sum_total_purchase += totalPurchase;
+            row.find('.total-purchase').text(formatNumber(totalPurchase));
+        });
+        // display the sum total purchase and sum total selling
+        $('tfoot .sum-total-purchase').text(formatNumber(sum_total_purchase));
+      
+    }
+
+    function calculate_profit() {
+        let transport_fee = parseFloat($('#transport_fee').val());
+        let customs_fee = parseFloat($('#customs_fee').val());
+        let total_fee = transport_fee + customs_fee;
+        let sum_total_purchase = parseFloat($('tfoot .sum-total-purchase').text());
+        let sum_total_selling = parseFloat($('tfoot .sum-total-selling').text());
+        let profit = sum_total_selling - sum_total_purchase;
+        let net_profit = profit + total_fee;
+        $('#ek-vk').val(profit.toFixed(2));
+        $('#rb-ek').val(net_profit.toFixed(2));
+    }
+
+    $('#margin').on('input', function () {
+        calculate_sellingPrice();
     });
 
+    $('#transport_fee, #customs_fee').on('input', function() {
+        calculate_profit();
+    });
+    // Execute recalculate function once on initial page load
+    if (isFirstExecution) {
+        calculate_purchasePrice();
+        calculate_sellingPrice();
+        formate_columns();
+        isFirstExecution = false;
+    }
+
+
+    function formatNumber(number) {
+    // Convert the number to a string
+    number = number.toFixed(2)
+    var strNumber = number.toString();
+    
+    // Split the number into integer and decimal parts
+    var parts = strNumber.split(".");
+    
+    // Format the integer part with thousands separators
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    
+    // Join the integer and decimal parts with a comma
+    var formattedNumber = parts.join(",");
+    
+    return formattedNumber;
+    }
+});
 </script>

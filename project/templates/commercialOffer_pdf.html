@@ -1,6 +1,7 @@
 {% load static %}
+{% load format_numbers %}
 <div class="container-fluid">
-    <div class="item-to-print">
+    <div class="item-to-print font-arial">
         <!-- Header section -->
         <div class="row">
             <div class="col-12">
@@ -8,58 +9,143 @@
             </div>
         </div>
         <!-- Contact section -->
-       <table class="table table-borderless mt-4 size-13">
-            <tr>
-                <td class="text-left">
-                    {{ commercialOffer.project.client }} <br />
-                    {{ commercialOffer.project.client.address }} <br />
-                    Phone :{{ commercialOffer.project.client.phone_number1 }} <br />
-                    Email :{{ commercialOffer.project.client.email1 }} <br />
-                    Fax :{{ commercialOffer.project.client.fax }}
-                </td>
-                <td class="text-center">
-                    <h4> {{ commercialOffer.project.project_nbr }} <br/>
-                        {{ commercialOffer.offer_nbr }} </h4>
-                </td>
-                <td class="text-left">
-                    Case followed by <br/>
-                    Mr. T.Sammoudi <br/>
-                    Tel.: +49 (4104) 699 99 - 0 <br/>
-                    Fax: +49 (4104) 699 99 - 5 or - 9 <br/>
-                </td>
-            </tr>
-        </table>
-        <div class="row mt-4">
+        <div class="mt-4 d-flex justify-content-between">
+            <div class="size-13">
+                {{ commercialOffer.project.client }} <br />
+                {{ commercialOffer.project.client.address }} <br />
+                Phone :{{ commercialOffer.project.client.phone_number1 }} <br />
+                Email :{{ commercialOffer.project.client.email1 }} <br />
+                Fax :{{ commercialOffer.project.client.fax }}
+            </div>
+            <div>
+                <h6 class="text-center border border-3 border-info rounded shadow py-3 px-3">
+                    PROFORMA: <br/> {{ commercialOffer.offer_nbr }} 
+                </h6>
+            </div>
+            <div class="size-13">
+                Case followed by <br/>
+                Mr. T.Sammoudi <br/>
+                Tel.: +49 (4104) 699 99 - 0 <br/>
+                Fax: +49 (4104) 699 99 - 5 or - 9 <br/>
+            </div>
+        </div>
+        <div class="mt-4 d-flex justify-content-between">
+            <div>
+                <p> Project N° : {{ commercialOffer.project.project_nbr }} <br/>
+                    Our Réf : {{ commercialOffer.project.our_ref }}
+                </p>
+            </div>
+            <div class="ml-10 size-12">
+                <p> Reinbek/Hamburg, <span id="currentDate"></span> </p>
+            </div>
+        </div>
+        <div class="mt-4 row size-13">
             <p> {{commercialOffer.get_greeting_text}} <br/> {{commercialOffer.get_controlling_idea_text}} </p>
         </div>
         <!-- Body section -->
         <div class="row mt-4">
             <div class="col-12">
-                <table class="table table-sm">
+                <table class="table table-sm bg-white" id="offer-articles-table">
                     <thead>
-                        <tr class="size-12">
-                            <th>Pos</th>
-                            <th>Article Nr</th>
-                            <th>Designation</th>
-                            <th>Qte</th>
+                        <tr class="size-13">
+                            <th>Article nbr</th>
+                            <th>Designation </th>
+                            <th>Qty</th>
                             <th>U</th>
-                            <th>P.U/EURO</th>
-                            <th>P.T/EURO</th>
+                            <th>P.U/EUR</th>
+                            <th>P.T/EUR</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for article in commercialOffer.articles.all %}
-                        <tr>
-                            <td> {{ forloop.counter }} </td>
-                            <td> {{ article.article_nbr }} </td>
-                            <td style="font-size:12px;max-width: 250px;"> 
-                                <pre>{{ article.get_description }}</pre>
+                        {% for article in commercialOffer.get_articles %}
+                        <tr class="size-13">
+                            <td> {{article.article_nbr}} </td>
+                            <td> <pre> {{article.get_description}} </pre> </td>
+                            <td> {{article.quantity|thousand_separator}} </td>
+                            <td> {{article.article_unit}} </td>
+                            <td> {{article.selling_price|thousand_separator  }}
+                                 {{commercialOffer.currency}}
                             </td>
-                            <td> {{ article.quantity }} {{ article.unit }} </td>
+                            <td> {{article.total_selling_price|thousand_separator}} 
+                                 {{commercialOffer.currency}}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                <table class="table table-sm table-borderless">
+                    <tbody>
+                        <tr class="size-13">
+                            <td colspan="2">
+                                Délai de livraison: {{ commercialOffer.validity_date|date:'d-m-Y' }}
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="size-13">
+                            <td colspan="2">
+                            </td>
+                            <td><input type="checkbox" checked class="form-check-input"></td>
+                            <td class="size-14">
+                                Total EXW:
+                            </td>
+                            <td>
+                                {{ commercialOffer.destination }}
+                            </td>
+                            <td>
+                                {{ commercialOffer.get_total_selling|thousand_separator }} 
+                                {{commercialOffer.currency}}
+                            </td>
+                        </tr>
+                        <tr class="size-13">
+                            <td colspan="2"></td>
+                            <td><input type="checkbox" checked class="form-check-input"></td>
+                            <td class="size-14">
+                                Mise à:
+                            </td>
+                            <td>
+                                {{ commercialOffer.transport }}
+                            </td>
+                            <td>
+                                {{ commercialOffer.customs_fee|thousand_separator }}
+                                {{commercialOffer.currency}}
+                            </td>
+                        </tr>
+                        <tr class="size-13">
+                            <td colspan="2"></td>
+                            <td><input type="checkbox" checked class="form-check-input" id="total-EXW"></td>
+                            <td class="size-14">
+                                Transport:
+                            </td>
+                            <td contentEditable="true">
+                                {{ commercialOffer.destination }}
+                            </td>
+                            <td>
+                                {{ commercialOffer.transport_fee|thousand_separator }} 
+                                {{commercialOffer.currency}}
+                            </td>
+                        </tr>
+                        <tr class="size-13">
+                            <td colspan="2"></td>
+                            <td><input type="checkbox" checked class="form-check-input" id="total-EXW"></td>
+                            <td class="size-14">
+                                Total Price:
+                            </td>
+                            <td>
+                                {{ commercialOffer.destination }}
+                            </td>
+                            <td>
+                                {{ commercialOffer.get_total_selling_withFee|thousand_separator }}
+                                {{commercialOffer.currency}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <p class="size-13">Délai de livraison: {{ commercialOffer.delivery_time_interval }} {{ commercialOffer.delivery_time_unit }}
+                    <br/> Mode de paiement: {{ commercialOffer.payment }}
+                    </p>
+                </div>
             </div>
         </div>
         <!-- Footer section -->
@@ -83,13 +169,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
     
+    function removeItems()
+    {
+         $('tbody tr').each(function() {
+            var checkbox = $(this).find('input[type="checkbox"]');
+            if (checkbox.length && !checkbox.prop('checked')) {
+                $(this).remove();
+            }
+            else{
+                $(this).find('td:has(input[type="checkbox"])').remove();
+            }
+        });
+    }
+
     function printPage() {
+        removeItems()
         var printContent = document.querySelector('.item-to-print');
-        var originalBody = document.body.innerHTML;
         document.body.innerHTML = printContent.outerHTML;
         window.print();
-        document.body.innerHTML = originalBody;
+        window.location.reload();
     }
+
+    $(document).ready(function() {
+        var currentDate = new Date();
+        var day = currentDate.getDate().toString().padStart(2, '0');
+        var month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+        var year = currentDate.getFullYear();
+        $("#currentDate").text(day + "." + month + "." + year);
+    });
 
     function printPageAndSendEmail() {
         var printContent = document.querySelector('.item-to-print');

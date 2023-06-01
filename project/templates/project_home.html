@@ -339,7 +339,6 @@
       var url = '{% url "create-commercialOffer" project.id %}?';
       var queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
       url += queryParam;
-      alert(url)
       load_modal('Create Commercial offer', url);
        
     });

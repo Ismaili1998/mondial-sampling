@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm
-from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Payment, Transport, Destination
-from client.models import Client, Country, Language
+from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination
+from client.models import Client, Country, Language, Transport, Payment, Currency
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -142,11 +142,11 @@ def article_edit(request, pk):
     page_name = 'update-article'
     projects = Project.objects.all()
     suppliers = Supplier.objects.all()
-    units = ArticleUnit.objects.all()
+    article_units = ArticleUnit.objects.all()
     context = {'article':article, 
                'projects':projects, 
                'suppliers':suppliers,
-               'units':units,
+               'article_units':article_units,
                'page':page_name}
     return render(request, 'article.html', context)
 
@@ -213,21 +213,14 @@ def create_quoteRequest(request,project_pk):
         articles = request.POST.getlist('articles')
         suppliers = request.POST.getlist('suppliers')
         last_quotRequest = QuoteRequest.objects.order_by('id').last()
-        if last_quotRequest:
-            request_id = last_quotRequest.id + 1
-        else:
-            request_id = 1
+        request_id = ( last_quotRequest.id or 0 ) + 1
         try:
             for index,supplier_id in enumerate(suppliers,1):
                 supplier = Supplier.objects.get(id=supplier_id)
-                # if not QuoteRequest.objects.filter(project=project, 
-                #                                 supplier=supplier, 
-                #                                 articles__in=articles).exists():
                 last_quotRequest = QuoteRequest.objects.order_by('id').last()
-                request_nbr = "R{0}/{1}-N{2}-{3}{4}".format(request_id,
+                request_nbr = "R{0}/{1}-N{2}-{3}".format(request_id,
                                                     project_nbr,
                                                     index,
-                                                    project.client.country.abbreviation,
                                                     project.client.client_nbr)
                 quoteRequest = QuoteRequest.objects.create(project = project,
                                                         supplier=supplier,
@@ -253,12 +246,20 @@ def create_quoteRequest_pdfReport(request, request_pk):
 #======================= Commercial offer area ====================================#
 def create_commercialOffer(request,project_pk):
     project = get_object_or_404(Project, id=project_pk)
+    project_nbr = project.project_nbr
+    last_commercialOffer = QuoteRequest.objects.order_by('id').last()
+    offer_id = ( last_commercialOffer.id or 0 ) + 1
     if request.method == 'POST':
         form = CommercialOfferForm(request.POST)
         if form.is_valid():
-            form.save()
+            commercialOffer = form.save(commit=False)
+            offer_nbr = "{0}/G-{1}-{2}".format(project_nbr,
+                                                offer_id,
+                                                project.client.client_nbr)
+            commercialOffer.offer_nbr = offer_nbr
+            commercialOffer.save()
             messages.success(request, 'Commercial offer has been created successfully')
-            return redirect('project-detail', project.project_nbr)
+            return redirect('project-detail', project_nbr)
         else:
             errors = form.errors.as_data()
             for field, error_list in errors.items():
@@ -279,7 +280,9 @@ def create_commercialOffer(request,project_pk):
     payments = Payment.objects.all()
     transports = Transport.objects.all()
     destinations = Destination.objects.all()
+    currencies = Currency.objects.all()
     context = {'project':project,
+               'currencies': currencies,
                'timeUnits':timeUnits,
                'payments':payments,
                'transports':transports,
@@ -306,7 +309,9 @@ def update_commercialOffer(request,pk):
     payments = Payment.objects.all()
     transports = Transport.objects.all()
     destinations = Destination.objects.all()
+    currencies = Currency.objects.all()
     context = {'commercialOffer':commercialOffer,
+               'currencies': currencies,
                'timeUnits':timeUnits,
                'payments':payments,
                'transports':transports,

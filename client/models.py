@@ -21,10 +21,35 @@ class Language(models.Model):
     class Meta:
         db_table = 'language'
 
+class Payment(models.Model):
+    mode = models.CharField(max_length=150)
+    class Meta:
+        db_table = 'payment'
+    def __str__(self) -> str:
+        return self.mode 
+
+class Transport(models.Model):
+    mode = models.CharField(max_length=150) 
+    class Meta:
+        db_table = 'transport'
+    
+    def __str__(self) -> str:
+        return self.mode
+
+class Currency(models.Model):
+    symbol = models.CharField(max_length=2) 
+    class Meta:
+        db_table = 'Currency'
+        
+    def __str__(self) -> str:
+        return self.symbol
+    
 class Client(models.Model):
     client_name = models.CharField(max_length=100)
-    client_nbr = models.CharField(max_length=20,unique=True)
+    # transport = models.ForeignKey(Transport,on_delete=models.PROTECT, null=True)
+    # payment = models.ForeignKey(Payment,on_delete=models.PROTECT, null=True)
     language = models.ForeignKey(Language,on_delete=models.PROTECT)
+    client_nbr = models.CharField(max_length=20,unique=True)
     address = models.CharField(max_length=200,blank=True)
     postal_code = models.CharField(max_length=20,blank=True)
     country = models.ForeignKey(Country,on_delete=models.PROTECT)
