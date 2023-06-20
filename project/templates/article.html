@@ -1,4 +1,5 @@
-<form action="{% if page == 'add-article' %} {% url 'create-article' %} {% else %} {% url 'update-article' article.id %} {% endif %}" method="POST">
+<form class="submit-form" 
+    action="{% if page == 'add-article' %} {% url 'create-article' %} {% else %} {% url 'update-article' article.id %} {% endif %}" method="POST">
     {% csrf_token %}
     <div class="row">
         <div class="col-md-4">
@@ -136,7 +137,6 @@
                 var englishTranslation = response.responseData.translatedText;
                 $('#id_description_en').val(englishTranslation);
             });
-
             // Make an API call to translate the French word to German
             $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|de', function (response) {
                 var germanTranslation = response.responseData.translatedText;
@@ -144,6 +144,25 @@
             });
 
         });
-    });
 
+        $('.submit-form').submit(function(event) {
+            event.preventDefault(); 
+            let formData = $(this).serialize(); 
+            let url = $(this).attr('action');
+            $.ajax({
+            type: 'POST',
+            url: url, 
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                $('#Modal').modal('hide');
+                alert(response.message);
+            },
+            error: function() {
+                alert('An error occurred');
+            }
+            });
+        });
+
+    });
 </script>

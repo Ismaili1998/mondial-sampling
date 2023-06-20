@@ -53,7 +53,7 @@
           </div>
           <div class="form-group row mt-2">
             <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm">Client number</label>
-            <div class="col-sm-9">
+            <div class="col-sm-9 d-flex">
               <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="client" required
                 id="client_nbr" aria-label=".form-select-sm example">
                 <option value=""> Client number </option>
@@ -63,13 +63,7 @@
                   </option>
                 {% endfor %}
               </select>
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="id_client_name" class="col-sm-3 col-form-label col-form-label-sm">Client name</label>
-            <div class="col-sm-9 d-flex">
-              <input type="text" disabled class="form-control form-control-sm" id="id_client_name"
-                value="{{project.client.client_name}}" />&nbsp;
+              &nbsp;
               <a class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
                 onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
                   class="material-icons align-middle text-dark">visibility</i></a>
@@ -97,18 +91,19 @@
             <label for="desc" class="col-sm-3 col-form-label col-form-label-sm">Project description</label>
             <div class="col-sm-9">
               <textarea class="form-control" name="project_description" id="desc"
-                rows="2">{{project.project_description}}</textarea>
+                rows="3">{{project.project_description}}</textarea>
             </div>
           </div>
           <div class="form-group row mt-2">
             <label for="to_do" class="col-sm-3 col-form-label col-form-label-sm">To do</label>
             <div class="col-sm-9">
-              <textarea class="form-control" id="to_do" name="to_do" rows="2">{{project.to_do}}</textarea>
+              <textarea rows="3" class="form-control" id="to_do" name="to_do" rows="2">{{project.to_do}}</textarea>
             </div>
           </div>
         </div>
       </div>
-      <div class="row mt-4">
+      {% if page == 'update-project' %}
+      <div class="row">
         <div class="col-md-6">
           <div id="dropzone" class="mt-2">
             <div class="dropdown">
@@ -123,11 +118,12 @@
                   {{project_file.file.name }} </a>
                 {% endfor %}
               </div>
-           </div>
+          </div>
             <p>Drag and drop files here to upload.</p>
           </div>
         </div>
       </div>
+      {% endif %}
       <div class="mt-3 d-flex justify-content-end">
         <button type="submit" class="btn btn-dark btn-sm">
           {% if page == 'add-project' %}
@@ -191,52 +187,22 @@
 </main>
 {% endblock %}
 
+<!-- java script code section --> 
 {% block javascript %}
-
-
-
 <script type="text/javascript">
 
+  // load page by url, and display it in modal  
   function load_modal(title, page_url) {
     $('.modal-title').text(title);
     $('.modal-body').load(page_url);
   }
-  var client_id = "{{project.client.id}}";
-  function get_clientDetail(title, url) {
-    if (client_id == 0)
-      title = "No client chosen"
-    var url = url.replace('0', client_id);
-    load_modal(title, url)
-  }
-
-  $('#searchProject').autocomplete({
-    source: function (request, response) {
-      $.getJSON("{% url 'get-projectsByKeyWord' %}",
-        { keyword: request.term }, function (data) {
-          // Map the project numbers to an array of objects with label and value properties
-          var mappedData = $.map(data, function (item) {
-            return {
-              label: item,
-              value: item
-            };
-          });
-          response(mappedData);
-        });
-    },
-    select: function (event, ui) {
-      project_nbr = ui.item.value;
-      var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
-      window.location.href = url;
-      return false;
-    }
-  });
-  // search articles 
+  // search project by project_nbr 
   $(document).ready(function () {
-    $('#searchArticle').autocomplete({
+    $('#searchProject').autocomplete({
       source: function (request, response) {
-        $.getJSON("{% url 'get-articlesByKeyWord' %}",
+        $.getJSON("{% url 'get-projectsByKeyWord' %}",
           { keyword: request.term }, function (data) {
-            // Map the article numbers to an array of objects with label and value properties
+            // Map the project numbers to an array of objects with label and value properties
             var mappedData = $.map(data, function (item) {
               return {
                 label: item,
@@ -245,8 +211,89 @@
             });
             response(mappedData);
           });
+      },
+      select: function (event, ui) {
+        project_nbr = ui.item.value;
+        var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
+        window.location.href = url;
+        return false;
       }
     });
+  });
+
+  // get chosen client id, so that we can use its id 
+  // to get all detail about it
+  let client_id = {{ project.client.id|default:0 }};
+  $('#client_nbr').change(function () {
+    client_id = $(this).val();
+  });
+
+  function get_clientDetail(title, url) {
+    if (!client_id)
+    {
+      $('.modal-title').text("please chose a client from the list");
+    }
+    else{
+      load_modal(title, url.replace('0', client_id))
+    }
+  }
+
+  {% if page == 'update-project' %}
+    // search articles 
+    $(document).ready(function () {
+      $('#searchArticle').autocomplete({
+        source: function (request, response) {
+          $.getJSON("{% url 'get-articlesByKeyWord' %}",
+            { keyword: request.term }, function (data) {
+              // Map the article numbers to an array of objects with label and value properties
+              var mappedData = $.map(data, function (item) {
+                return {
+                  label: item,
+                  value: item
+                };
+              });
+              response(mappedData);
+            });
+        }
+      });
+
+    // adding files to project (drag and drop zone)
+    var dropzone = $('#dropzone');
+    dropzone.on('dragenter dragover', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      dropzone.addClass('dragover');
+    });
+    dropzone.on('dragleave drop', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      dropzone.removeClass('dragover');
+    });
+    dropzone.on('drop', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      dropzone.removeClass('dragover');
+      // Create a new FormData object
+      var formData = new FormData();
+      // Add the files to the FormData object
+      $.each(event.originalEvent.dataTransfer.files, function (index, file) {
+        formData.append('files', file);
+      });
+      // Send the files to the server using AJAX
+      $.ajax({
+        url: '{% url "upload-file-to-project" project.id %}',
+        type: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          alert(response.message);
+          window.location.reload();
+        }
+      });
+    });
+
 
     // Get references to the "check-all" checkbox and all the other checkboxes in the table
     const $checkAll = $('#check-all');
@@ -257,75 +304,10 @@
       $articleCheckboxes.prop('checked', $checkAll.prop('checked'));
     });
 
-    let clients = []
-    {% for c in clients %}
-    client = { id: '{{c.id}}', client_name: '{{c.client_name}}' }
-    clients.push(client)
-    {% endfor %}
-
-    $('#client_nbr').change(function () {
-      client_id = $(this).val()
-      let client = clients.filter(clt => clt.id == client_id);
-      client = client[0]
-      $('#id_client_name').val(client.client_name)
-    });
-
-    // adding files to project 
-
-    // Get the dropzone element
-    var dropzone = $('#dropzone');
-
-    // Add event listeners for dragenter and dragover events
-    dropzone.on('dragenter dragover', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      dropzone.addClass('dragover');
-    });
-
-    // Add event listeners for dragleave and drop events
-    dropzone.on('dragleave drop', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      dropzone.removeClass('dragover');
-    });
-
-    // Add event listener for drop event
-    dropzone.on('drop', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      dropzone.removeClass('dragover');
-
-      // Create a new FormData object
-      var formData = new FormData();
-
-      // Add the files to the FormData object
-      $.each(event.originalEvent.dataTransfer.files, function (index, file) {
-        formData.append('files', file);
-      });
-
-      // Send the files to the server using AJAX
-      $.ajax({
-        url: '{% url "upload-file-to-project" 0 %}',
-        type: 'POST',
-        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          alert("file has been added successfully")
-        }
-      });
-    });
-
-    $('#fileList').toggle();
-    $('.file-list-toggle-icon').click(function (e) {
-      e.preventDefault();
-      $('#fileList').toggle();
-    });
-
-      $('#new-commercialOffer').click(function() {
+    // create commercial offer 
+    $('#new-commercialOffer').click(function() {
       // Array to store the IDs of checked articles
-      var selectedArticles = [];
+      let selectedArticles = [];
       // Iterate over the checked checkboxes in the table
       $('#articles-table tbody input:checked').each(function() {
         selectedArticles.push($(this).val());
@@ -333,11 +315,11 @@
       
       if (selectedArticles.length == 0)
       {
-        $('.modal-title').text("select at least one article !");
+        alert("select at least one article !");
         return
       }
-      var url = '{% url "create-commercialOffer" project.id %}?';
-      var queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
+      let url = '{% url "create-commercialOffer" project.id %}?';
+      let queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
       url += queryParam;
       load_modal('Create Commercial offer', url);
        
@@ -345,8 +327,6 @@
 
   });
 
-
-
+  {% endif %}
 </script>
-
 {% endblock %}

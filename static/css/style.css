@@ -44,3 +44,32 @@
 .font-arial {
     font-family: Arial, sans-serif;
 }
+
+.text-description {
+    font-size: 12px;
+    max-width: 500px;
+}
+
+.outset-border {
+    border-style: outset;
+}
+
+
+@media print {
+
+    .header-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .header-pdf {
+        margin-bottom: 140px;
+
+    }
+}
+
+@page {
+    margin-top: 100mm;
+    margin-bottom: 1cm;
+}

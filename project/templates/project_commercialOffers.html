@@ -22,8 +22,12 @@
                     <a class="dropdown-item" href="#" class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
                         onclick="load_modal('Article detail','{%  url "update-commercialOffer" offer.id %}')"><i class="material-icons">visibility</i></a>
                     <a class="dropdown-item" onclick="load_modal('Generate pdf','{%  url "create-commercialOffer-pdfReport" offer.id %}')"
-                        data-bs-toggle="modal" href="#" data-bs-target="#Modal">
-                        <i class="material-icons text-info">picture_as_pdf</i>
+                        data-bs-toggle="modal" href="#" data-bs-target="#Modal">CO
+                        <i class="material-icons text-info align-middle">picture_as_pdf</i>
+                    </a>
+                    <a class="dropdown-item" onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')"
+                        data-bs-toggle="modal" href="#" data-bs-target="#Modal">TO
+                        <i class="material-icons text-info align-middle">picture_as_pdf</i>
                     </a>
                 </div>
             </td>

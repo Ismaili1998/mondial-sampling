@@ -33,6 +33,7 @@ urlpatterns = [
     path('create-commercialOffer/<str:project_pk>', views.create_commercialOffer, name='create-commercialOffer'),
     path('update-commercialOffer/<str:pk>', views.update_commercialOffer, name='update-commercialOffer'),
     path('create-commercialOffer-pdfReport/<str:offer_pk>/', views.create_commercialOffer_pdfReport, name='create-commercialOffer-pdfReport'),
+    path('print-technicalOffer/<str:offer_pk>/', views.print_technicalOffer, name='print-technicalOffer'),
 
 ]
 

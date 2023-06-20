@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Client, Country, Language, Transport, Payment
 from .forms import ClientForm
+from django.http import JsonResponse
+# from django.views.decorators.csrf import csrf_exempt
 
 def client_list(request):
     clients = Client.objects.all()[:10]
@@ -22,13 +24,13 @@ def client_create(request):
         form = ClientForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Client has been created successfully')
+            return JsonResponse({'message': 'Client has been added successfully'})
         else:
-            messages.error(request, 'An error occured ! please retry again')
+            messages.error(request, 'An error occured ! please retry again ')
             for err in form.errors:
                 print(err)
-        return redirect('project-home')
-    
+            return JsonResponse({'message':'An error occured ! please retry again'})
+        
     page_name = 'add-client'
     countries = Country.objects.all()
     languages = Language.objects.all()
@@ -46,12 +48,12 @@ def client_edit(request, pk):
         form = ClientForm(request.POST, instance=client)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Client has been modified successfully')
+            return JsonResponse({'message': 'Client has been modified successfully'})
         else:
             messages.error(request, 'An error occured ! please retry again ')
             for err in form.errors:
                 print(err)
-        return redirect('project-home')
+            return JsonResponse({'message':'An error occured ! please retry again'})
     countries = Country.objects.all()
     page_name = 'update-client'
     languages = Language.objects.all()
@@ -62,9 +64,10 @@ def client_edit(request, pk):
     return render(request, 'client.html', context)
 
 def client_delete(request, pk):
-    client = get_object_or_404(Client, pk=pk)
-    client.delete()
-    messages.success(request, 'project has been deleted successfully')
-    return redirect('client-list')
+    if request.method == "POST":
+        client = get_object_or_404(Client, pk=pk)
+        client.delete()
+        messages.success(request, 'project has been deleted successfully')
+        return redirect('client-list')
 
 

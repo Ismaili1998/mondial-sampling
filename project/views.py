@@ -1,20 +1,21 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm
 from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination
-from client.models import Client, Country, Language, Transport, Payment, Currency
+from client.models import Client, Country, Language, Transport, Payment, Currency, Shipping
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import io
 from django.conf import settings
 from django.views.static import serve
 from django.http import Http404
+from . import translations
 
 
 def project_home(request):
     clients = Client.objects.all()
-    nbr_projects = Project.objects.all().count()
-    project_nbr  = "P{0}".format(nbr_projects + 1)
+    latest_project = Project.objects.order_by('-id').first()
+    last_id = latest_project.id if latest_project else 0 
+    project_nbr  = "P{0}".format(last_id + 1)
     context = {'clients':clients,
                'page':'add-project',
                'project_nbr':project_nbr}
@@ -23,7 +24,7 @@ def project_home(request):
 
 def project_detail(request, project_nbr):
     project = get_object_or_404(Project, project_nbr=project_nbr)
-    clients =Client.objects.all()
+    clients = Client.objects.all()
     articles = project.articles.all()
     page_name = 'update-project'
     context = {'project':project,
@@ -79,12 +80,12 @@ def upload_file_to_project(request, project_pk):
         for file in files:
             project_file = File(project=project,
                                        file=file,
-                                       description="ici")
+                                       description="")
             project_file.save()
             filenames.append(project_file.file.name)
-        return JsonResponse({'filenames': filenames})
+        return JsonResponse({'message': 'files have been added successfully'})
     else:
-        return JsonResponse({'error': 'Invalid request'})
+        return JsonResponse({'message': 'Invalid request'})
 
 def download_file(request, file_pk):
     try:
@@ -93,19 +94,18 @@ def download_file(request, file_pk):
         raise Http404
     # Use Django's built-in `serve()` view to return the file
     return serve(request, project_file.file.name, document_root=settings.MEDIA_ROOT)
+
 #======================= Article area ====================================#
 def article_create(request):
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
-            article = form.save()
-            messages.success(request, 'Article has been created successfully')
+            form.save()
+            return JsonResponse({'message': 'Article has been modified successfully'})
         else:
             for err in form.errors:
                 print(err)
-            messages.error(request, 'An error occured, please retry')
-        return redirect('project-home')
-    
+            return JsonResponse({'message':'An error occured ! please retry again'})
     projects = Project.objects.all()
     suppliers = Supplier.objects.all()
     article_units = ArticleUnit.objects.all()
@@ -132,12 +132,12 @@ def article_edit(request, pk):
         form = ArticleForm(request.POST, instance=article)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Article has been modified successfully')
+            return JsonResponse({'message': 'Article has been modified successfully'})
         else:
+            messages.error(request, 'An error occured ! please retry again ')
             for err in form.errors:
                 print(err)
-            messages.error(request, 'An error occured, please retry')
-        return redirect('project-home')
+            return JsonResponse({'message':'An error occured ! please retry again'})
     
     page_name = 'update-article'
     projects = Project.objects.all()
@@ -165,10 +165,9 @@ def add_article_to_project(request):
             project = Project.objects.get(project_nbr=project_nbr)
             project.articles.add(article)
             project.save()
-        except Article.DoesNotExist:
-            pass
-        return redirect('project-detail', project.project_nbr)
-    return redirect('project-home')
+            return redirect('project-detail', project_nbr)
+        except:
+            return JsonResponse({'message':'An error occured ! please retry again'})
 
 def article_delete(request, pk):
     if request.method == 'POST':
@@ -213,7 +212,7 @@ def create_quoteRequest(request,project_pk):
         articles = request.POST.getlist('articles')
         suppliers = request.POST.getlist('suppliers')
         last_quotRequest = QuoteRequest.objects.order_by('id').last()
-        request_id = ( last_quotRequest.id or 0 ) + 1
+        request_id = (last_quotRequest.id if last_quotRequest else 0 ) + 1
         try:
             for index,supplier_id in enumerate(suppliers,1):
                 supplier = Supplier.objects.get(id=supplier_id)
@@ -239,7 +238,9 @@ def create_quoteRequest(request,project_pk):
 
 def create_quoteRequest_pdfReport(request, request_pk):
     quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)
-    context = {'quoteRequest':quoteRequest}
+    language_code = quoteRequest.supplier.language.language_code 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {'quoteRequest':quoteRequest,'translations':filtered_translations}
     return render(request, 'quoteRequest_pdf.html', context)
 
 
@@ -247,12 +248,13 @@ def create_quoteRequest_pdfReport(request, request_pk):
 def create_commercialOffer(request,project_pk):
     project = get_object_or_404(Project, id=project_pk)
     project_nbr = project.project_nbr
-    last_commercialOffer = QuoteRequest.objects.order_by('id').last()
-    offer_id = ( last_commercialOffer.id or 0 ) + 1
     if request.method == 'POST':
         form = CommercialOfferForm(request.POST)
         if form.is_valid():
-            commercialOffer = form.save(commit=False)
+            commercialOffer = form.save()
+            last_commercialOffer = CommercialOffer.objects.order_by('id').last()
+            offer_id = last_commercialOffer.id if last_commercialOffer else 0
+            offer_id += 1
             offer_nbr = "{0}/G-{1}-{2}".format(project_nbr,
                                                 offer_id,
                                                 project.client.client_nbr)
@@ -281,12 +283,14 @@ def create_commercialOffer(request,project_pk):
     transports = Transport.objects.all()
     destinations = Destination.objects.all()
     currencies = Currency.objects.all()
+    shippings = Shipping.objects.all()
     context = {'project':project,
                'currencies': currencies,
                'timeUnits':timeUnits,
                'payments':payments,
                'transports':transports,
                'destinations':destinations,
+               'shippings':shippings,
                'page':'add-commercialOffer',
                'articles':articles}
     return render(request, 'commercialOffer.html',context) 
@@ -310,18 +314,30 @@ def update_commercialOffer(request,pk):
     transports = Transport.objects.all()
     destinations = Destination.objects.all()
     currencies = Currency.objects.all()
+    shippings = Shipping.objects.all()
     context = {'commercialOffer':commercialOffer,
                'currencies': currencies,
                'timeUnits':timeUnits,
                'payments':payments,
                'transports':transports,
                'destinations':destinations,
+               'shippings': shippings,
                'page':'update-commercialOffer',
                'articles':commercialOffer.articles.all()}
     return render(request, 'commercialOffer.html',context) 
 
 def create_commercialOffer_pdfReport(request, offer_pk):
     commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
-    context = {'commercialOffer':commercialOffer}
+    language_code = commercialOffer.project.client.language.language_code 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {'commercialOffer':commercialOffer, 'translations':filtered_translations}
     return render(request, 'commercialOffer_pdf.html', context)
+
+
+def print_technicalOffer(request, offer_pk):
+    commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
+    language_code = commercialOffer.project.client.language.language_code 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {'commercialOffer':commercialOffer, 'translations':filtered_translations}
+    return render(request, 'technicalOffer_print.html', context)
 

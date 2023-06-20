@@ -1,5 +1,4 @@
 from django.db import models
-
 class Country(models.Model):
     country_name_fr = models.CharField(max_length=200)
     country_name_en = models.CharField(max_length=200)
@@ -10,7 +9,7 @@ class Country(models.Model):
     
     class Meta:
         db_table = 'country'
-
+        
 class Language(models.Model):
     language_name =  models.CharField(max_length=100)
     language_code =  models.CharField(max_length=4,unique=True)
@@ -35,7 +34,15 @@ class Transport(models.Model):
     
     def __str__(self) -> str:
         return self.mode
-
+    
+class Shipping(models.Model):
+    term = models.CharField(max_length=50, unique=True)
+    class Meta:
+        db_table = 'shipping'
+    
+    def __str__(self):
+        return self.term
+    
 class Currency(models.Model):
     symbol = models.CharField(max_length=2) 
     class Meta:
@@ -44,10 +51,13 @@ class Currency(models.Model):
     def __str__(self) -> str:
         return self.symbol
     
+
 class Client(models.Model):
     client_name = models.CharField(max_length=100)
-    # transport = models.ForeignKey(Transport,on_delete=models.PROTECT, null=True)
-    # payment = models.ForeignKey(Payment,on_delete=models.PROTECT, null=True)
+    # transport = models.ForeignKey(Transport,on_delete=models.PROTECT)
+    # payment = models.ForeignKey(Payment,on_delete=models.PROTECT)
+    # currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
+    # shipping = models.ForeignKey(Shipping, on_delete=models.PROTECT)
     language = models.ForeignKey(Language,on_delete=models.PROTECT)
     client_nbr = models.CharField(max_length=20,unique=True)
     address = models.CharField(max_length=200,blank=True)
@@ -62,10 +72,7 @@ class Client(models.Model):
     website = models.URLField(blank=True)
     internal_contact = models.CharField(max_length=100,blank=True)
     external_contact = models.CharField(max_length=100,blank=True)
-    representative = models.CharField(max_length=100,blank=True)
-    representative_1 = models.CharField(max_length=100,blank=True)
-    representative_2 = models.CharField(max_length=100,blank=True)
-    
+    representative = models.CharField(max_length=100,blank=True)    
     credit_limit = models.FloatField(blank=True)
     remark = models.TextField(blank=True,max_length=500)
 

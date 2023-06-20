@@ -1,3 +1,4 @@
+{% load format_numbers %}
 <div class="container-fluid">
     <form
         action="{% if page == 'add-commercialOffer'%} {% url 'create-commercialOffer' project.id %} {% else %} {% url 'update-commercialOffer' commercialOffer.id %} {% endif %}"
@@ -18,7 +19,6 @@
                 <thead>
                     <tr class="size-13">
                         <th>Article nbr</th>
-                        <th>Description </th>
                         <th>Qty</th>
                         <th>Unit</th>
                         <th>Purchase price </th>
@@ -30,20 +30,24 @@
                 <tbody>
                     {% for article in articles %}
                     <tr>
-                        <td> {{article.article_nbr}} </td>
-                        <td> {{article.get_description}} </td>
-                        <td class="article-quantity"> {{article.quantity}} </td>
+                        <td class="article-id" data-article-id="{{ article.id }}">
+                            <a  href="#" ata-bs-toggle="modal" data-bs-target="#Modal"
+                                onclick="get_article('Article detail','{%  url "update-article" article.id %}')">
+                                {{ article.article_nbr }}
+                            </a>
+                        </td>
+                        <td class="article-quantity"> {{article.quantity|thousand_separator}} </td>
                         <td> {{article.article_unit}} </td>
-                        <td class="purchase-price"> {{article.purchase_price }} </td>
+                        <td class="purchase-price"> {{article.purchase_price|thousand_separator}} </td>
                         <td class="selling-price "> </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
                     </tr>
                     {% endfor %}
                     <tfoot>
-                        <td colspan="6"></td>
-                        <td >Total achat = <strong class="sum-total-purchase"></strong></td>
-                        <td>Total Selling = <strong  class="sum-total-selling"></strong></td>
+                        <td colspan="5"></td>
+                        <td> Total achat = <strong class="sum-total-purchase"></strong></td>
+                        <td> Total Price EXW = <strong  class="sum-total-selling"></strong></td>
                     </tfoot>
                 </tbody>
             </table>
@@ -59,19 +63,25 @@
                     </select>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="id_number_of_days" class="col-sm-4 col-form-label col-form-label-sm"> Number of
-                        days</label>
-                    <div class="col-sm-8">
-                        <input type="number" name="duration_in_days" class="form-control form-control-sm"
-                            id="id_number_of_days" value="{{commercialOffer.duration_in_days}}" />
+                    <label for="exceptional-discount" class="col-sm-4 col-form-label col-form-label-sm"> Exceptional discount
+                    </label>
+                    <div class="col-sm-3">
+                        <input type="number" name="discount" class="form-control form-control-sm"
+                            placeholder = "discount in %" id="exceptional-discount" value="{{ commercialOffer.discount }}" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="id_validity_date" class="col-sm-4 col-form-label col-form-label-sm"> Validity date
+                    <label for="transport" class="col-sm-4 col-form-label col-form-label-sm"> Shipping 
                     </label>
                     <div class="col-sm-8">
-                        <input type="date" name="validity_date" class="form-control form-control-sm"
-                            id="id_validity_date" value="{{commercialOffer.validity_date|date:'Y-m-d'}}" />
+                        <select name="shipping" class="form-select form-select-sm" id="shipping">
+                            <option value=""> Chose a shipping term</option>
+                            {% for shipping in shippings %}
+                            <option value="{{shipping.id }}" {% if commercialOffer.shipping.id == shipping.id %} selected {% endif %}>
+                                {{ shipping }}
+                            </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -83,6 +93,19 @@
                             {% for transport in transports %}
                             <option value="{{transport.id }}" {% if commercialOffer.transport.id == transport.id %} selected {% endif %}>
                                 {{ transport}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="destination" class="col-sm-4 col-form-label col-form-label-sm">Destination</label>
+                    <div class="col-sm-8">
+                        <select name="destination" class="form-select form-select-sm" id="destination">
+                            <option value="">Choose a destination</option>
+                            {% for destination in destinations %}
+                            <option value="{{ destination.id }}" {% if commercialOffer.destination.id == destination.id %} selected {% endif %}>
+                                {{ destination }}
                             </option>
                             {% endfor %}
                         </select>
@@ -102,16 +125,19 @@
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="destination" class="col-sm-4 col-form-label col-form-label-sm">Destination</label>
+                    <label for="number_of_days" class="col-sm-4 col-form-label col-form-label-sm"> Number of
+                        days</label>
                     <div class="col-sm-8">
-                        <select name="destination" class="form-select form-select-sm" id="destination">
-                            <option value="">Choose a destination</option>
-                            {% for destination in destinations %}
-                            <option value="{{ destination.id }}" {% if commercialOffer.destination.id == destination.id %} selected {% endif %}>
-                                {{ destination }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                        <input type="number" name="duration_in_days" class="form-control form-control-sm"
+                            id="number_of_days" value="{{commercialOffer.duration_in_days}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="validity_date" class="col-sm-4 col-form-label col-form-label-sm"> Validity date
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="date" name="validity_date" class="form-control form-control-sm"
+                            id="validity_date" value="{{commercialOffer.validity_date|date:'Y-m-d'}}" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -136,37 +162,36 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group row mt-2">
-                    <label for="customs_fee" class="col-sm-4 col-form-label col-form-label-sm">Customs Fees</label>
-                    <div class="col-sm-8">
-                        <input type="number" name="customs_fee" class="form-control form-control-sm"
-                            id="customs_fee" value="{{commercialOffer.customs_fee}}" step="any" />
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price EXW deducted: </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="shipping_fee" class="form-control form-control-sm"
+                            disabled id="discounted_price" value="" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="transport_fee" class="col-sm-4 col-form-label col-form-label-sm">Transport
-                        Fees</label>
-                    <div class="col-sm-8">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee : </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="shipping_fee" class="form-control form-control-sm"
+                            id="shipping_fee" value="{{commercialOffer.shipping_fee}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee : </label>
+                    <div class="col-sm-4">
                         <input type="number" name="transport_fee" class="form-control form-control-sm"
                             id="transport_fee" value="{{commercialOffer.transport_fee}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="ek-vk" class="col-sm-4 col-form-label col-form-label-sm"> EK - VK </label>
-                    <div class="col-sm-8">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price : </label>
+                    <div class="col-sm-4">
                         <input type="number" class="form-control form-control-sm"
-                            id="ek-vk" step="any" />
+                            id="total-price"  disabled step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="rb-ek" class="col-sm-4 col-form-label col-form-label-sm"> RB - EK </label>
-                    <div class="col-sm-8">
-                        <input type="number" class="form-control form-control-sm"
-                            id="rb-ek"  step="any" />
-                    </div>
-                </div>
-                <div class="form-group row mt-2">
-                    <label for="rb-ek" class="col-sm-4 col-form-label col-form-label-sm"> Currency </label>
-                    <div class="col-sm-8">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Currency : </label>
+                    <div class="col-sm-4">
                         <select name="currency" class="form-select form-select-sm">
                             <option value="">Choose a currency</option>
                             {% for currency in currencies %}
@@ -187,37 +212,36 @@
             </div>
     </form>
 </div>
-<script>
+<script>   
 $(document).ready(function () {
+
     let isFirstExecution = true;
     function calculate_sellingPrice() {
-        let margin = parseFloat($('#margin').val()) / 100;
+            let margin = parseFloat($('#margin').val()) / 100;
+            if (margin >= 0 && margin <= 100) {
+            let sellingPrice = 0;
+            let totalSelling = 0;
+            let articleQuantity = 0;
+            let row = NaN;
+            let sum_total_selling = 0;
 
-        if (isNaN(margin) || margin < 0 || margin > 1) {
-            return;
+            $('#offer-articles-table tbody tr').each(function () {
+                row = $(this);
+                articleQuantity = parseInt(row.find('.article-quantity').text()
+                .replace(/\./g, '').replace(',', '.'));
+                purchasePrice = parseFloat(row.find('.purchase-price').text()
+                .replace(/\./g, '').replace(',', '.'));
+
+                sellingPrice = purchasePrice + (margin * purchasePrice);
+                totalSelling = sellingPrice * articleQuantity;
+                sum_total_selling += totalSelling;
+
+                row.find('.selling-price').text(formatNumber(sellingPrice));
+                row.find('.total-selling').text(formatNumber(totalSelling));
+            });
+
+            $('tfoot .sum-total-selling').text(formatNumber(sum_total_selling));
         }
-
-        let sellingPrice = 0;
-        let totalSelling = 0;
-        let articleQuantity = 0;
-        let row = NaN;
-        let sum_total_selling = 0;
-
-        $('#offer-articles-table tbody tr').each(function () {
-            row = $(this);
-            articleQuantity = parseInt(row.find('.article-quantity').text());
-            purchasePrice = parseFloat(row.find('.purchase-price').text());
-
-            sellingPrice = purchasePrice + (margin * purchasePrice);
-            totalSelling = sellingPrice * articleQuantity;
-            sum_total_selling += totalSelling;
-
-            row.find('.selling-price').text(formatNumber(sellingPrice));
-            row.find('.total-selling').text(formatNumber(totalSelling));
-        });
-        // Add a new row to display the sum total selling
-        $('tfoot .sum-total-selling').text(formatNumber(sum_total_selling))
-        calculate_profit()
       
     }
 
@@ -229,8 +253,10 @@ $(document).ready(function () {
 
         $('#offer-articles-table tbody tr').each(function () {
             row = $(this);
-            articleQuantity = parseInt(row.find('.article-quantity').text());
-            purchasePrice = parseFloat(row.find('.purchase-price').text());
+            articleQuantity = parseInt(row.find('.article-quantity').text()
+            .replace(/\./g, '').replace(',', '.'));
+            purchasePrice = parseFloat(row.find('.purchase-price').text()
+            .replace(/\./g, '').replace(',', '.'));
             totalPurchase = purchasePrice * articleQuantity;
             sum_total_purchase += totalPurchase;
             row.find('.total-purchase').text(formatNumber(totalPurchase));
@@ -239,50 +265,134 @@ $(document).ready(function () {
         $('tfoot .sum-total-purchase').text(formatNumber(sum_total_purchase));
       
     }
+    
+    function calculate_discount()
+    {
+        let discount = parseFloat($('#exceptional-discount').val());
+        let sum_total_selling = parseFloat($('tfoot .sum-total-selling').text()
+        .replace(/\./g, '').replace(',', '.'));
+        if (discount >= 0 && discount <= 100  && sum_total_selling > 0)
+        {
+            let discounted_price = (1 - discount/100) * sum_total_selling;
+            $('#discounted_price').val(discounted_price.toFixed(2));
 
-    function calculate_profit() {
-        let transport_fee = parseFloat($('#transport_fee').val());
-        let customs_fee = parseFloat($('#customs_fee').val());
-        let total_fee = transport_fee + customs_fee;
-        let sum_total_purchase = parseFloat($('tfoot .sum-total-purchase').text());
-        let sum_total_selling = parseFloat($('tfoot .sum-total-selling').text());
-        let profit = sum_total_selling - sum_total_purchase;
-        let net_profit = profit + total_fee;
-        $('#ek-vk').val(profit.toFixed(2));
-        $('#rb-ek').val(net_profit.toFixed(2));
+        }
+        
+        else
+        {
+            $('#discounted_price').val('');
+        }
+    }
+
+    function calculate_total_price() {
+        let transport_fee = parseFloat($('#transport_fee').val()) || 0;
+        let shipping_fee = parseFloat($('#shipping_fee').val()) || 0;
+        let sum_total_selling = parseFloat($('tfoot .sum-total-selling').text()
+        .replace(/\./g, '').replace(',', '.'));
+        let discounted_price = parseFloat($('#discounted_price').val());
+        let total_price = discounted_price || sum_total_selling;
+        if (total_price > 0)
+        {
+            let total_fee = transport_fee + shipping_fee;
+            total_price = total_price + total_fee;
+            $('#total-price').val(total_price.toFixed(2));
+
+        }
     }
 
     $('#margin').on('input', function () {
         calculate_sellingPrice();
+        calculate_discount();
+        calculate_total_price();
+
     });
 
-    $('#transport_fee, #customs_fee').on('input', function() {
-        calculate_profit();
+    $('#transport_fee, #shipping_fee').on('input', function() {
+        calculate_total_price();
     });
+
+    $('#exceptional-discount').on('input', function() {
+        calculate_discount();
+        calculate_total_price();
+    });
+
     // Execute recalculate function once on initial page load
     if (isFirstExecution) {
         calculate_purchasePrice();
         calculate_sellingPrice();
-        formate_columns();
+        calculate_discount();
+        calculate_total_price();
         isFirstExecution = false;
     }
 
+    $('#number_of_days').on('input', function() {
+        var days = parseInt($(this).val());
+        if (!isNaN(days)) {
+            var currentDate = new Date();
+            var newDate = new Date(currentDate.getTime() + days * 24 * 60 * 60 * 1000);
+            var year = newDate.getFullYear();
+            var month = String(newDate.getMonth() + 1).padStart(2, '0');
+            var day = String(newDate.getDate()).padStart(2, '0');
+            var formattedDate = year + '-' + month + '-' + day;
+            $('#validity_date').val(formattedDate);
+        }
+    });
 
     function formatNumber(number) {
-    // Convert the number to a string
-    number = number.toFixed(2)
-    var strNumber = number.toString();
+        // Convert the number to a string
+        number = number.toFixed(2)
+        var strNumber = number.toString();
+        
+        // Split the number into integer and decimal parts
+        var parts = strNumber.split(".");
+        
+        // Format the integer part with thousands separators
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        // Join the integer and decimal parts with a comma
+        var formattedNumber = parts.join(",");
+        
+        return formattedNumber;
+    }
+
     
-    // Split the number into integer and decimal parts
-    var parts = strNumber.split(".");
-    
-    // Format the integer part with thousands separators
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    
-    // Join the integer and decimal parts with a comma
-    var formattedNumber = parts.join(",");
-    
-    return formattedNumber;
+}); 
+
+
+
+article_is_opned = false ;
+function get_article(title, url)
+{
+    load_modal(title,url);
+    article_is_opned = !article_is_opned;
+}
+
+project_id = "{{project.id}}"
+url = "{% url 'create-commercialOffer' 0%}?".replace(0,project_id);
+page = "{{ page }}";
+
+if (page == "add-commercialOffer")
+{
+    selectedArticles = [];
+    $('.article-id').each(function() {
+        selectedArticles.push($(this).data('article-id'));
+    });
+    let queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
+    url += queryParam;
+}
+
+else{
+    offer_id = "{{commercialOffer.id}}"
+    url = "{% url 'update-commercialOffer'  0 %}".replace('0',offer_id );
+}
+
+$('#Modal').on('hidden.bs.modal', function() {
+    if (article_is_opned)
+    {
+        load_modal('Create Commercial offer', url);
+        $('#Modal').modal('show');
+        article_is_opned = !article_is_opned
     }
 });
+
 </script>

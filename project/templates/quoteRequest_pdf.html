@@ -8,40 +8,47 @@
             </div>
         </div>
         <!-- Contact section -->
-        <table class="table table-borderless mt-4 size-13">
-            <tr>
-                <td class="text-left">
-                    {{ quoteRequest.supplier }} <br />
-                    {{ quoteRequest.supplier.country.country_name_fr }} <br />
-                    Phone :{{ quoteRequest.supplier.phone_number }} <br />
-                    Email :{{ quoteRequest.supplier.email }} <br />
-                    Fax :{{ quoteRequest.supplier.fax }}
-                </td>
-                <td class="text-center">
-                    <h4 > INQUIRY: <br/> {{ quoteRequest.request_nbr }} </h4>
-                </td>
-                <td class="text-left">
-                        Responsable:<br/>
-                        Mr. Moez Ben‐Khemis <br/>
-                        Phone :00843232323 <br/>
-                        Email :azura@gmail.com <br/>
-                </td>
-            </tr>
-        </table>
-        <div class="row mt-4">
-            <p> {{quoteRequest.get_greeting_text}} <br/> {{quoteRequest.get_controlling_idea_text}} </p>
-            <p contentEditable="true"> Free text to edit here </p>
+        <div class="mt-2 d-flex justify-content-between">
+            <div class="size-13">
+                {{ quoteRequest.supplier }} <br/>
+                {{ quoteRequest.supplier.country.country_name_fr }} <br/>
+                Phone :{{ quoteRequest.supplier.phone_number }} <br/>
+                Email :{{ quoteRequest.supplier.email }} <br/>
+                Fax :{{ quoteRequest.supplier.fax }}
+            </div>
+            <div>
+                <h6 class="mt-5 text-center outset-border py-2 px-5">
+                   {{ translations.inquiry }} <br/> {{ quoteRequest.request_nbr }} 
+                </h6>
+            </div>
+            <div class="size-13">
+                <p>
+                    Case followed by <br/>
+                    Mr. T.Sammoudi <br/>
+                    Tel.: +49 (4104) 699 99 - 0 <br/>
+                    Fax: +49 (4104) 699 99 - 5<br/>
+                </p>
+                <p>
+                    Contact Local: <br/>
+                    Mr. Aziz <br/>
+                    Tel.: +49 (4104) 699 99 - 0 <br/>
+                    Fax: +49 (4104) 699 99 - 5<br/>
+                </p>
+            </div>
+        </div>
+        <div class="size-13 row mt-4">
+            <p> {{ translations.greeting }} <br/> {{ translations.controlling_idea_qr }} </p>
+            <p> Free text to edit ! </p>
         </div>
         <!-- Body section -->
         <div class="row mt-4">
             <div class="col-12">
-                <table class="table table-sm">
+                <table class="table table-sm bg-white size-13">
                     <thead>
-                        <tr class="size-12">
-                            <th>Pos</th>
-                            <th>Article Nr</th>
-                            <th>Designation</th>
-                            <th>Qte</th>
+                        <tr>
+                            {% for column_name in translations.columns_name|slice:":5" %}
+                                <th> {{ column_name }} </th>
+                            {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
@@ -49,10 +56,11 @@
                         <tr>
                             <td> {{ forloop.counter }} </td>
                             <td> {{ article.article_nbr }} </td>
-                            <td style="font-size:12px;max-width: 250px;"> 
+                            <td class="text-description"> 
                                 <pre>{{ article.get_description }}</pre>
                             </td>
-                            <td> {{ article.quantity }} {{ article.article_unit }} </td>
+                            <td> {{ article.quantity }} </td>
+                            <td> {{ article.article_unit }} </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -63,7 +71,7 @@
         <div class="row mt-3" contentEditable="true">
             <div class="col-12">
                 <p class="text-left size-12">
-                    {% for phrase in quoteRequest.get_infos_text %}
+                    {% for phrase in translations.delivery_infos %}
                         {{  phrase }} <br/>
                     {% endfor %}
                 </p>
@@ -71,7 +79,7 @@
         </div>
         <div class="row mt-4">
             <div class="col-12">
-                <p class="text-left size-14"> {{ quoteRequest.get_signature_text }} <br/> ESS-Mondial GmbH </p>
+                <p class="text-left size-14"> {{ translations.signature }} <br/> ESS-Mondial GmbH </p>
             </div>
         </div>
     </div>

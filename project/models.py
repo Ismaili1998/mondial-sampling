@@ -1,6 +1,5 @@
 from django.db import models
-from client.models import Client, Country, Language, Payment, Transport, Currency
-import datetime
+from client.models import Client, Country, Language, Payment, Transport, Currency, Shipping
 
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=100)
@@ -111,69 +110,7 @@ class QuoteRequest(models.Model):
     class Meta:
         db_table = 'quoteRequest'
         ordering = ['-id']
-
-    def get_infos_text(self):
-        language_code = self.supplier.language.language_code
-        if language_code == "en":
-            return """Reseller, please max reduction.
-                +We ask for your offer including the following informations as soon as possible
-                +- Pricing: ex works, including domestic packaging and freight to our addres.
-                +- Validity of the offer: at least 90 days
-                +- Delivery time
-                +- approximate total weight / volume:
-                +- Customs tariff number(s) (HS-Code):
-                +- Country of origin:
-                +- Dangerous goods for air or sea freight: yes / no:""".split("+")
-
-        elif language_code == "de" :
-            return """Wiederverkäufer, bitte max. Rabatte (Exportprojekt)
-            +wir bitten um Ihr Angebot einschließlich folgender Angaben schnellst möglich
-            +- Preisstellung:ab Werk, einschl. Inlandsverpackung
-            +- Angebotsgültigkeit:mindestens 90 Tage
-            +- Lieferzeit:
-            +- ungefähres Gesamtgewicht/ -volumen:
-            +- Zolltarifnummer(n):
-            +- Ursprungsland:
-            +- Gefahrgut für Luft- oder Seefracht: ja / nein:""".split("+")
-        
-        else:
-            return """Veuillez nous consentir le max. de reduction (Projet d'export).
-            +Nous vous demandons votre offre comprenant les informations suivantes dès que possible:
-            +- Prix : départ usine, y compris l'emballage domestique et frais jusqu'à notre adresse.
-            +- Validité de l'offre : au moins 90 jours
-            +- Délai de livraison:
-            +- Poids / Volume total approximatif:
-            +- Numéro(s) de tarif douanier:
-            +- Pays d'origine:
-            +- Marchandises dangereuses pour le fret aérien ou maritime : oui / non :""".split("+")
-
-    def get_greeting_text(self):
-        language_code = self.supplier.language.language_code
-        if language_code == "en":
-            return "Dear Sirs,"
-        elif language_code == "de":
-            return "Sehr geehrte,"
-        else:
-            return "Messieurs,"
     
-    def get_controlling_idea_text(self):
-        language_code = self.supplier.language.language_code
-        if language_code == "en":
-            return "Please provide us urgently with your best price and delivery time for:"
-        elif language_code == "de":
-            return "Damen und Herrn, erbeten Ihr günstigstes Angebot in aller Eile über:"
-        else:
-            return "Veuillez nous transmettre en toute urgence votre meilleure offre et delai pour:"
-    
-    def get_signature_text(self):
-        language_code = self.supplier.language.language_code
-        if language_code == "en":
-            return "Best regards"
-        elif language_code == "de":
-            return "Mit freundlichen Grüßen"
-        else:
-            return "Meilleures Salutations"
-        
 class Destination(models.Model):
     destination_name = models.CharField(max_length=150)
     class Meta:
@@ -192,10 +129,12 @@ class TimeUnit(models.Model):
     
 
 class CommercialOffer(models.Model):
-    offer_nbr = models.CharField(max_length=20) 
+    offer_nbr = models.CharField(max_length=20, unique=True) 
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
-    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, )
-    margin = models.IntegerField()
+    margin = models.DecimalField(max_digits=4, decimal_places=2) 
+    discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True,null=True)
+    shipping = models.ForeignKey(Shipping, on_delete=models.PROTECT)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     transport = models.ForeignKey(Transport,on_delete=models.PROTECT)
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT)
     destination = models.ForeignKey(Destination,on_delete=models.PROTECT)
@@ -204,8 +143,8 @@ class CommercialOffer(models.Model):
     articles = models.ManyToManyField(Article)
     duration_in_days = models.IntegerField() 
     validity_date = models.DateField() 
-    customs_fee = models.DecimalField(max_digits=12, decimal_places=2) 
-    transport_fee = models.DecimalField(max_digits=12, decimal_places=2) 
+    shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
+    transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
 
     class Meta:
         db_table = 'commercial_offer'
@@ -216,7 +155,7 @@ class CommercialOffer(models.Model):
     def get_articles(self):
         articles = []
         for article in self.articles.all():
-            article.selling_price = round(self.margin * article.purchase_price,2)
+            article.selling_price = round(article.purchase_price + self.margin * article.purchase_price / 100,2)
             article.total_selling_price = round(article.quantity * article.selling_price, 2)
             articles.append(article)
         return articles
@@ -228,55 +167,28 @@ class CommercialOffer(models.Model):
         return round(total_purchase,2)
 
     def get_total_selling(self):
-        total_selling = self.get_total_purchase() + self.get_total_purchase() * self.margin 
+        total_selling = self.get_total_purchase() + self.get_total_purchase() * self.margin / 100
         return round(total_selling,2)
+    
+    def get_discounted_price(self):
+        if self.discount:
+            discounted_price = self.get_total_selling() * (1- self.discount / 100)
+            return round(discounted_price,2)
+    
+    def get_discount_price(self):
+        if self.discount:
+            discount_price = self.get_total_selling() * (self.discount / 100)
+            return round(discount_price,2)
+
 
     def get_total_fee(self):
-        return self.transport_fee + self.customs_fee
+        return (self.transport_fee or 0) + (self.shipping_fee or 0)
 
     def get_total_selling_withFee(self):
-        return self.get_total_selling() + self.get_total_fee()
+        return (self.get_discounted_price() or self.get_total_selling()) + self.get_total_fee()
     
-    def get_profit(self):
-        return self.get_total_selling() - self.get_total_purchase()
-    
-    def get_net_profit(self):
-        return self.get_total_selling_withFee() - self.get_total_purchase()
-    
-    def get_validate_date(self):
-        current_date = datetime.date.today()
-        future_date = current_date + datetime.timedelta(days=self.duration_in_days)
-        return future_date 
-    
-    def get_greeting_text(self):
-        language_code = self.project.client.language.language_code
-        if language_code == "en":
-            return "Dear Sirs,"
-        elif language_code == "de":
-            return "Sehr geehrte,"
-        else:
-            return "Messieurs,"
-        
-    def get_controlling_idea_text(self):
-        language_code = self.project.client.language.language_code
-        if language_code == "en":
-            return """We refer to your consultation, for which we thank you very much 
-            and are pleased to send you our offer as follows:"""
-        elif language_code == "de":
-            return """Wir verweisen auf Ihre Beratung, für die wir uns sehr bedanken und die wir Ihnen gerne 
-            zukommen lassen Unser Angebot wie folgt:"""
-        else:
-            return """ Nous nous référons à votre consultation, pour laquelle nous vous remercions 
-            vivement et avons le plaisir de vous transmettre notre offre comme suit:"""
-        
-    def get_signature_text(self):
-        language_code = self.project.client.language.language_code
-        if language_code == "en":
-            return "Best regards"
-        elif language_code == "de":
-            return "Mit freundlichen Grüßen"
-        else:
-            return "Meilleures Salutations"
+   
+
 
 
 
