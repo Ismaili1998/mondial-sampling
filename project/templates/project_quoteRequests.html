@@ -10,7 +10,7 @@
         {% for quoteRequest in project.quoterequest_set.all %}
             <tr>
                 <td>{{ quoteRequest.request_nbr }}</td>
-                <td>
+                <td class="size-13">
                 {{ quoteRequest.supplier }}
                 - ({{ quoteRequest.supplier.language }})
                 </td>
@@ -19,6 +19,14 @@
                     data-bs-toggle="modal" href="#" data-bs-target="#Modal">
                         <i class="material-icons">picture_as_pdf</i>
                     </a>
+                </td>
+                <td>
+                    <form method="POST" action="{% url 'delete-quoteRequest' quoteRequest.id %}">
+                        {% csrf_token %}
+                        <a class="text-danger delete-btn" href="#">
+                            <i class="material-icons">delete</i>
+                        </a>
+                    </form>
                 </td>
             </tr>
         {% endfor %}

@@ -1,8 +1,15 @@
-<form action="{% if page == 'add-supplier' %} {% url 'create-supplier' %} {% else %} {% url 'update-supplier' supplier.id %} {% endif %}" method="POST">
+<form class="submit-form" action="{% if page == 'add-supplier' %} {% url 'create-supplier' %} {% else %} {% url 'update-supplier' supplier.id %} {% endif %}" method="POST">
     {% csrf_token %}
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
+                <label for="supplier_nbr" class="col-sm-4 col-form-label col-form-label-sm">Supplier number</label>
+                <div class="col-sm-8">
+                    <input type="text" name="supplier_nbr" class="form-control form-control-sm" id="supplier_nbr"
+                        value="{{supplier.supplier_nbr}}" required/>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
                 <label for="id_supplier_name" class="col-sm-4 col-form-label col-form-label-sm">Supplier Name</label>
                 <div class="col-sm-8">
                     <input type="text" name="supplier_name" class="form-control form-control-sm" id="id_supplier_name"
@@ -10,10 +17,17 @@
                 </div>
             </div>
             <div class="form-group row mt-2">
+                <label for="id_email" class="col-sm-4 col-form-label col-form-label-sm">Email</label>
+                <div class="col-sm-8">
+                    <input type="email" name="email" class="form-control form-control-sm" id="id_email"
+                        value="{{supplier.email}}" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
                 <label for="id_address" class="col-sm-4 col-form-label col-form-label-sm">Address</label>
                 <div class="col-sm-8">
                     <input type="text" name="address" class="form-control form-control-sm" id="id_address"
-                        value="{{supplier.address}}" required/>
+                        value="{{supplier.address}}"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -26,7 +40,7 @@
             <div class="form-group row mt-2">
                 <label class="col-sm-4 col-form-label col-form-label-sm">Country</label>
                 <div class="col-sm-8">
-                    <select class="form-select form-select-sm" name="country" aria-label=".form-select-sm example" required>
+                    <select required class="form-select form-select-sm" name="country" aria-label=".form-select-sm example" required>
                         <option> Choisir un pays </option>
                         {% for country in countries %}
                         <option value="{{ country.id }}" {% if supplier.country.id == country.id %} selected {% endif %}>
@@ -49,27 +63,10 @@
                     <select name="language" class="form-select form-select-sm" id="language">
                         <option value=""> Chose a language </option>
                         {% for language in languages %}
-                        <option value="{{language.id }}" {% if client.language.id == language.id %} selected {% endif %}>
+                        <option value="{{language.id }}" {% if supplier.language.id == language.id %} selected {% endif %}>
                             {{ language }}
                         </option>
                         {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="supplier_representative" class="col-sm-4 col-form-label col-form-label-sm">Supplier Rep</label>
-                <div class="col-sm-8">
-                    <input type="text" name="supplier_representative" class="form-control form-control-sm"
-                        id="supplier_representative" value="{{supplier.supplier_representative}}" />
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="internal_representative" class="col-sm-4 col-form-label col-form-label-sm">Internal
-                    Rep</label>
-                <div class="col-sm-8">
-                    <select class="form-select form-select-sm" name="internal_representative" aria-label=".form-select-sm example">
-                        <option> Chose a representative </option>
-                        <option> representative ismail </option>
                     </select>
                 </div>
             </div>
@@ -90,13 +87,6 @@
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="id_email" class="col-sm-4 col-form-label col-form-label-sm">Email</label>
-                <div class="col-sm-8">
-                    <input type="email" name="email" class="form-control form-control-sm" id="id_email"
-                        value="{{supplier.email}}" />
-                </div>
-            </div>
-            <div class="form-group row mt-2">
                 <label for="website" class="col-sm-4 col-form-label col-form-label-sm">Website</label>
                 <div class="col-sm-8">
                     <input type="url" name="website" class="form-control form-control-sm" id="website"
@@ -110,6 +100,30 @@
                         value="{{supplier.delivery_type}}" />
                 </div>
             </div>
+             <fieldset class="border p-1 mt-2 rounded">
+                <h6> External represenatant  </h6>
+                <div class="form-group row mt-2">
+                    <label class="col-sm-4 col-form-label col-form-label-sm">Contact name</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="supplier_contact-name" class="form-control form-control-sm"
+                            value="{{supplier.supplier_contact.name}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-1">
+                    <label class="col-sm-4 col-form-label col-form-label-sm">Email</label>
+                    <div class="col-sm-8">
+                        <input type="email" name="supplier_contact-email" class="form-control form-control-sm"
+                            value="{{supplier.supplier_contact.email}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-1">
+                    <label class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="supplier_contact-phone_number" class="form-control form-control-sm"
+                            value="{{supplier.supplier_contact.phone_number}}" />
+                    </div>
+                </div>
+            </fieldset>
             <div class="form-group row mt-2">
                 <label for="comment" class="col-sm-4 col-form-label col-form-label-sm">Comment</label>
                 <div class="col-sm-8">
@@ -127,3 +141,26 @@
         </button>
     </div>
 </form>
+<script>
+    $(document).ready(function () {
+        $('.submit-form').submit(function(event) {
+            event.preventDefault(); 
+            let formData = $(this).serialize(); 
+            let url = $(this).attr('action');
+            $.ajax({
+            type: 'POST',
+            url: url, 
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                $('#Modal').modal('hide');
+                alert(response.message);
+            },
+            error: function() {
+                alert('An error occurred');
+            }
+            });
+        });
+
+    });
+</script>

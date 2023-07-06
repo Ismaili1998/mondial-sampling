@@ -19,18 +19,21 @@ urlpatterns = [
     path('create-article',views.article_create,name='create-article'),
     path('update-article/<str:pk>',views.article_edit,name='update-article'),
     path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
-    path('delete-article/<str:pk>',views.article_delete,name='delete-article'),
+    path('remove-article-from-project/<str:article_pk>',views.remove_article_from_project,name='remove-article-from-project'),
     path('get-articlesByKeyWord',views.get_articlesByKeyWord,name='get-articlesByKeyWord'),
     path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
 
 
 
     path('create-supplier',views.supplier_create,name='create-supplier'),
+    path('get-suppliersByKeyWord/', views.get_suppliersByKeyWord, name='get-suppliersByKeyWord'),
 
     path('create-quoteRequest/<str:project_pk>', views.create_quoteRequest, name='create-quoteRequest'),
+    path('delete-quoteRequest/<str:pk>', views.delete_quoteRequest, name='delete-quoteRequest'),
     path('create-quoteRequest-pdfReport/<str:request_pk>', views.create_quoteRequest_pdfReport, name='create-quoteRequest-pdfReport'),
 
     path('create-commercialOffer/<str:project_pk>', views.create_commercialOffer, name='create-commercialOffer'),
+    path('delete-commercialOffer/<str:pk>', views.delete_commercialOffer, name='delete-commercialOffer'),
     path('update-commercialOffer/<str:pk>', views.update_commercialOffer, name='update-commercialOffer'),
     path('create-commercialOffer-pdfReport/<str:offer_pk>/', views.create_commercialOffer_pdfReport, name='create-commercialOffer-pdfReport'),
     path('print-technicalOffer/<str:offer_pk>/', views.print_technicalOffer, name='print-technicalOffer'),

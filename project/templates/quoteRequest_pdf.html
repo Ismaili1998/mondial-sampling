@@ -1,10 +1,10 @@
 {% load static %}
 <div class="container-fluid">
-    <div class="item-to-print font-arial">
+    <div class="item-to-print font-arial" contenteditable="true">
         <!-- Header, logo section -->
         <div class="row">
             <div class="col-12">
-                <img src="{% static 'img/pdf_header.png' %}" class="img-fluid" alt="Header Image">
+                <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
             </div>
         </div>
         <!-- Contact section -->
@@ -23,17 +23,21 @@
             </div>
             <div class="size-13">
                 <p>
-                    Case followed by <br/>
-                    Mr. T.Sammoudi <br/>
-                    Tel.: +49 (4104) 699 99 - 0 <br/>
-                    Fax: +49 (4104) 699 99 - 5<br/>
+                    {{ translations.contact_name }} <br/>
+                    Mr: {{ request.user.first_name }} <br/>
+                    Tel: {{ request.user.phone_number }} <br/>
+                    Fax: {{ request.user.fax }}
                 </p>
-                <p>
-                    Contact Local: <br/>
-                    Mr. Aziz <br/>
-                    Tel.: +49 (4104) 699 99 - 0 <br/>
-                    Fax: +49 (4104) 699 99 - 5<br/>
+            </div>
+        </div>
+        <div class="mt-2 d-flex justify-content-between">
+            <div>
+                <p> {{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
+                    {{translations.our_ref}} : {{ quoteRequest.request_nbr }}<br/>
                 </p>
+            </div>
+            <div class="ml-10 size-12">
+                <p> Reinbek/Hamburg, <span id="currentDate"></span> </p>
             </div>
         </div>
         <div class="size-13 row mt-4">
@@ -68,7 +72,7 @@
             </div>
         </div>
         <!-- Footer section -->
-        <div class="row mt-3" contentEditable="true">
+        <div class="row mt-3">
             <div class="col-12">
                 <p class="text-left size-12">
                     {% for phrase in translations.delivery_infos %}
@@ -79,18 +83,29 @@
         </div>
         <div class="row mt-4">
             <div class="col-12">
-                <p class="text-left size-14"> {{ translations.signature }} <br/> ESS-Mondial GmbH </p>
+                <p class="text-left size-14"> {{ translations.signature }} <br/> Team ESS-Mondial GmbH </p>
             </div>
         </div>
     </div>
     <button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
 </div>
 <script>
+
     function printPage() {
         var printContent = document.querySelector('.item-to-print');
-        var originalBody = document.body.innerHTML;
         document.body.innerHTML = printContent.outerHTML;
         window.print();
-        document.body.innerHTML = originalBody;
+        window.location.reload();
     }
+
+    $(document).ready(function() {
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1; 
+        var year = currentDate.getFullYear();
+
+        var formattedDate = day + '.' + month + '.' + year;
+        $('#currentDate').text(formattedDate);
+    });
+
 </script>

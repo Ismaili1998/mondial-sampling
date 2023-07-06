@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'account',
     'client',
     'project',
 ]
@@ -72,6 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ESS_MONDIAL.wsgi.application'
 
+AUTH_USER_MODEL = 'account.User'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

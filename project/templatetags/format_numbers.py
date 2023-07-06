@@ -3,6 +3,8 @@ import locale
 register = template.Library()
 @register.filter
 def thousand_separator(value):
+    if not value:
+        return '' 
     # Set the desired locale
     locale.setlocale(locale.LC_ALL, 'de_DE')
     # Format the number with dot as the thousand separator and comma as the decimal separator

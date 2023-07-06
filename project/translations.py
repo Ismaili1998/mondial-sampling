@@ -30,7 +30,7 @@ translations = {
         'de':'U/Ref',
     },
 
-    'ur_ref': {
+    'client_ref': {
         'en': 'Y/Ref',
         'fr':'V/Réf',
         'de':'Ihre Ref',
@@ -78,7 +78,7 @@ translations = {
 
     'warranty_period': {
         'en':'''Contact's Name''',
-        'fr':'Délai garantie',
+        'fr':'Délai de garantie',
         'de':'Garantiedauer:'
     },
 
@@ -96,7 +96,7 @@ translations = {
 
     'time_delivery': {
         'en':'Time of delivery ',
-        'fr':'Délai livraison',
+        'fr':'Délai de livraison',
         'de':'Lieferfrist'
     },
 
@@ -114,14 +114,14 @@ translations = {
 
      
     'total_EXW': {
-        'en':'Total EXW',
-        'fr':'Total EXW',
+        'en':'Total price EXW',
+        'fr':'Prix Total EXW',
         'de':'Endsumme netto zzgl. Mwst'
     },
 
 
     'discount': {
-        'en':'Exceptional discount',
+        'en':'Total EXW discountdeducted',
         'fr':'Remise exceptionnelle',
         'de':'Außergewöhnlicher Rabatt'
     },

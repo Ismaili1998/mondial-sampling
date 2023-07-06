@@ -1,24 +1,24 @@
 from django.db import models
-from client.models import Client, Country, Language, Payment, Transport, Currency, Shipping
+from client.models import Client, Country, Language, Payment, Transport, Currency, Shipping, Local_contact
 
 class Supplier(models.Model):
-    supplier_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=100,blank=True)
-    postal_code = models.CharField(max_length=50,blank=True)
-    country = models.ForeignKey(Country,on_delete=models.PROTECT)
-    city = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
-    fax = models.CharField(max_length=20,blank=True)
-    email = models.EmailField(max_length=254,unique=True)
-    website = models.URLField(max_length=200,blank=True)
+    supplier_nbr = models.CharField(max_length=30, null=True)
+    supplier_name = models.CharField(max_length=150,null=True)
+    
+    email = models.EmailField(unique=True,null=True, blank= True)
+    phone_number = models.CharField(max_length=40,null=True, blank=True)
+    fax = models.CharField(max_length=40,blank=True,null=True)    
+    address = models.CharField(max_length=200,blank=True,null=True)
+    postal_code = models.CharField(max_length=50,blank=True,null=True)
+    country = models.ForeignKey(Country,on_delete=models.PROTECT,blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    website = models.URLField(max_length=150,blank=True, null=True)
     language = models.ForeignKey(Language,on_delete=models.PROTECT,null=True,blank=True)
-    supplier_representative = models.CharField(max_length=100,blank=True)
-    delivery_type = models.CharField(max_length=100,blank=True)
-    internal_representative = models.CharField(max_length=100,blank=True)
-    comment = models.TextField(blank=True, max_length=500)
+    delivery_type = models.CharField(max_length=100,blank=True,null=True)
+    comment = models.TextField(blank=True, max_length=500,null=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         db_table = 'supplier'
@@ -26,6 +26,19 @@ class Supplier(models.Model):
     
     def __str__(self):
         return self.supplier_name
+
+class Supplier_contact(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField(unique=True, blank=True, null= True)
+    phone_number = models.CharField(max_length=20, blank=True, null= True)
+    supplier = models.OneToOneField(Supplier, on_delete=models.PROTECT, blank=True, null= True)
+
+
+    class Meta:
+        db_table = 'supplier_contact'
+        
+    def __str__(self) -> str:
+        return self.name 
     
 class ArticleUnit(models.Model):
     unit_name = models.CharField(max_length=50,unique=True)
@@ -35,23 +48,62 @@ class ArticleUnit(models.Model):
     class Meta:
         db_table = 'article_unit'
               
-class Article(models.Model):
-    article_name = models.CharField(max_length=50)
-    article_nbr = models.CharField(max_length=20)
-    description_de = models.TextField(blank=True)
-    description_fr = models.TextField(blank=True)
-    description_en = models.TextField(blank=True)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2)
-    article_unit = models.ForeignKey(ArticleUnit,on_delete=models.PROTECT,null=True)
-    purchase_price = models.DecimalField(max_digits=10, decimal_places=2)
-    selling_price = models.DecimalField(max_digits=10, decimal_places=2)
-    net_weight = models.DecimalField(max_digits=10, decimal_places=2)
-    customs_tariff =  models.CharField(max_length=150)
-    customs_description = models.TextField(blank=True, max_length=500)
-    comment = models.TextField(blank=True, max_length=500)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class Client_contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(null= True, blank=True)
+    phone_number = models.CharField(max_length=40, blank=True, null= True)
+
+    class Meta:
+        db_table = 'client_contact'
+        
+    def __str__(self) -> str:
+        return self.name 
+    
+class Project(models.Model):
+    #required fields 
+    project_nbr = models.CharField(max_length=30, unique=True)
+    project_name = models.CharField(max_length=150, null= True)
+    our_ref = models.CharField(max_length=50,null=True)
+
+    #optional fields 
+    client_ref = models.CharField(max_length=50,null=True, blank=True)
+    project_description = models.TextField(blank=True,max_length=500, null= True)
+    to_do = models.TextField(blank=True,max_length=500, null= True)
+    client = models.ForeignKey(Client,on_delete=models.PROTECT)
+    local_contact =  models.ForeignKey(Local_contact,on_delete=models.PROTECT,null=True,blank=True)
+    client_contact =  models.ForeignKey(Client_contact,on_delete=models.PROTECT,null=True,blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null= True)
+
+    
+    class Meta:
+        db_table = 'project'
+
+    def __str__(self):
+        return self.project_name
+
+
+class Article(models.Model):
+    article_nbr = models.CharField(max_length=30,unique=True)
+    description_de = models.TextField(null= True, max_length=1500)
+    description_fr = models.TextField(null= True, max_length=1500)
+    description_en = models.TextField(null= True, max_length=1500)
+
+    article_name = models.CharField(max_length=150,null=True, blank= True)
+    project = models.ForeignKey(Project,on_delete=models.PROTECT,null=True,blank=True)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
+    article_unit = models.ForeignKey(ArticleUnit,on_delete=models.PROTECT,null=True, blank= True)
+    purchase_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
+    selling_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
+    net_weight = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
+    customs_tariff =  models.CharField(max_length=150, null= True, blank= True)
+    customs_description = models.TextField(blank=True, max_length=500, null= True)
+    comment = models.TextField(blank=True, max_length=500, null= True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null= True)
+    updated_at = models.DateTimeField(auto_now=True, null= True)
 
     def __str__(self):
         return self.article_nbr
@@ -62,7 +114,13 @@ class Article(models.Model):
 
    
     def get_description(self):
-        language_code = ''
+        language_code = 'fr'
+        try:
+            language_code = self.project.client.language.language_code
+        except:
+            pass 
+        if  self.project.client.language:
+            language_code = self.project.client.language.language_code
         if language_code == 'fr':
             return self.description_fr
         elif language_code == 'en':
@@ -71,26 +129,9 @@ class Article(models.Model):
             return self.description_de
         else:
             return self.description_fr
- 
     
-class Project(models.Model):
-    project_name = models.CharField(max_length=100)
-    project_nbr = models.CharField(max_length=20, unique=True)
-    client = models.ForeignKey(Client,on_delete=models.PROTECT)
-    articles = models.ManyToManyField(Article, related_name='projects')
-    client_ref = models.CharField(max_length=50)
-    our_ref = models.CharField(max_length=50)
-    project_description = models.TextField(blank=True,max_length=500)
-    to_do = models.TextField(blank=True,max_length=500)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'project'
-
-    def __str__(self):
-        return self.project_name
     
+        
 class File(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     file = models.FileField(upload_to='project_files/')
@@ -103,7 +144,7 @@ class File(models.Model):
 
 class QuoteRequest(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    request_nbr = models.CharField(max_length=20,unique=True,blank=True)
+    request_nbr = models.CharField(max_length=20,unique=True)
     articles = models.ManyToManyField(Article)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
 
@@ -131,18 +172,20 @@ class TimeUnit(models.Model):
 class CommercialOffer(models.Model):
     offer_nbr = models.CharField(max_length=20, unique=True) 
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
     margin = models.DecimalField(max_digits=4, decimal_places=2) 
-    discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True,null=True)
-    shipping = models.ForeignKey(Shipping, on_delete=models.PROTECT)
-    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
-    transport = models.ForeignKey(Transport,on_delete=models.PROTECT)
-    payment = models.ForeignKey(Payment,on_delete=models.PROTECT)
-    destination = models.ForeignKey(Destination,on_delete=models.PROTECT)
-    delivery_time_interval = models.CharField(max_length=20)
-    delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT) 
     articles = models.ManyToManyField(Article)
-    duration_in_days = models.IntegerField() 
-    validity_date = models.DateField() 
+
+    discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True,null=True)
+    shipping = models.ForeignKey(Shipping, on_delete=models.PROTECT, blank=True,null=True)
+    transport = models.ForeignKey(Transport,on_delete=models.PROTECT, blank=True,null=True)
+    payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
+    local_contact = models.BooleanField(default=1)
+    destination = models.ForeignKey(Destination,on_delete=models.PROTECT, blank=True,null=True)
+    delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
+    delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
+    duration_in_days = models.IntegerField(blank=True,null=True) 
+    validity_date = models.DateField(blank=True,null=True)
     shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
     transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
 
@@ -188,6 +231,18 @@ class CommercialOffer(models.Model):
         return (self.get_discounted_price() or self.get_total_selling()) + self.get_total_fee()
     
    
+class Buyer(models.Model):
+    name = models.CharField(max_length=100,blank=True)
+    email = models.EmailField(unique=True,blank=True,null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null= True)
+    project = models.OneToOneField(Project, on_delete=models.PROTECT,null=True,unique=False)
+
+    class Meta:
+        db_table = 'buyer'
+
+    def __str__(self) -> str:
+        return self.name
+
 
 
 

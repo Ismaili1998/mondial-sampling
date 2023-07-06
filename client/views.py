@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Client, Country, Language, Transport, Payment
+from .models import Client, Country, Language, Local_contact
 from .forms import ClientForm
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 # from django.views.decorators.csrf import csrf_exempt
 
 def client_list(request):
@@ -25,22 +26,21 @@ def client_create(request):
         if form.is_valid():
             form.save()
             return JsonResponse({'message': 'Client has been added successfully'})
-        else:
-            messages.error(request, 'An error occured ! please retry again ')
-            for err in form.errors:
-                print(err)
-            return JsonResponse({'message':'An error occured ! please retry again'})
+        
+        for err in form.errors:
+            print(err)
+        return JsonResponse({'message':'An error occured ! please retry again'})
         
     page_name = 'add-client'
-    countries = Country.objects.all()
-    languages = Language.objects.all()
     nbr_clients = Client.objects.all().count()
     client_nbr  = "C{0}".format(nbr_clients + 1)
-    context = {'page':page_name,
+    countries = Country.objects.all()
+    languages = Language.objects.all()
+    context = {'client_nbr':client_nbr,
                'countries':countries,
-               'client_nbr':client_nbr,
-               'languages':languages}
-    return render(request,'client.html',context)
+               'languages':languages,
+               'page':page_name}
+    return render(request, 'client.html', context)
 
 def client_edit(request, pk):
     client = get_object_or_404(Client, pk=pk)
@@ -49,11 +49,11 @@ def client_edit(request, pk):
         if form.is_valid():
             form.save()
             return JsonResponse({'message': 'Client has been modified successfully'})
-        else:
-            messages.error(request, 'An error occured ! please retry again ')
-            for err in form.errors:
-                print(err)
-            return JsonResponse({'message':'An error occured ! please retry again'})
+        
+        for err in form.errors:
+            print(err)
+        return JsonResponse({'message':'An error occured ! please retry again'})
+    
     countries = Country.objects.all()
     page_name = 'update-client'
     languages = Language.objects.all()

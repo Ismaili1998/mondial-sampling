@@ -29,6 +29,14 @@
                         data-bs-toggle="modal" href="#" data-bs-target="#Modal">TO
                         <i class="material-icons text-info align-middle">picture_as_pdf</i>
                     </a>
+                    <div class="dropdown-item">
+                        <form method="POST" action="{% url 'delete-commercialOffer' offer.id %}">
+                            {% csrf_token %}
+                            <a class="text-danger delete-btn" href="#">
+                                <i class="material-icons">delete</i>
+                            </a>
+                        </form>
+                    </div>
                 </div>
             </td>
         </tr>

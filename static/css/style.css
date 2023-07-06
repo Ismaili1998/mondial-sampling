@@ -57,19 +57,43 @@
 
 @media print {
 
-    .header-img {
-        position: absolute;
+    /* .header-img {
+        position: fixed;
         top: 0;
         left: 0;
-    }
+    } */
 
-    .header-pdf {
-        margin-bottom: 140px;
-
+    .header-img+* {
+        margin-top: 200px;
     }
 }
 
 @page {
-    margin-top: 100mm;
-    margin-bottom: 1cm;
+    margin-top: 0.5cm;
+    margin-bottom: 0mm;
+}
+
+.login-container {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+}
+
+.company-info {
+    background-color: #f2f2f2;
+    padding: 30px;
+}
+
+.login-form {
+    padding: 30px;
+    background-color: #ffffff;
+}
+
+.text-truncate-custom {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 380px;
+    max-height: 250px;
 }

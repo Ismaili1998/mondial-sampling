@@ -1,13 +1,12 @@
 {% load static %}
 {% load format_numbers %}
 <div class="container">
-    <div class="item-to-print font-arial">
+    <div class="item-to-print font-arial" contentEditable="true">
         <!-- Header section -->
         <div class="header-pdf">
             <div class="header-img row">
                 <div class="col-12">
-                    <img src="{% static 'img/essmondial_logo.png' %}" class="img-fluid" alt="Header Image">
-                    <p class="size-10"> ESS-Mondial GmbH • Finkenkoppel 37 • D-21465 Reinbek Germany </p>
+                    <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
                 </div>
             </div>
         </div>
@@ -27,24 +26,26 @@
             </div>
             <div class="size-13">
                 <p>
-                    {{translations.contact_name }} <br/>
-                    Mr. T.Sammoudi <br/>
-                    Tel.: +49 (4104) 699 99 - 0 <br/>
-                    Fax: +49 (4104) 699 99 - 5<br/>
+                    {{ translations.contact_name }} <br/>
+                    Mr: {{ request.user.first_name }} <br/>
+                    Tel: {{ request.user.phone_number }} <br/>
+                    Fax: {{ request.user.fax }}
                 </p>
                 <p>
-                    {{translations.local_contact }}: <br/>
-                    Mr. Aziz <br/>
-                    Tel.: +49 (4104) 699 99 - 0 <br/>
-                    Fax: +49 (4104) 699 99 - 5<br/>
+                    {% if commercialOffer.local_contact %}
+                        {{translations.local_contact }} <br/>
+                       Mr:  {{ commercialOffer.project.local_contact.name }} <br/>
+                       Tel: {{ commercialOffer.project.local_contact.email }} <br/>
+                       Fax: {{ commercialOffer.project.local_contact.fax }} <br/>
+                    {% endif %}
                 </p>
             </div>
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
                 <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
-                    {{translations.our_ref}} : {{ commercialOffer.project.our_ref }}<br/>
-                    {{translations.ur_ref}} : PR24795 - PR24348
+                    {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
+                    {{translations.client_ref}} : {{ commercialOffer.project.client_ref }}
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -88,8 +89,10 @@
                 <table class="table table-sm table-borderless">
                     <tbody class="size-13">
                         <tr>
-                            <td colspan="4"></td>
-                            <td class="size-14" contentEditable="true">
+                            <td colspan="4">
+                                {{translations.validity_date}}: {{ commercialOffer.validity_date|date:'d.m.Y' }}
+                            </td>
+                            <td class="size-14">
                                 {{translations.total_EXW}}:
                             </td>
                             <td></td>
@@ -100,9 +103,7 @@
                         </tr>
                         {% if  commercialOffer.discount %}
                         <tr>
-                            <td colspan="4">
-                                {{translations.validity_date}}: {{ commercialOffer.validity_date|date:'d-m-Y' }}
-                            </td>
+                            <td colspan="4"></td>
                             <td>
                                 {{ translations.discount }} :
                                 {{ commercialOffer.discount|thousand_separator }} %
@@ -117,7 +118,7 @@
                         {% if  commercialOffer.get_discounted_price %}
                         <tr>
                             <td colspan="4"></td>
-                            <td class="size-14" contentEditable="true">
+                            <td class="size-14" >
                                 {{ translations.discounted_total_EXW }} :
                             </td>
                             <td></td>
@@ -129,8 +130,9 @@
                         {% endif %}
                         {% if  commercialOffer.shipping_fee %}
                         <tr>
-                            <td colspan="4"></td>
-                            <td class="size-14" contentEditable="true">
+                            <td colspan="4">
+                            </td>
+                            <td class="size-14" >
                                 {{translations.incoterm}}:
                             </td>
                             <td> {{commercialOffer.shipping }} </td>
@@ -143,7 +145,7 @@
                         {% if  commercialOffer.transport_fee %}
                         <tr>
                             <td colspan="4"></td>
-                            <td class="size-14" contentEditable="true">
+                            <td class="size-14" >
                                 {{translations.transportation}}:
                             </td>
                             <td> {{commercialOffer.transport}} </td>
@@ -155,7 +157,7 @@
                         {% endif %}
                         <tr>
                             <td colspan="4"></td>
-                            <td class="size-14" contentEditable="true">
+                            <td class="size-14" >
                                 {{translations.total_price}}:
                             </td>
                             <td>
@@ -210,7 +212,7 @@
         var month = currentDate.getMonth() + 1; 
         var year = currentDate.getFullYear();
 
-        var formattedDate = day + '-' + month + '-' + year;
+        var formattedDate = day + '.' + month + '.' + year;
         $('#currentDate').text(formattedDate);
     });
 </script>
