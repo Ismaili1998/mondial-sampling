@@ -21,7 +21,7 @@ class Supplier(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
-        db_table = 'supplier'
+        db_table = 'Supplier'
         ordering = ['-id']
     
     def __str__(self):
@@ -35,7 +35,7 @@ class Supplier_contact(models.Model):
 
 
     class Meta:
-        db_table = 'supplier_contact'
+        db_table = 'Supplier_contact'
         
     def __str__(self) -> str:
         return self.name 
@@ -46,7 +46,7 @@ class ArticleUnit(models.Model):
         return self.unit_name
 
     class Meta:
-        db_table = 'article_unit'
+        db_table = 'Article_unit'
               
 
 class Client_contact(models.Model):
@@ -55,7 +55,7 @@ class Client_contact(models.Model):
     phone_number = models.CharField(max_length=40, blank=True, null= True)
 
     class Meta:
-        db_table = 'client_contact'
+        db_table = 'Client_contact'
         
     def __str__(self) -> str:
         return self.name 
@@ -79,7 +79,7 @@ class Project(models.Model):
 
     
     class Meta:
-        db_table = 'project'
+        db_table = 'Project'
 
     def __str__(self):
         return self.project_name
@@ -109,7 +109,7 @@ class Article(models.Model):
         return self.article_nbr
     
     class Meta:
-        db_table = 'article'
+        db_table = 'Article'
         ordering = ['-created_at']
 
    
@@ -139,7 +139,7 @@ class File(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'file'
+        db_table = 'File'
     
 
 class QuoteRequest(models.Model):
@@ -149,13 +149,13 @@ class QuoteRequest(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'quoteRequest'
+        db_table = 'QuoteRequest'
         ordering = ['-id']
     
 class Destination(models.Model):
     destination_name = models.CharField(max_length=150)
     class Meta:
-        db_table = 'destination'
+        db_table = 'Destination'
     
     def __str__(self) -> str:
         return self.destination_name
@@ -163,7 +163,7 @@ class Destination(models.Model):
 class TimeUnit(models.Model):
     unit_name = models.CharField(max_length=20) #days, weeks, months ...
     class Meta:
-        db_table = 'time_unit'
+        db_table = 'Time_unit'
     
     def __str__(self) -> str:
         return self.unit_name
@@ -190,7 +190,7 @@ class CommercialOffer(models.Model):
     transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
 
     class Meta:
-        db_table = 'commercial_offer'
+        db_table = 'Commercial_offer'
 
     def __str__(self):
         return self.offer_nbr
@@ -238,7 +238,7 @@ class Buyer(models.Model):
     project = models.OneToOneField(Project, on_delete=models.PROTECT,null=True,unique=False)
 
     class Meta:
-        db_table = 'buyer'
+        db_table = 'Buyer'
 
     def __str__(self) -> str:
         return self.name

@@ -9,6 +9,9 @@ media
 # Backup files # 
 *.bak 
 
+# Django settings file
+ESS_MONDIAL/settings.py
+
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml
