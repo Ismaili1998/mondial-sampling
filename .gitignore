@@ -10,8 +10,7 @@ media
 *.bak 
 
 # Django settings file
-ESS_MONDIAL/settings.py
-
+settings.py
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml

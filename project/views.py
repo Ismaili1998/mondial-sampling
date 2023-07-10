@@ -330,7 +330,7 @@ def create_commercialOffer(request,project_pk):
         form = CommercialOfferForm(request.POST)
         if form.is_valid():
             commercialOffer = form.save()
-            index = project.commercialoffer_set.all().count() + 1
+            index = project.commercialoffer_set.all().count()
             offer_nbr = "{0}/G{1}-{2}".format(project_nbr,
                                                 index,
                                                 project.client.client_nbr)
