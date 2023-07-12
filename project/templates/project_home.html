@@ -103,58 +103,19 @@
           </div>
         </div>
         <div class="col-md-4">
-          <fieldset class="border p-1 rounded">
-                <a id ="buyer-infos" href="#"> Buyer Infos </a>
-                <div class="form-group row mt-2">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Buyer name</label>
-                    <div class="col-sm-8">
-                        <input type="text" name="buyer-name" class="form-control form-control-sm"
-                            value="{{project.buyer.name|default:'' }}" />
-                    </div>
+          <div class="form-group row mt-2">
+                <label for="client_contact" class="col-sm-4 col-form-label col-form-label-sm">Extern Contact</label>
+                <div class="col-sm-8">
+                    <select name="client_contact" class="form-select form-select-sm" id="client_contact">
+                        <option value=""> Chose a buyer </option>
+                        {% for client_contact in client_contacts %}
+                        <option value="{{client_contact.id }}" {% if project.client_contact.id == client_contact.id %} selected {% endif %}>
+                            {{ client_contact }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div id="buyer-form" style="display: none;">
-                  <div class="form-group row mt-1">
-                      <label class="col-sm-4 col-form-label col-form-label-sm">Email</label>
-                      <div class="col-sm-8">
-                          <input type="email" name="buyer-email" class="form-control form-control-sm"
-                              value="{{project.buyer.email|default:'' }}" />
-                      </div>
-                  </div>
-                  <div class="form-group row mt-1">
-                      <label class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
-                      <div class="col-sm-8">
-                          <input type="text" name="buyer-phone_number" class="form-control form-control-sm"
-                              value="{{project.buyer.phone_number|default:'' }}" />
-                      </div>
-                  </div>
-                </div>
-            </fieldset>
-            <fieldset class="border p-1 mt-2 rounded">
-                <a href="#" id="external-contact-infos"> External contact </a>
-                <div class="form-group row mt-2">
-                  <label class="col-sm-4 col-form-label col-form-label-sm">Contact name</label>
-                  <div class="col-sm-8">
-                      <input type="text" name="client_contact-name" class="form-control form-control-sm"
-                          value="{{project.client_contact.name|default:'' }}" />
-                  </div>
-                </div>
-                <div id="external-contact-form">
-                  <div class="form-group row mt-1">
-                      <label class="col-sm-4 col-form-label col-form-label-sm">Email</label>
-                      <div class="col-sm-8">
-                          <input type="text" name="client_contact-email" class="form-control form-control-sm"
-                              value="{{project.client_contact.email|default:''}}" />
-                      </div>
-                  </div>
-                  <div class="form-group row mt-1">
-                      <label class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
-                      <div class="col-sm-8">
-                          <input type="text" name="client_contact-phone_number" class="form-control form-control-sm"
-                              value="{{project.client_contact.phone_number|default:''}}" />
-                      </div>
-                  </div>
-                </div>
-            </fieldset>
+            </div>
             <div class="form-group row mt-2">
                 <label for="local_contact" class="col-sm-4 col-form-label col-form-label-sm">Intern Contact</label>
                 <div class="col-sm-8">

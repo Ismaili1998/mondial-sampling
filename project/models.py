@@ -229,20 +229,6 @@ class CommercialOffer(models.Model):
 
     def get_total_selling_withFee(self):
         return (self.get_discounted_price() or self.get_total_selling()) + self.get_total_fee()
-    
-   
-class Buyer(models.Model):
-    name = models.CharField(max_length=100,blank=True)
-    email = models.EmailField(unique=True,blank=True,null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null= True)
-    project = models.OneToOneField(Project, on_delete=models.PROTECT,null=True,unique=False)
-
-    class Meta:
-        db_table = 'Buyer'
-
-    def __str__(self) -> str:
-        return self.name
-
 
 
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm, Supplier_contactForm
-from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact, Buyer
+from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact
 from client.models import Client, Country, Language, Transport, Payment, Currency, Shipping
 from django.contrib import messages
 from django.http import JsonResponse
@@ -10,7 +10,6 @@ from django.views.static import serve
 from django.http import Http404
 from . import translations
 from django.contrib.auth.decorators import login_required
-from .forms import Client_contactForm, BuyerForm
 
 @login_required(login_url='sign-in')
 def project_home(request):
@@ -19,9 +18,11 @@ def project_home(request):
     last_id = latest_project.id if latest_project else 0 
     project_nbr  = "P{0}".format(last_id + 1)
     local_contacts = Local_contact.objects.all()
+    client_contacts = Client_contact.objects.all()
     context = {'clients':clients,
                'page':'add-project',
                'local_contacts': local_contacts,
+               'client_contacts': client_contacts,
                'project_nbr':project_nbr}
     return render(request, 'project_home.html',context)
 
@@ -32,71 +33,34 @@ def project_detail(request, project_nbr):
     articles = project.article_set.all()[:50]
     page_name = 'update-project'
     local_contacts = Local_contact.objects.all()
+    client_contacts = Client_contact.objects.all()
     context = {'project':project,
                'clients':clients, 
                'local_contacts':local_contacts,
+               'client_contacts': client_contacts,
                'page':page_name,
                'articles':articles}
     return render(request, 'project_home.html', context)
 
 def project_create(request):
     if request.method == 'POST':
-        project_form = ProjectForm(request.POST)
-        if project_form.is_valid():
-            project = project_form.save(commit=False)
-            client_contact_form = Client_contactForm(prefix='client_contact', data=request.POST)
-            if client_contact_form.is_valid():
-                client_contact = client_contact_form.save()
-                project.client_contact = client_contact 
-            else:
-                for field, errors in client_contact_form.errors.items():
-                    for error in errors:
-                        print(f"Field: {field} - Error: {error}")
-            project.save()
-            buyer_form = BuyerForm(prefix='buyer', data=request.POST)
-            if buyer_form.is_valid():
-                buyer = buyer_form.save(commit=False)
-                buyer.project = project 
-                buyer.save()
-            else:
-                for err in buyer_form.errors:
-                    print(err) 
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save()
             messages.success(request, 'Project has been created successfully')
             return project_detail(request,project.project_nbr)
-        else:
-            for err in project_form.errors:
-                print(err)
-            messages.error(request, 'An error occured, please retry')
+        for err in form.errors:
+            print(err)
+        messages.error(request, 'An error occured, please retry')
     return redirect('project-home')
 
 def project_edit(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
-        project_form = ProjectForm(request.POST, instance=project)
-        if project_form.is_valid():
-            project = project_form.save(commit=False)
-            client_contact_form = Client_contactForm(prefix='client_contact',data=request.POST)
-            if client_contact_form.is_valid():
-                name =  client_contact_form.cleaned_data['name']
-                email =  client_contact_form.cleaned_data['email']
-                phone_number =  client_contact_form.cleaned_data['phone_number']
-                client_contact, created = Client_contact.objects.get_or_create(name=name)
-                client_contact.email = email
-                client_contact.phone_number = phone_number
-                client_contact.save()
-                project.client_contact = client_contact
-            project.save()
-            try:
-                buyer_form = BuyerForm(prefix='buyer',data=request.POST,instance=project.buyer)
-                if buyer_form.is_valid():
-                    buyer_form.save()
-            except:
-                buyer_form = BuyerForm(prefix='buyer',data=request.POST)
-                if buyer_form.is_valid():
-                    buyer = buyer_form.save(commit=False)
-                    buyer.project = project
-                    buyer.save()
-            messages.success(request, 'Project has been created successfully')
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            project = form.save()
+            messages.success(request, 'Project has been updated successfully')
     return redirect('project-detail', project.project_nbr)
 
 
