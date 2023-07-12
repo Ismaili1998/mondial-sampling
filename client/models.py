@@ -29,7 +29,7 @@ class Local_contact(models.Model):
     phone_number = models.CharField(max_length=20, blank=True,null=True)
 
     class Meta:
-        db_table = 'Local_contact'
+        db_table = 'local_contact'
         
     def __str__(self) -> str:
         return self.name
@@ -60,7 +60,7 @@ class Shipping(models.Model):
 class Currency(models.Model):
     symbol = models.CharField(max_length=2) 
     class Meta:
-        db_table = 'Currency'
+        db_table = 'currency'
         
     def __str__(self) -> str:
         return self.symbol
