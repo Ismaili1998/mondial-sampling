@@ -115,12 +115,6 @@ class Article(models.Model):
    
     def get_description(self):
         language_code = 'fr'
-        try:
-            language_code = self.project.client.language.language_code
-        except:
-            pass 
-        if  self.project.client.language:
-            language_code = self.project.client.language.language_code
         if language_code == 'fr':
             return self.description_fr
         elif language_code == 'en':
