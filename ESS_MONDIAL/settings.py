@@ -75,6 +75,7 @@ WSGI_APPLICATION = 'ESS_MONDIAL.wsgi.application'
 
 AUTH_USER_MODEL = 'account.User'
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # xxx update
