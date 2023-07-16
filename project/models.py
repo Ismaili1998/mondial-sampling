@@ -93,7 +93,6 @@ class Article(models.Model):
 
     article_name = models.CharField(max_length=150,null=True, blank= True)
     project = models.ForeignKey(Project,on_delete=models.PROTECT,null=True,blank=True)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
     article_unit = models.ForeignKey(ArticleUnit,on_delete=models.PROTECT,null=True, blank= True)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
     selling_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
@@ -162,13 +161,11 @@ class TimeUnit(models.Model):
     def __str__(self) -> str:
         return self.unit_name
     
-
 class CommercialOffer(models.Model):
     offer_nbr = models.CharField(max_length=20, unique=True) 
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
     margin = models.DecimalField(max_digits=4, decimal_places=2) 
-    articles = models.ManyToManyField(Article)
 
     discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True,null=True)
     shipping = models.ForeignKey(Shipping, on_delete=models.PROTECT, blank=True,null=True)
@@ -189,18 +186,18 @@ class CommercialOffer(models.Model):
     def __str__(self):
         return self.offer_nbr
     
-    def get_articles(self):
-        articles = []
-        for article in self.articles.all():
-            article.selling_price = round(article.purchase_price + self.margin * article.purchase_price / 100,2)
-            article.total_selling_price = round(article.quantity * article.selling_price, 2)
-            articles.append(article)
-        return articles
+    def get_orders(self):
+        orders = []
+        for order in self.order_set.all():
+            order.selling_price = round(order.article.purchase_price + order.margin * order.article.purchase_price / 100,2)
+            order.total_selling_price = round(order.quantity * order.selling_price, 2)
+            orders.append(order)
+        return orders
     
     def get_total_purchase(self):
         total_purchase = 0
-        for article in self.articles.all():
-            total_purchase += article.quantity * article.purchase_price
+        for order in self.order_set.all():
+            total_purchase += order.quantity * order.article.purchase_price
         return round(total_purchase,2)
 
     def get_total_selling(self):
@@ -223,6 +220,27 @@ class CommercialOffer(models.Model):
 
     def get_total_selling_withFee(self):
         return (self.get_discounted_price() or self.get_total_selling()) + self.get_total_fee()
+
+
+class Order(models.Model):
+    article = models.ForeignKey(Article,on_delete=models.PROTECT)
+    commercialOffer = models.ForeignKey(CommercialOffer,on_delete=models.CASCADE,null=True)
+    quoteRequest = models.ForeignKey(QuoteRequest,on_delete=models.CASCADE,null=True)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
+    margin = models.DecimalField(max_digits=4, decimal_places=2,  null= True, blank=True)
+
+    class Meta:
+        db_table = 'order'
+
+    def __str__(self):
+        return "{0} of {1}".format(self.quantity, self.article.article_name)
+
+    def get_selling_price(self):
+        return (self.margin * self.quantity) or ""
+
+
+
+
 
 
 

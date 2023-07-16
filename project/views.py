@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm, Supplier_contactForm
-from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact
+from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact, Order
 from client.models import Client, Country, Language, Transport, Payment, Currency, Shipping
 from django.contrib import messages
 from django.http import JsonResponse
@@ -240,18 +240,22 @@ def create_quoteRequest(request,project_pk):
     project = get_object_or_404(Project, pk=project_pk)
     if request.method == 'POST':
         project_nbr = project.project_nbr
+        client_nbr = project.client.client_nbr 
         articles = request.POST.getlist('articles')
         suppliers = request.POST.getlist('suppliers')
         if not len(articles) or not len(suppliers):
             messages.error(request, 'Please, select at least one article and one supplier  !')
             return redirect('project-detail',project_nbr)
+        index = 1
         try:
-            index = project.quoterequest_set.all().count() + 1
             for supplier_id in suppliers:
                 supplier = Supplier.objects.get(id=supplier_id)
-                request_nbr = "{0}/N{1}-{2}".format(project_nbr,
-                                                index,
-                                                project.client.client_nbr)
+                quoteRequests = project.quoterequest_set.all()
+                existing_request_nbrs = quoteRequests.values_list('request_nbr', flat=True)
+                request_nbr = "{0}/N{1}-{2}".format(project_nbr,index, client_nbr)      
+                while request_nbr in existing_request_nbrs:
+                    index += 1
+                    request_nbr = "{0}/N{1}-{2}".format(project_nbr,index, client_nbr)
                 quoteRequest = QuoteRequest.objects.create(project = project,
                                                         supplier=supplier,
                                                         request_nbr=request_nbr)
@@ -286,20 +290,37 @@ def delete_quoteRequest(request, pk):
         quoteRequest.delete()
         messages.success(request, 'quoteRequest has been deleted successfully')
     return redirect('project-detail',project.project_nbr)
-#======================= Commercial offer area ====================================#
+
+#======================= Commercial offer area ====================================#   
 def create_commercialOffer(request,project_pk):
     project = get_object_or_404(Project, id=project_pk)
     project_nbr = project.project_nbr
     if request.method == 'POST':
         form = CommercialOfferForm(request.POST)
         if form.is_valid():
-            commercialOffer = form.save()
-            index = project.commercialoffer_set.all().count()
-            offer_nbr = "{0}/G{1}-{2}".format(project_nbr,
-                                                index,
-                                                project.client.client_nbr)
+            commercialOffers = project.commercialoffer_set.all()
+            existing_offer_nbrs = commercialOffers.values_list('offer_nbr', flat=True)
+            
+            project_nbr = project.project_nbr
+            client_nbr = project.client.client_nbr
+            
+            index = 1
+            offer_nbr = "{0}/G{1}-{2}".format(project_nbr, index, client_nbr)
+            
+            while offer_nbr in existing_offer_nbrs:
+                index += 1
+                offer_nbr = "{0}/G{1}-{2}".format(project_nbr, index, client_nbr)
+            
+            commercialOffer = form.save(commit=False)
             commercialOffer.offer_nbr = offer_nbr
             commercialOffer.save()
+
+            articles = request.POST.getlist('article')
+            quantities = request.POST.getlist('quantity')
+            margins = request.POST.getlist('article-margin')
+            for article, quantity, margin in zip(articles, quantities, margins):
+                order = Order(article_id=article, quantity=quantity, margin=margin, commercialOffer=commercialOffer)
+                order.save()
             messages.success(request, 'Commercial offer has been created successfully')
             return redirect('project-detail', project_nbr)
         else:
@@ -331,9 +352,8 @@ def create_commercialOffer(request,project_pk):
                'transports':transports,
                'destinations':destinations,
                'shippings':shippings,
-               'page':'add-commercialOffer',
                'articles':articles}
-    return render(request, 'commercialOffer.html',context) 
+    return render(request, 'commercialOffer_create.html',context) 
 
 def update_commercialOffer(request,pk):
     commercialOffer = get_object_or_404(CommercialOffer, id=pk)
@@ -342,7 +362,15 @@ def update_commercialOffer(request,pk):
         form = CommercialOfferForm(request.POST,instance=commercialOffer)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Commercial offer has been created successfully')
+            order_ids = request.POST.getlist('order')
+            quantities = request.POST.getlist('quantity')
+            margins = request.POST.getlist('article-margin')
+            for order_id, quantity, margin in zip(order_ids, quantities, margins):
+                order = get_object_or_404(Order, id=order_id)
+                order.quantity = quantity
+                order.margin = margin
+                order.save()
+            messages.success(request, 'Commercial offer has been updated successfully')
         else:
             for err in form.errors:
                 print(err)
@@ -362,9 +390,8 @@ def update_commercialOffer(request,pk):
                'transports':transports,
                'destinations':destinations,
                'shippings': shippings,
-               'page':'update-commercialOffer',
-               'articles':commercialOffer.articles.all()}
-    return render(request, 'commercialOffer.html',context) 
+               'orders':commercialOffer.order_set.all()}
+    return render(request, 'commercialOffer_edit.html',context) 
 
 def delete_commercialOffer(request, pk):
     commercialOffer = get_object_or_404(CommercialOffer, pk=pk)
@@ -374,7 +401,7 @@ def delete_commercialOffer(request, pk):
         messages.success(request, 'commercial offer has been deleted successfully')
     return redirect('project-detail',project.project_nbr)
 
-def create_commercialOffer_pdfReport(request, offer_pk):
+def print_commercialOffer(request, offer_pk):
     commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
     language_code = 'fr'
     try:
@@ -383,7 +410,7 @@ def create_commercialOffer_pdfReport(request, offer_pk):
         pass 
     filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
     context = {'commercialOffer':commercialOffer, 'translations':filtered_translations}
-    return render(request, 'commercialOffer_pdf.html', context)
+    return render(request, 'commercialOffer_print.html', context)
 
 
 def print_technicalOffer(request, offer_pk):

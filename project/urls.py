@@ -12,10 +12,6 @@ urlpatterns = [
     path('upload-file-to-project/<str:project_pk>',views.upload_file_to_project,name='upload-file-to-project'),
     path('download-file/<str:file_pk>',views.download_file,name='download-file'),
 
-
-
-
-
     path('create-article',views.article_create,name='create-article'),
     path('update-article/<str:pk>',views.article_edit,name='update-article'),
     path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
@@ -35,7 +31,7 @@ urlpatterns = [
     path('create-commercialOffer/<str:project_pk>', views.create_commercialOffer, name='create-commercialOffer'),
     path('delete-commercialOffer/<str:pk>', views.delete_commercialOffer, name='delete-commercialOffer'),
     path('update-commercialOffer/<str:pk>', views.update_commercialOffer, name='update-commercialOffer'),
-    path('create-commercialOffer-pdfReport/<str:offer_pk>/', views.create_commercialOffer_pdfReport, name='create-commercialOffer-pdfReport'),
+    path('print-commercialOffer/<str:offer_pk>/', views.print_commercialOffer, name='print-commercialOffer'),
     path('print-technicalOffer/<str:offer_pk>/', views.print_technicalOffer, name='print-technicalOffer'),
 
 ]
