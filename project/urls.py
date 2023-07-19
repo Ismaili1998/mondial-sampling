@@ -13,18 +13,24 @@ urlpatterns = [
     path('download-file/<str:file_pk>',views.download_file,name='download-file'),
 
     path('create-article',views.article_create,name='create-article'),
+    path('add-article-to-commercialOffer/<str:offer_pk>/<str:article_nbr>',views.add_article_to_commercialOffer,name='add-article-to-commercialOffer'),
     path('update-article/<str:pk>',views.article_edit,name='update-article'),
     path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
     path('remove-article-from-project/<str:article_pk>',views.remove_article_from_project,name='remove-article-from-project'),
     path('get-articlesByKeyWord',views.get_articlesByKeyWord,name='get-articlesByKeyWord'),
     path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
+    path('delete-order/<str:pk>',views.delete_order ,name='delete-order'),
 
 
 
     path('create-supplier',views.supplier_create,name='create-supplier'),
+    path('update-supplier/<str:pk>',views.update_supplier,name='update-supplier'),
     path('get-suppliersByKeyWord/', views.get_suppliersByKeyWord, name='get-suppliersByKeyWord'),
 
     path('create-quoteRequest/<str:project_pk>', views.create_quoteRequest, name='create-quoteRequest'),
+    path('add-article-to-quoteRequest/<str:request_pk>/<str:article_nbr>', views.add_article_to_quoteRequest, name='add-article-to-quoteRequest'),
+    path('remove-article-from-quoteRequest/<str:request_pk>/<str:article_pk>', views.remove_article_from_quoteRequest, name='remove-article-from-quoteRequest'),
+    path('update-quoteRequest/<str:pk>', views.update_quoteRequest, name='update-quoteRequest'),
     path('delete-quoteRequest/<str:pk>', views.delete_quoteRequest, name='delete-quoteRequest'),
     path('create-quoteRequest-pdfReport/<str:request_pk>', views.create_quoteRequest_pdfReport, name='create-quoteRequest-pdfReport'),
 

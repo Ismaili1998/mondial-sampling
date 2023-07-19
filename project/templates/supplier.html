@@ -6,35 +6,35 @@
                 <label for="supplier_nbr" class="col-sm-4 col-form-label col-form-label-sm">Supplier number</label>
                 <div class="col-sm-8">
                     <input type="text" name="supplier_nbr" class="form-control form-control-sm" id="supplier_nbr"
-                        value="{{supplier.supplier_nbr}}" required/>
+                        value="{{supplier.supplier_nbr|default:''}}" required/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_supplier_name" class="col-sm-4 col-form-label col-form-label-sm">Supplier Name</label>
                 <div class="col-sm-8">
                     <input type="text" name="supplier_name" class="form-control form-control-sm" id="id_supplier_name"
-                        value="{{supplier.supplier_name}}" required/>
+                        value="{{supplier.supplier_name|default:''}}" required/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_email" class="col-sm-4 col-form-label col-form-label-sm">Email</label>
                 <div class="col-sm-8">
                     <input type="email" name="email" class="form-control form-control-sm" id="id_email"
-                        value="{{supplier.email}}" />
+                        value="{{supplier.email|default:''}}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_address" class="col-sm-4 col-form-label col-form-label-sm">Address</label>
                 <div class="col-sm-8">
                     <input type="text" name="address" class="form-control form-control-sm" id="id_address"
-                        value="{{supplier.address}}"/>
+                        value="{{supplier.address|default:''}}"/>
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_postal_code" class="col-sm-4 col-form-label col-form-label-sm">Postal Code</label>
                 <div class="col-sm-8">
                     <input type="text" name="postal_code" class="form-control form-control-sm" id="id_postal_code"
-                        value="{{supplier.postal_code}}" />
+                        value="{{supplier.postal_code|default:''}}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -54,7 +54,7 @@
                 <label for="id_city" class="col-sm-4 col-form-label col-form-label-sm">City</label>
                 <div class="col-sm-8">
                     <input type="text" name="city" class="form-control form-control-sm" id="id_city"
-                        value="{{supplier.address}}" />
+                        value="{{supplier.city}}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -76,51 +76,51 @@
                 <label for="id_fax" class="col-sm-4 col-form-label col-form-label-sm">Fax</label>
                 <div class="col-sm-8">
                     <input type="text" name="fax" class="form-control form-control-sm" id="id_fax"
-                        value="{{supplier.fax}}" />
+                        value="{{supplier.fax|default:''}}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="id_phone" class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
                 <div class="col-sm-8">
                     <input type="text" name="phone_number" class="form-control form-control-sm" id="id_phone"
-                        value="{{supplier.phone_number}}" />
+                        value="{{supplier.phone_number|default:''}}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="website" class="col-sm-4 col-form-label col-form-label-sm">Website</label>
                 <div class="col-sm-8">
-                    <input type="url" name="website" class="form-control form-control-sm" id="website"
-                        value="{{supplier.website}}" />
+                    <input type="text" name="website" class="form-control form-control-sm" id="website"
+                        value="{{supplier.website|default:''}}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="delivery_type" class="col-sm-4 col-form-label col-form-label-sm">Delivery type</label>
                 <div class="col-sm-8">
                     <input type="text" name="delivery_type" class="form-control form-control-sm" id="delivery_type"
-                        value="{{supplier.delivery_type}}" />
+                        value="{{supplier.delivery_type|default:''}}" />
                 </div>
             </div>
-             <fieldset class="border p-1 mt-2 rounded">
+            <fieldset class="border p-1 mt-2 rounded">
                 <h6> External represenatant  </h6>
                 <div class="form-group row mt-2">
                     <label class="col-sm-4 col-form-label col-form-label-sm">Contact name</label>
                     <div class="col-sm-8">
                         <input type="text" name="supplier_contact-name" class="form-control form-control-sm"
-                            value="{{supplier.supplier_contact.name}}" />
+                            value="{{supplier.supplier_contact.name|default:''}}" />
                     </div>
                 </div>
                 <div class="form-group row mt-1">
                     <label class="col-sm-4 col-form-label col-form-label-sm">Email</label>
                     <div class="col-sm-8">
                         <input type="email" name="supplier_contact-email" class="form-control form-control-sm"
-                            value="{{supplier.supplier_contact.email}}" />
+                            value="{{supplier.supplier_contact.email|default:''}}" />
                     </div>
                 </div>
                 <div class="form-group row mt-1">
                     <label class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
                     <div class="col-sm-8">
                         <input type="text" name="supplier_contact-phone_number" class="form-control form-control-sm"
-                            value="{{supplier.supplier_contact.phone_number}}" />
+                            value="{{supplier.supplier_contact.phone_number|default:''}}" />
                     </div>
                 </div>
             </fieldset>
@@ -128,7 +128,7 @@
                 <label for="comment" class="col-sm-4 col-form-label col-form-label-sm">Comment</label>
                 <div class="col-sm-8">
                     <textarea name="comment" class="form-control form-control-sm" rows="3"
-                        id="comment"> {{supplier.comment}} </textarea>
+                        id="comment"> {{supplier.comment|default:'' }} </textarea>
                 </div>
             </div>
         </div>

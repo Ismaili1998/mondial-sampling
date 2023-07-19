@@ -38,7 +38,7 @@ class Supplier_contact(models.Model):
         db_table = 'supplier_contact'
         
     def __str__(self) -> str:
-        return self.name 
+        return self.name or ""
     
 class ArticleUnit(models.Model):
     unit_name = models.CharField(max_length=50,unique=True)
@@ -91,7 +91,6 @@ class Article(models.Model):
     description_fr = models.TextField(null= True, max_length=1500)
     description_en = models.TextField(null= True, max_length=1500)
 
-    article_name = models.CharField(max_length=150,null=True, blank= True)
     project = models.ForeignKey(Project,on_delete=models.PROTECT,null=True,blank=True)
     article_unit = models.ForeignKey(ArticleUnit,on_delete=models.PROTECT,null=True, blank= True)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
@@ -112,16 +111,14 @@ class Article(models.Model):
         ordering = ['-created_at']
 
    
-    def get_description(self):
-        language_code = 'fr'
+    def get_description(self, language_code):
         if language_code == 'fr':
             return self.description_fr
         elif language_code == 'en':
             return self.description_en
         elif language_code == 'de':
             return self.description_de
-        else:
-            return self.description_fr
+        return self.description_fr
     
     
         
@@ -141,6 +138,14 @@ class QuoteRequest(models.Model):
     articles = models.ManyToManyField(Article)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
 
+
+    def get_articles(self):
+        articles = []
+        for article in self.articles.all():
+            article.description = article.get_description(self.supplier.language.language_code)
+            articles.append(article)
+        return articles
+    
     class Meta:
         db_table = 'quoteRequest'
         ordering = ['-id']
@@ -237,6 +242,11 @@ class Order(models.Model):
 
     def get_selling_price(self):
         return (self.margin * self.quantity) or ""
+    
+    def get_description(self):
+        language_code = self.commercialOffer.project.client.language.language_code
+        return self.article.get_description(language_code)
+    
 
 
 

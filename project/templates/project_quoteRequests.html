@@ -4,27 +4,36 @@
             <th>Request Number</th>
             <th>Supplier</th>
             <th>Action</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         {% for quoteRequest in project.quoterequest_set.all %}
             <tr>
-                <td>{{ quoteRequest.request_nbr }}</td>
+                <td>
+                    <a class="text-info" onclick="load_modal('Update quoteRequest','{%  url "update-quoteRequest"  quoteRequest.id %}')"
+                        href="#">
+                        {{ quoteRequest.request_nbr }}
+                    </a>
+                </td>
                 <td class="size-13">
-                {{ quoteRequest.supplier }}
-                - ({{ quoteRequest.supplier.language }})
+                    {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language }})
+                    <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
+                        href="#"><i
+                        class="material-icons align-middle size-13 text-dark">visibility</i>
+                    </a>
                 </td>
                 <td class="d-flex justify-content-end">
-                    <a onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
-                    data-bs-toggle="modal" href="#" data-bs-target="#Modal">
-                        <i class="material-icons">picture_as_pdf</i>
+                    <a href="#" onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
+                    >
+                        <i class="material-icons text-dark">picture_as_pdf</i>
                     </a>
                 </td>
                 <td>
                     <form method="POST" action="{% url 'delete-quoteRequest' quoteRequest.id %}">
                         {% csrf_token %}
                         <a class="text-danger delete-btn" href="#">
-                            <i class="material-icons">delete</i>
+                            <i class="material-icons size-11">clear</i>
                         </a>
                     </form>
                 </td>

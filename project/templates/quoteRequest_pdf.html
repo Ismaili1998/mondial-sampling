@@ -56,12 +56,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for article in quoteRequest.articles.all %}
+                        {% for article in quoteRequest.get_articles %}
                         <tr>
                             <td> {{ forloop.counter }} </td>
                             <td> {{ article.article_nbr }} </td>
                             <td class="text-description"> 
-                                <pre>{{ article.get_description }}</pre>
+                                <pre>{{ article.description }}</pre>
                             </td>
                             <td> {{ article.quantity }} </td>
                             <td> {{ article.article_unit }} </td>

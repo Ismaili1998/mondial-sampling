@@ -25,7 +25,6 @@ class Supplier_contactForm(forms.ModelForm):
     class Meta:
         model = Supplier_contact
         fields = '__all__'
-        exclude = ['client']
             
 class Client_contactForm(forms.ModelForm):
     class Meta:

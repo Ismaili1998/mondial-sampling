@@ -77,7 +77,6 @@ def get_projectsByKeyWord(request):
     projects = Project.objects.filter(project_nbr__icontains=keyword).values_list('project_nbr', flat=True)[:20]
     return JsonResponse(list(projects), safe=False)
 
-@csrf_exempt
 def upload_file_to_project(request, project_pk):
     project = get_object_or_404(Project, id=project_pk)
     if request.method == 'POST' and request.FILES:
@@ -125,6 +124,31 @@ def article_create(request):
                'page':page_name}
     return render(request, 'article.html',context)
 
+def add_article_to_commercialOffer(request, offer_pk, article_nbr):
+    try:
+        commercialOffer = get_object_or_404(CommercialOffer, id=offer_pk)
+        article = get_object_or_404(Article, article_nbr=article_nbr)
+        order = Order(article=article, quantity=0, margin=0, commercialOffer=commercialOffer)
+        order.save()
+    except Article.DoesNotExist or CommercialOffer.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Article or offer not found'})
+    timeUnits = TimeUnit.objects.all()
+    payments = Payment.objects.all()
+    transports = Transport.objects.all()
+    destinations = Destination.objects.all()
+    currencies = Currency.objects.all()
+    shippings = Shipping.objects.all()
+    context = {'commercialOffer':commercialOffer,
+               'currencies': currencies,
+               'timeUnits':timeUnits,
+               'payments':payments,
+               'transports':transports,
+               'destinations':destinations,
+               'shippings': shippings,
+               'orders':commercialOffer.order_set.all()}
+    return render(request, 'commercialOffer_edit.html',context) 
+
+    
 def article_detail(request, article_nbr):
     article= get_object_or_404(Article, article_nbr = article_nbr)
     projects = Project.objects.all()
@@ -183,6 +207,26 @@ def remove_article_from_project(request, article_pk):
     messages.success(request,'Article has been removed from project succesfully')
     return redirect('project-detail', project.project_nbr)
 
+def delete_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    commercialOffer = order.commercialOffer
+    order.delete()
+    timeUnits = TimeUnit.objects.all()
+    payments = Payment.objects.all()
+    transports = Transport.objects.all()
+    destinations = Destination.objects.all()
+    currencies = Currency.objects.all()
+    shippings = Shipping.objects.all()
+    context = {'commercialOffer':commercialOffer,
+               'currencies': currencies,
+               'timeUnits':timeUnits,
+               'payments':payments,
+               'transports':transports,
+               'destinations':destinations,
+               'shippings': shippings,
+               'orders':commercialOffer.order_set.all()}
+    return render(request, 'commercialOffer_edit.html',context) 
+
 #======================= supplier area ====================================#
 def supplier_create(request):
     if request.method == 'POST':
@@ -207,18 +251,60 @@ def supplier_create(request):
     countries = Country.objects.all()
     page_name = 'add-supplier'
     languages = Language.objects.all()
-    local_contacts = Local_contact.objects.all()
     context = {'countries':countries,
                'page':page_name,
-               'languages':languages,
-               'local_contacts':local_contacts}
+               'languages':languages}
     return render(request, 'supplier.html',context)
 
-
+def update_supplier(request, pk):
+    supplier = get_object_or_404(Supplier, pk=pk)
+    if request.method == 'POST':
+        supplier_form = SupplierForm(request.POST, instance=supplier)
+        if supplier_form.is_valid():
+            supplier = supplier_form.save()
+            try:
+                supplier_contact_form = Supplier_contactForm(prefix='supplier_contact',
+                                                            data=request.POST, 
+                                                            instance=supplier.supplier_contact)
+                if supplier_contact_form.is_valid():
+                    supplier_contact = supplier_contact_form.save(commit=False)
+                    supplier_contact.supplier = supplier 
+                    supplier_contact.save()
+                else:
+                    for field, errors in supplier_contact_form.errors.items():
+                        for error in errors:
+                            print(f"++Field: {field} - Error: {error}")
+            except:
+                pass
+                supplier_contact_form = Supplier_contactForm(prefix='supplier_contact',
+                                                            data=request.POST)
+                if supplier_contact_form.is_valid():
+                    supplier_contact = supplier_contact_form.save(commit=False)
+                    supplier_contact.supplier = supplier 
+                    supplier_contact.save()
+                else:
+                    for field, errors in supplier_contact_form.errors.items():
+                        for error in errors:
+                            print(f"Field: {field} - Error: {error}")
+            return JsonResponse({'message': 'Client has been added successfully'})
+        else:
+            for err in supplier_form.errors:
+                print(err)
+            return JsonResponse({'message':'An error occured ! please retry again'})
+        
+    countries = Country.objects.all()
+    page_name = 'update-supplier'
+    languages = Language.objects.all()
+    context = {'countries':countries,
+               'page':page_name,
+               'supplier':supplier,
+               'languages':languages}
+    return render(request, 'supplier.html',context)
+        
 def get_suppliersByKeyWord(request):
     keyword = request.GET.get('keyword', '')
     # Perform the search query using the keyword
-    suppliers = Supplier.objects.filter(supplier_name__icontains=keyword)[:10]
+    suppliers = Supplier.objects.filter(supplier_name__icontains=keyword)[:5]
     # Prepare the suppliers' data for JSON serialization
     supplier_data = []
     if len(suppliers):
@@ -241,8 +327,8 @@ def create_quoteRequest(request,project_pk):
     if request.method == 'POST':
         project_nbr = project.project_nbr
         client_nbr = project.client.client_nbr 
-        articles = request.POST.getlist('articles')
-        suppliers = request.POST.getlist('suppliers')
+        articles = request.POST.getlist('article')
+        suppliers = request.POST.getlist('supplier')
         if not len(articles) or not len(suppliers):
             messages.error(request, 'Please, select at least one article and one supplier  !')
             return redirect('project-detail',project_nbr)
@@ -269,7 +355,47 @@ def create_quoteRequest(request,project_pk):
     
     suppliers = Supplier.objects.all()
     context = {'project':project,'suppliers':suppliers}
-    return render(request, 'quoteRequest.html',context) 
+    return render(request, 'quoteRequest_create.html',context) 
+
+def update_quoteRequest(request,pk):
+    quoteRequest = get_object_or_404(QuoteRequest, id=pk)
+    context = {'quoteRequest':quoteRequest}
+    return render(request, 'quoteRequest_edit.html',context) 
+
+
+
+def add_article_to_quoteRequest(request, request_pk, article_nbr):
+    quoteRequest = get_object_or_404(QuoteRequest, id=request_pk)
+    article = get_object_or_404(Article, article_nbr=article_nbr)
+    quoteRequest.articles.add(article)
+    context = {'quoteRequest':quoteRequest}
+    return render(request, 'quoteRequest_edit.html',context)
+   
+     
+
+def remove_article_from_quoteRequest(request, request_pk, article_pk):
+    try:
+        quoteRequest = get_object_or_404(QuoteRequest, id=request_pk)
+        article = get_object_or_404(Article, id=article_pk)
+        quoteRequest.articles.remove(article)
+    except:
+        messages.error(request, 'An error occured please retry !')
+    
+    context = {'quoteRequest':quoteRequest}
+    return render(request, 'quoteRequest_edit.html',context) 
+    
+
+
+def create_quoteRequest_pdfReport(request, request_pk):
+    quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)
+    language_code = 'fr'
+    try:
+        language_code = quoteRequest.supplier.language.language_code
+    except:
+        pass 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {'quoteRequest':quoteRequest,'translations':filtered_translations}
+    return render(request, 'quoteRequest_pdf.html', context)
 
 def create_quoteRequest_pdfReport(request, request_pk):
     quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)

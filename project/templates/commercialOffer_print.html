@@ -72,7 +72,7 @@
                             <td> {{ forloop.counter }} </td>
                             <td> {{order.article.article_nbr}} </td>
                             <td class="text-description"> 
-                                <pre>{{ order.article.get_description }}</pre>
+                                <pre>{{ order.get_description }}</pre>
                             </td>
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>

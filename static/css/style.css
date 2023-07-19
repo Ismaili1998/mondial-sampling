@@ -97,3 +97,7 @@
     max-width: 380px;
     max-height: 250px;
 }
+
+.ui-autocomplete {
+    z-index: 9999;
+}

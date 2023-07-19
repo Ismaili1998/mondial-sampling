@@ -40,7 +40,7 @@
                             </a>
                         </td>
                         <td style="width:300px">
-                           <textarea disabled rows="5" class="form-control size-11"> {{ article.get_description}} </textarea>
+                           <textarea disabled rows="5" class="form-control size-11"> {{ article.description_fr}} </textarea>
                         </td>
                         <td class="form-group">
                             <input type="number" name="quantity" 
@@ -233,7 +233,6 @@
 $(document).ready(function () {
 
     let isFirstExecution = true;
-
     function set_margin() {
         let margin = parseFloat($('#global-margin').val());
         if (margin >= 0 && margin <= 100) {

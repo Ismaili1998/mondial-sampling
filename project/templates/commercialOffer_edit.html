@@ -16,7 +16,7 @@
         </div>
         <div class="row mt-2">
             <table class="table table-sm bg-white size-13" id="offer-articles-table">
-                <thead class="text-center size-11">
+                <thead class="text-left size-11">
                     <tr>
                         <th>Article nbr</th>
                         <th>Description</th>
@@ -27,21 +27,20 @@
                         <th>Selling price </th>
                         <th>Total Purchase price </th>
                         <th>Total Selling price </th>
+                        <th> </th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for order in orders %}
                     <tr>
-                        <input type="hidden" name="order" value="{{ order.id }}">
-                        <input type="hidden" name="article" value="{{ order.article.id }}">
                         <td class="article-id" data-article-id="{{ article.id }}">
-                            <a  href="#" ata-bs-toggle="modal" data-bs-target="#Modal"
+                            <a  href="#" 
                                 onclick="get_article('Article detail','{%  url "update-article" order.article.id %}')">
                                 {{ order.article.article_nbr }}
                             </a>
                         </td>
                         <td style="width:300px">
-                           <textarea disabled rows="5" class="form-control size-11"> {{ order.article.get_description}} </textarea>
+                           <textarea disabled rows="5" class="form-control size-11"> {{ order.get_description}} </textarea>
                         </td>
                         <td class="form-group">
                             <input type="number" name="quantity" 
@@ -59,14 +58,26 @@
                         <td class="selling-price "> </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
+                        <td> <a href="#" class="btn btn-sm btn-remove"
+                                onclick="load_modal('Update ','{%  url "delete-order" order.id %}')"
+                            > 
+                            <i class="material-icons size-11 text-danger">clear</i></a>
+                        </td>
                     </tr>
+                    <input type="hidden" name="order" value="{{ order.id }}">
+                    <input type="hidden" name="article" value="{{ order.article.id }}">
                     {% endfor %}
-                    <tfoot>
-                        <td colspan="6"></td>
-                        <td> Total Purchase  = <strong class="sum-total-purchase"></strong></td>
-                        <td> Total Price EXW = <strong  class="sum-total-selling"></strong></td>
-                    </tfoot>
                 </tbody>
+                <tfoot>
+                    <td colspan="1">
+                        <input type="text"  name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
+                    </td>
+                    <td colspan="5">
+                        <button class="btn btn-sm"> + add new article</button>
+                    </td>
+                    <td colspan="2"> Total Purchase  = <strong class="sum-total-purchase"></strong></td>
+                    <td colspan="2"> Total Price EXW = <strong  class="sum-total-selling"></strong></td>
+                </tfoot>
             </table>
         </div>
         <div class="row mt-4">
@@ -235,6 +246,23 @@
 <script>   
 $(document).ready(function () {
 
+     // search articles 
+      $('.searchArticle').autocomplete({
+        source: function (request, response) {
+          $.getJSON("{% url 'get-articlesByKeyWord' %}",
+            { keyword: request.term }, function (data) {
+              // Map the article numbers to an array of objects with label and value properties
+              var mappedData = $.map(data, function (item) {
+                return {
+                  label: item,
+                  value: item
+                };
+              });
+              response(mappedData);
+            });
+        }
+      });
+
     let isFirstExecution = true;
 
     function set_margin() {
@@ -391,24 +419,29 @@ $(document).ready(function () {
         return formattedNumber;
     }
 
-    // Get the form and buttons
+    $('tfoot .btn').click(function(event) {
+        event.preventDefault();
+        let article_nbr = $('tfoot .searchArticle').val();
+        url = "{% url 'add-article-to-commercialOffer' commercialOffer.id 'article_nbr' %}".replace('article_nbr',article_nbr );
+        load_modal('Update Commercial offer', url);
+       
+    });
+
+   
+
+
     const form = $('.commercial-offer-form');
     const saveChangesBtn = $('.commercial-offer-form .btn-dark');
     const createNewBtn = $('.commercial-offer-form .btn-warning');
-
-    // Add click event handlers to the buttons
     saveChangesBtn.click(function() {
-        alert("")
         form.attr('action', '{% url "update-commercialOffer" commercialOffer.id %}');
     });
-
     createNewBtn.click(function() {
         form.attr('action', '{% url "create-commercialOffer" commercialOffer.project.id %}');
     });
 
     
 }); 
-
 
 
 article_is_opned = false ;
@@ -418,25 +451,7 @@ function get_article(title, url)
     article_is_opned = !article_is_opned;
 }
 
-project_id = "{{commercialOffer.project.id}}"
-url = "{% url 'create-commercialOffer' 0%}?".replace(0,project_id);
-page = "{{ page }}";
-
-if (page == "add-commercialOffer")
-{
-    selectedArticles = [];
-    $('.article-id').each(function() {
-        selectedArticles.push($(this).data('article-id'));
-    });
-    let queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
-    url += queryParam;
-}
-
-else{
-    offer_id = "{{commercialOffer.id}}"
-    url = "{% url 'update-commercialOffer'  0 %}".replace('0',offer_id );
-}
-
+url = "{% url 'update-commercialOffer'  commercialOffer.id %}";
 $('#Modal').on('hidden.bs.modal', function() {
     if (article_is_opned)
     {
@@ -445,4 +460,5 @@ $('#Modal').on('hidden.bs.modal', function() {
         article_is_opned = !article_is_opned
     }
 });
+
 </script>

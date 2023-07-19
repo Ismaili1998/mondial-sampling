@@ -20,10 +20,10 @@
               <a class="dropdown-item" data-bs-toggle="modal" href="#" data-bs-target="#Modal"
                 onclick="load_modal('Create client','{%  url "create-client" %}')"> <i
                   class="material-icons align-middle">add</i> New client</a>
-              <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+              <a class="dropdown-item"
                 onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
                   class="material-icons align-middle">add</i> New supplier</a>
-              <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+              <a class="dropdown-item"
                 onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#"> <i
                   class="material-icons align-middle">add</i> New article </a>
             </div>
@@ -35,7 +35,7 @@
                <i class="material-icons align-middle">account_circle</i> {{ request.user }}
             </a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item mt-2" data-bs-toggle="modal" data-bs-target="#Modal" href="#"
+                <a class="dropdown-item mt-2" href="#"
                   onclick="load_modal('Update profile','{%  url "update-profile" %}')"> 
                     Profile 
                 </a>
@@ -82,7 +82,7 @@
                 {% endfor %}
               </select>
               &nbsp;
-              <a class="text-info" data-bs-toggle="modal" data-bs-target="#Modal"
+              <a class="text-info"
                 onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
                   class="material-icons align-middle text-dark">visibility</i></a>
             </div>
@@ -194,7 +194,7 @@
             <div class="input-group">
                 {%  csrf_token %}
                 <input type="hidden" name="project_nbr" value="{{ project.project_nbr }}" />
-                <input type="text"  name="article_nbr" id="searchArticle" class="form-control form-control-sm typeahead" placeholder="Search Article" />
+                <input type="text"  name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
                 <div class="input-group-append">
                   <button class="btn btn-sm btn-dark" type="submit">Add to project</button>
                 </div>
@@ -202,18 +202,18 @@
           </form>
         </div>
         <div class="col-md-1">
-          <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Modal"
+          <a class="dropdown-item"
             onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#">
             <i class="material-icons align-middle">add</i> New article
           </a>
         </div>
         <div class="col-md-3 offset-2">
           <div class="btn-group" role="group" aria-label="Button group">
-              <button class="btn btn-sm btn-secondary size-12" data-bs-toggle="modal" data-bs-target="#Modal"
+              <button class="btn btn-sm btn-secondary size-12"
                   onclick="load_modal('Create quote Request','{% url 'create-quoteRequest' project.id %}')">
                   <i class="material-icons align-middle">add</i> New Quote request
               </button>
-              <button class="btn btn-sm btn-secondary size-12" data-bs-toggle="modal" data-bs-target="#Modal"
+              <button class="btn btn-sm btn-secondary size-12"
                   id ="new-commercialOffer">
                   <i class="material-icons align-middle">add</i> New Commercial offer
               </button>
@@ -242,6 +242,7 @@
   function load_modal(title, page_url) {
     $('.modal-title').text(title);
     $('.modal-body').load(page_url);
+    $('#Modal').modal('show');
   }
   // search project by project_nbr 
   $(document).ready(function () {
@@ -261,7 +262,7 @@
       },
       select: function (event, ui) {
         project_nbr = ui.item.value;
-        var url = "{% url 'project-detail' 0 %}".replace('0', project_nbr);
+        var url = "{% url 'project-detail' 'project_nbr' %}".replace('project_nbr', project_nbr);
         window.location.href = url;
         return false;
       }
@@ -304,7 +305,7 @@
   {% if page == 'update-project' %}
     // search articles 
     $(document).ready(function () {
-      $('#searchArticle').autocomplete({
+      $('.searchArticle').autocomplete({
         source: function (request, response) {
           $.getJSON("{% url 'get-articlesByKeyWord' %}",
             { keyword: request.term }, function (data) {
