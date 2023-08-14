@@ -106,6 +106,12 @@ translations = {
         'de':'Frachtkosten'
     },
 
+    'confirmation_order' :{
+    'fr': 'Confirmation de Commande',
+    'en': 'Order Confirmation',
+    'de': 'Bestellbestätigung'
+    },
+    
     'incoterm': {
         'en':'Incoterm',
         'fr':'Mise à',

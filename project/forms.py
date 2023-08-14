@@ -19,7 +19,7 @@ class ArticleForm(forms.ModelForm):
 class CommercialOfferForm(forms.ModelForm):
     class Meta:
         model = CommercialOffer
-        exclude = ['offer_nbr']
+        exclude = ['offer_nbr', 'confirmation_nbr']
 
 class Supplier_contactForm(forms.ModelForm):
     class Meta:

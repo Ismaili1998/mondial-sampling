@@ -234,12 +234,20 @@
                 </div>
             </div>
             <div class="mt-5">
-                <button type="submit" class="btn btn-dark btn-sm mr-4">
-                    save changes
-                </button>
-                <button type="submit" class="btn btn-sm btn-warning">
-                    create new version
-                </button>
+                <div class="btn-group" role="group" aria-label="Offer Actions">
+                    <button type="submit" class="btn btn-dark btn-sm mr-4">
+                        save changes
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-warning">
+                        create new version
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-success"
+                        {% if commercialOffer.confirmed %}
+                        disabled
+                        {% endif %} >
+                        confirm this offer
+                    </button>
+                </div>
             </div>
     </form>
 </div>
@@ -433,13 +441,16 @@ $(document).ready(function () {
     const form = $('.commercial-offer-form');
     const saveChangesBtn = $('.commercial-offer-form .btn-dark');
     const createNewBtn = $('.commercial-offer-form .btn-warning');
+    const confirmBtn = $('.commercial-offer-form .btn-success');
     saveChangesBtn.click(function() {
         form.attr('action', '{% url "update-commercialOffer" commercialOffer.id %}');
     });
     createNewBtn.click(function() {
         form.attr('action', '{% url "create-commercialOffer" commercialOffer.project.id %}');
     });
-
+    confirmBtn.click(function() {
+        form.attr('action', '{% url "confirm-order" commercialOffer.id %}');
+    });
     
 }); 
 

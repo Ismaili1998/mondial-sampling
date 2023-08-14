@@ -72,7 +72,6 @@
             <div class="col-md-6">
                 <div class="d-none">
                     <input type="hidden" name="project" value="{{project.id}}{{commercialOffer.project.id}}" />
-                    u
                 </div>
                 <div class="form-group row mt-2">
                     <label for="exceptional-discount" class="col-sm-4 col-form-label col-form-label-sm"> Exceptional discount
@@ -414,8 +413,14 @@ if (page == "add-commercialOffer")
 }
 
 else{
-    offer_id = "{{commercialOffer.id}}"
-    url = "{% url 'update-commercialOffer'  0 %}".replace('0',offer_id );
+
+    selectedArticles = [];
+    $('.article-id').each(function() {
+        selectedArticles.push($(this).data('article-id'));
+    });
+    let queryParam = selectedArticles.map(articleId => `articles[]=${articleId}`).join('&');
+    url += queryParam;
+    
 }
 
 $('#Modal').on('hidden.bs.modal', function() {

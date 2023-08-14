@@ -22,10 +22,18 @@
                 <select id="selected-suppliers" name="supplier" multiple class="form-control">
                 </select>
             </div>
-            <div class="form-group">
+            <div class="mt-2">
                 <label>Concerned articles:</label>
-                <select id="checked-artilces" name="article" multiple class="form-control">
-                </select>
+                <table id="checked-articles" class="table table-sm">
+                    <thead>
+                        <th></th>
+                        <th> Pos </th>
+                        <th> Article </th>
+                        <th> Quantity </th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -40,9 +48,21 @@
 
         // display list of checked articles 
         $('#articles-table tbody td input[type=checkbox]:checked').each(function () {
-                // add a new option for each checked row
-                var option = $('<option>').val($(this).val()).text($(this).closest('tr').find('td:lt(3)').text()).prop('selected', true);
-                 $('#checked-artilces').append(option);
+                // Create a new table row element
+                var newRow = $('<tr>');
+                // Create a new table data (cell) element and set its text content to the option text
+                var order =$(this).closest('tr').find('td:lt(3)')
+                order.appendTo(newRow);
+                // Create an input element with the specified attributes
+                var quantityInput = $('<input>').attr({
+                    type: 'number',
+                    name: 'quantity',
+                    class: 'form-control form-control-sm',
+                    value: ''
+                });
+                $('<td>').append(quantityInput).appendTo(newRow);
+                // Append the new row to the articles table body
+                $('#checked-articles tbody').append(newRow);
         });
 
         // Add an event listener for input changes

@@ -4,41 +4,41 @@
             <th>Offer Number</th>
             <th>CO</th>
             <th>TO</th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {% for offer in project.commercialoffer_set.all %}
-        <tr>
-            <td> 
-                <a href="#" class="text-info"
-                    onclick="load_modal('Article detail','{%  url "update-commercialOffer" offer.id %}')">
-                    {{ offer.offer_nbr }}
-                </a>
-            </td>
-            <td> 
-                <a href="#"
-                    onclick="load_modal('Generate pdf','{%  url "print-commercialOffer" offer.id %}')">
-                    <i class="material-icons text-dark align-middle">picture_as_pdf</i>
-                </a>
-            </td>
-            <td> 
-                <a href="#" class="text-info"
-                    onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')">
-                    <i class="material-icons text-dark align-middle">picture_as_pdf</i>
-                </a>
-            </td>
-            <td>
-                <div class="dropdown-item">
-                    <form method="POST" action="{% url 'delete-commercialOffer' offer.id %}">
-                        {% csrf_token %}
-                        <a class="text-danger delete-btn" href="#">
-                            <i class="material-icons size-11">clear</i>
-                        </a>
-                    </form>
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <td> 
+                    <a href="#" class="text-info"
+                        onclick="load_modal('Update commercial offer','{%  url "update-commercialOffer" offer.id %}')">
+                        {{ offer.offer_nbr }}
+                    </a>
+                </td>
+                <td> 
+                    <a href="#"
+                        onclick="load_modal('Generate pdf','{%  url "print-commercialOffer" offer.id %}')">
+                        <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                    </a>
+                </td>
+                <td> 
+                    <a href="#" class="text-info"
+                        onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')">
+                        <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                    </a>
+                </td>
+                <td>
+                    <div class="dropdown-item">
+                        <form method="POST" action="{% url 'delete-commercialOffer' offer.id %}">
+                            {% csrf_token %}
+                            <a class="text-danger delete-btn" href="#" title="delete this offer">
+                                <i class="material-icons size-11">clear</i>
+                            </a>
+                        </form>
+                    </div>
+                </td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>

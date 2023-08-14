@@ -1,0 +1,32 @@
+<table class="table table-sm mt-3 bg-white">
+    <thead>
+        <tr>
+            <th>Confirmed Order Number</th>
+            <th>Action </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for offer in project.commercialoffer_set.all %}
+                <tr>
+                    {% if offer.confirmed %}
+                        <td> 
+                            <a href="#" class="text-info"
+                                onclick="load_modal('Confirmed order','{%  url "print-confirmedOrder" offer.id %}')">
+                                {{ offer.confirmation_nbr }}
+                            </a>
+                        </td>
+                        <td>
+                            <div class="dropdown-item">
+                                <form method="POST" action="{% url 'cancel-confirmedOrder' offer.id %}">
+                                    {% csrf_token %}
+                                    <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
+                                        <i class="material-icons size-11">clear</i>
+                                    </a>
+                                </form>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+        {% endfor %}
+    </tbody>
+</table>

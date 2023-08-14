@@ -10,13 +10,14 @@ from django.views.static import serve
 from django.http import Http404
 from . import translations
 from django.contrib.auth.decorators import login_required
+import re
 
 @login_required(login_url='sign-in')
 def project_home(request):
     clients = Client.objects.all()
     latest_project = Project.objects.order_by('-id').first()
     last_id = latest_project.id if latest_project else 0 
-    project_nbr  = "P{0}".format(last_id + 1)
+    project_nbr  = "A{0}".format(last_id + 1)
     local_contacts = Local_contact.objects.all()
     client_contacts = Client_contact.objects.all()
     context = {'clients':clients,
@@ -329,6 +330,7 @@ def create_quoteRequest(request,project_pk):
         client_nbr = project.client.client_nbr 
         articles = request.POST.getlist('article')
         suppliers = request.POST.getlist('supplier')
+        quantities = request.POST.getlist('quantities')
         if not len(articles) or not len(suppliers):
             messages.error(request, 'Please, select at least one article and one supplier  !')
             return redirect('project-detail',project_nbr)
@@ -337,16 +339,18 @@ def create_quoteRequest(request,project_pk):
             for supplier_id in suppliers:
                 supplier = Supplier.objects.get(id=supplier_id)
                 quoteRequests = project.quoterequest_set.all()
-                existing_request_nbrs = quoteRequests.values_list('request_nbr', flat=True)
+                if len(quoteRequests):
+                    last_request = quoteRequests.order_by('-request_nbr').first()
+                    request_nbr = last_request.request_nbr
+                    pattern = r'N(\d+)-'
+                    index = int(re.search(pattern, request_nbr).group(1)) + 1
                 request_nbr = "{0}/N{1}-{2}".format(project_nbr,index, client_nbr)      
-                while request_nbr in existing_request_nbrs:
-                    index += 1
-                    request_nbr = "{0}/N{1}-{2}".format(project_nbr,index, client_nbr)
                 quoteRequest = QuoteRequest.objects.create(project = project,
                                                         supplier=supplier,
                                                         request_nbr=request_nbr)
-                quoteRequest.articles.set(articles)
-                index+=1
+                for article, quantity in zip(articles, quantities):
+                    order = Order(article_id=article, quantity=quantity, quoteRequest=quoteRequest)
+                    order.save()
             messages.success(request, 'Quote request has been created successfully')
         except:
                 messages.error(request, 'An error occured please retry !')
@@ -359,7 +363,15 @@ def create_quoteRequest(request,project_pk):
 
 def update_quoteRequest(request,pk):
     quoteRequest = get_object_or_404(QuoteRequest, id=pk)
-    context = {'quoteRequest':quoteRequest}
+    project = quoteRequest.project
+    order_ids = request.POST.getlist('order')
+    quantities = request.POST.getlist('quantity')
+    for order_id, quantity in zip(order_ids, quantities):
+        order = get_object_or_404(Order, id=order_id)
+        order.quantity = quantity
+        order.save()
+        return redirect('project-detail',project.project_nbr)
+    context = {'quoteRequest':quoteRequest, 'orders':quoteRequest.order_set.all()}
     return render(request, 'quoteRequest_edit.html',context) 
 
 
@@ -367,7 +379,8 @@ def update_quoteRequest(request,pk):
 def add_article_to_quoteRequest(request, request_pk, article_nbr):
     quoteRequest = get_object_or_404(QuoteRequest, id=request_pk)
     article = get_object_or_404(Article, article_nbr=article_nbr)
-    quoteRequest.articles.add(article)
+    order = Order(article=article, quoteRequest=quoteRequest)
+    order.save()
     context = {'quoteRequest':quoteRequest}
     return render(request, 'quoteRequest_edit.html',context)
    
@@ -424,21 +437,19 @@ def create_commercialOffer(request,project_pk):
     if request.method == 'POST':
         form = CommercialOfferForm(request.POST)
         if form.is_valid():
-            commercialOffers = project.commercialoffer_set.all()
-            existing_offer_nbrs = commercialOffers.values_list('offer_nbr', flat=True)
-            
+            offers = project.commercialoffer_set.all()
+            index = 1
+            if len(offers):
+                last_offer = offers.order_by('-offer_nbr').first()
+                offer_nbr = last_offer.offer_nbr
+                pattern = r'G(\d+)-'
+                index = int(re.search(pattern, offer_nbr).group(1)) + 1      
             project_nbr = project.project_nbr
             client_nbr = project.client.client_nbr
-            
-            index = 1
             offer_nbr = "{0}/G{1}-{2}".format(project_nbr, index, client_nbr)
-            
-            while offer_nbr in existing_offer_nbrs:
-                index += 1
-                offer_nbr = "{0}/G{1}-{2}".format(project_nbr, index, client_nbr)
-            
             commercialOffer = form.save(commit=False)
             commercialOffer.offer_nbr = offer_nbr
+            commercialOffer.confirmation_nbr = offer_nbr.replace('G', 'C')
             commercialOffer.save()
 
             articles = request.POST.getlist('article')
@@ -550,3 +561,29 @@ def print_technicalOffer(request, offer_pk):
     context = {'commercialOffer':commercialOffer, 'translations':filtered_translations}
     return render(request, 'technicalOffer_print.html', context)
 
+
+def confirm_order(request,pk):
+    commercialOffer = get_object_or_404(CommercialOffer, id=pk)
+    if not commercialOffer.confirmed:
+        commercialOffer.confirmed = True
+        commercialOffer.save()
+    return redirect('project-detail', commercialOffer.project.project_nbr)
+
+def cancel_confirmedOrder(request,pk):
+    commercialOffer = get_object_or_404(CommercialOffer, id=pk)
+    if commercialOffer.confirmed:
+        commercialOffer.confirmed = False
+        commercialOffer.save()
+    return redirect('project-detail', commercialOffer.project.project_nbr)
+
+def print_confirmOrder(request, offer_pk):
+    commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
+    language_code = 'fr'
+    try:
+        language_code = commercialOffer.project.client.language.language_code 
+    except:
+        pass 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {'commercialOffer':commercialOffer, 
+               'translations':filtered_translations}
+    return render(request, 'confirmOrder_print.html', context)

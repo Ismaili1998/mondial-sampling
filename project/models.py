@@ -135,16 +135,15 @@ class File(models.Model):
 class QuoteRequest(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     request_nbr = models.CharField(max_length=20,unique=True)
-    articles = models.ManyToManyField(Article)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
 
 
-    def get_articles(self):
-        articles = []
-        for article in self.articles.all():
-            article.description = article.get_description(self.supplier.language.language_code)
-            articles.append(article)
-        return articles
+    # def get_articles(self):
+    #     articles = []
+    #     for article in self.articles.all():
+    #         article.description = article.get_description(self.supplier.language.language_code)
+    #         articles.append(article)
+    #     return articles
     
     class Meta:
         db_table = 'quoteRequest'
@@ -167,7 +166,8 @@ class TimeUnit(models.Model):
         return self.unit_name
     
 class CommercialOffer(models.Model):
-    offer_nbr = models.CharField(max_length=20, unique=True) 
+    offer_nbr = models.CharField(max_length=20, unique=True)
+    confirmation_nbr = models.CharField(max_length=20, unique=True, null=True) 
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
     margin = models.DecimalField(max_digits=4, decimal_places=2) 
@@ -183,10 +183,12 @@ class CommercialOffer(models.Model):
     duration_in_days = models.IntegerField(blank=True,null=True) 
     validity_date = models.DateField(blank=True,null=True)
     shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
-    transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
+    transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
+    confirmed = models.BooleanField(default=0)
 
     class Meta:
         db_table = 'commercial_offer'
+        ordering = ['-id']
 
     def __str__(self):
         return self.offer_nbr
@@ -243,12 +245,25 @@ class Order(models.Model):
     def get_selling_price(self):
         return (self.margin * self.quantity) or ""
     
-    def get_description(self):
+    def get_description_by_client_lang(self):
         language_code = self.commercialOffer.project.client.language.language_code
         return self.article.get_description(language_code)
     
+    def get_description_by_supplier_lang(self):
+        language_code = self.quoteRequest.project.client.language.language_code
+        return self.article.get_description(language_code)
 
 
+class SupplierCommand(models.Model):
+    command_nbr = models.CharField(max_length=20, unique=True)
+    due_date = models.DateField(blank=True,null=True)
+    delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
+    delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
+    payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    vat = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    packaging = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    delivery_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
 
 
 

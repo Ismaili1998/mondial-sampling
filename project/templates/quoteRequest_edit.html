@@ -24,49 +24,57 @@
             </p>
         </div>
         <div class="col-sm-8">
-            <fieldset class="border p-2">
-                <p class="w-auto"> Supplier : {{ quoteRequest.supplier }}  </p>
-                <table class="table table-sm bg-white size-12" id="offer-articles-table">
-                    <thead class="text-left">
-                        <tr>
-                            <th>Article nbr</th>
-                            <th>Description</th>
-                            <th>Unit</th>
-                            <th> </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for article in quoteRequest.get_articles  %}
-                        <input type="hidden" name="article" value="{{ article.id }}">
-                        <tr>
-                            <td>
-                                <a href="#" 
-                                    onclick="get_article('Article detail','{%  url "update-article" article.id %}')">
-                                    {{article.article_nbr }}
-                                </a>
+            <form>
+                {% csrf_token %}
+                <fieldset class="border p-2">
+                    <p class="w-auto"> Supplier : {{ quoteRequest.supplier }}  </p>
+                    <table class="table table-sm bg-white size-12" id="offer-articles-table">
+                        <thead class="text-left">
+                            <tr>
+                                <th>Article nbr</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders  %}
+                            <input type="hidden" name="order" value="{{ order.id }}">
+                            <tr>
+                                <td>
+                                    <a href="#" 
+                                        onclick="get_article('Article detail','{%  url "update-article" order.article.id %}')">
+                                        {{order.article.article_nbr }}
+                                    </a>
+                                </td>
+                                <td style="width:300px">
+                                <textarea disabled rows="5" class="form-control size-11"> {{order.get_description_by_supplier_lang}} </textarea>
+                                </td>
+                                <td>
+                                    <input class="form-control form-control-sm"  value="{{ order.quantity }}" name="quantity"/>
+                                </td>
+                                <td> {{order.article.article_unit}} </td>
+                                <td> <a href="#" class="btn btn-sm btn-remove"
+                                        onclick="load_modal('Update ','{%  url "remove-article-from-quoteRequest" quoteRequest.id order.article.id %}')"
+                                    > 
+                                    <i class="material-icons size-11 text-danger">clear</i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <td colspan="1">
+                                <input type="text"  name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
                             </td>
-                            <td style="width:300px">
-                            <textarea disabled rows="5" class="form-control size-11"> {{article.description}} </textarea>
+                            <td colspan="3">
+                                <button class="btn btn-sm"> + add new article</button>
                             </td>
-                            <td> {{article.article_unit}} </td>
-                            <td> <a href="#" class="btn btn-sm btn-remove"
-                                    onclick="load_modal('Update ','{%  url "remove-article-from-quoteRequest" quoteRequest.id article.id %}')"
-                                > 
-                                <i class="material-icons size-11 text-danger">clear</i></a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    <tfoot>
-                        <td colspan="1">
-                            <input type="text"  name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
-                        </td>
-                        <td colspan="3">
-                            <button class="btn btn-sm"> + add new article</button>
-                        </td>
-                    </tfoot>
-                </table>
-            </fieldset>
+                        </tfoot>
+                    </table>
+                    <button class="btn btn-sm btn-dark" type="submit"> save changes</button>
+                </fieldset>
+            </form>
         </div>
         <div class="d-flex justify-content-start mt-n3">
             <button type="submit" class="mt-n7 btn btn-warning btn-sm">
@@ -144,8 +152,7 @@
 
         $('tfoot .btn').click(function(event) {
             event.preventDefault();
-            let article_nbr = $('tfoot .searchArticle').val();
-            url = "{% url 'add-article-to-quoteRequest' quoteRequest.id 'article_nbr' %}".replace('article_nbr',article_nbr);
+            url = "{% url 'add-article-to-quoteRequest' quoteRequest.id%}";
             load_modal('Update Commercial offer', url);
         
         });
