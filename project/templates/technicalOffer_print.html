@@ -58,7 +58,7 @@
         <!-- Body section -->
         <div class="row mt-2">
             <div class="col-12">
-                <table class="table table-sm bg-white" id="offer-articles-table">
+                <table class="table table-sm bg-white" id="orders-list">
                     <thead>
                         <tr class="size-13">
                             {% for column_name in translations.columns_name|slice:":5" %}
@@ -72,7 +72,7 @@
                             <td> {{ forloop.counter }} </td>
                             <td> {{ order.article.article_nbr}} </td>
                             <td class="text-description"> 
-                                <pre>{{ order.get_description }}</pre>
+                                <pre>{{ order.get_description_by_client_lang }}</pre>
                             </td>
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
@@ -123,5 +123,16 @@
         var formattedDate = day + '.' + month + '.' + year;
         $('#currentDate').text(formattedDate);
     });
+
+
+    $("#orders-list tbody").sortable({
+            helper: "clone", // Display a clone of the row while dragging
+            update: function(event, ui) {
+                // Update the Pos numbers based on the new order
+                $("#orders-list tbody tr").each(function(index) {
+                    $(this).find("td:first-child").text(index + 1);
+                });
+            }
+        }).disableSelection();
 
 </script>

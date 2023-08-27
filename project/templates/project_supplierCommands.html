@@ -1,0 +1,28 @@
+<table class="table table-sm mt-3 bg-white">
+    <thead>
+        <tr>
+            <th>Command Number</th>
+            <th>Print</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for quoteRequest in project.quoterequest_set.all %}
+            {% if quoteRequest.suppliercommand %}
+            <tr>
+                <td>
+                    <a class="text-info" onclick="load_modal('Update command','{%  url "update-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                        href="#">
+                        {{ quoteRequest.suppliercommand.command_nbr }}
+                    </a>
+                </td>
+                <td>
+                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                    >
+                        <i class="material-icons align-middle text-dark">picture_as_pdf</i>
+                    </a>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

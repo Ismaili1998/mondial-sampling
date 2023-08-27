@@ -3,7 +3,8 @@
         <tr>
             <th>Request Number</th>
             <th>Supplier</th>
-            <th>QR</th>
+            <th>Print</th>
+            <th>Order </th>
             <th>Action</th>
         </tr>
     </thead>
@@ -23,10 +24,16 @@
                         class="material-icons align-middle size-13 text-dark">visibility</i>
                     </a>
                 </td>
-                <td class="d-flex justify-content-end">
+                <td>
                     <a href="#" onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
                     >
-                        <i class="material-icons text-dark">picture_as_pdf</i>
+                        <i class="material-icons align-middle text-dark">picture_as_pdf</i>
+                    </a>
+                </td>
+                <td>
+                    <a href="#" onclick="load_modal('Supplier command','{%  url "supplier-command"  quoteRequest.id %}')"
+                    >
+                        <i class="material-icons align-middle text-dark">shopping_cart_checkout</i>
                     </a>
                 </td>
                 <td>

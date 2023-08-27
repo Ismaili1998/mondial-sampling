@@ -28,8 +28,7 @@ urlpatterns = [
     path('get-suppliersByKeyWord/', views.get_suppliersByKeyWord, name='get-suppliersByKeyWord'),
 
     path('create-quoteRequest/<str:project_pk>', views.create_quoteRequest, name='create-quoteRequest'),
-    path('add-article-to-quoteRequest/<str:request_pk>', views.add_article_to_quoteRequest, name='add-article-to-quoteRequest'),
-    path('remove-article-from-quoteRequest/<str:request_pk>/<str:article_pk>', views.remove_article_from_quoteRequest, name='remove-article-from-quoteRequest'),
+    path('add-article-to-quoteRequest/<str:request_pk>/<str:article_nbr>', views.add_article_to_quoteRequest, name='add-article-to-quoteRequest'),
     path('update-quoteRequest/<str:pk>', views.update_quoteRequest, name='update-quoteRequest'),
     path('delete-quoteRequest/<str:pk>', views.delete_quoteRequest, name='delete-quoteRequest'),
     path('create-quoteRequest-pdfReport/<str:request_pk>', views.create_quoteRequest_pdfReport, name='create-quoteRequest-pdfReport'),
@@ -44,6 +43,13 @@ urlpatterns = [
     path('cancel-confirmedOrder/<str:pk>', views.cancel_confirmedOrder, name='cancel-confirmedOrder'),
     path('confirme-order/<str:pk>', views.confirm_order, name='confirm-order'),
     path('print-confirmedOrder/<str:offer_pk>/', views.print_confirmOrder, name='print-confirmedOrder'),
+
+
+    path('supplier-command/<str:request_pk>/', views.supplier_command, name='supplier-command'),
+    path('print-supplierCommand/<str:pk>/', views.print_supplierCommand, name='print-supplierCommand'),
+    path('update-supplierCommand/<str:pk>/', views.update_supplierCommand, name='update-supplierCommand'),
+
+
 
 ]
 

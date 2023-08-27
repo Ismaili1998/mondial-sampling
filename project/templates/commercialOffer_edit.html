@@ -31,7 +31,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for order in orders %}
+                    {% for order in commercialOffer.order_set.all %}
                     <tr>
                         <td class="article-id" data-article-id="{{ article.id }}">
                             <a  href="#" 
@@ -40,7 +40,7 @@
                             </a>
                         </td>
                         <td style="width:300px">
-                           <textarea disabled rows="5" class="form-control size-11"> {{ order.get_description}} </textarea>
+                           <textarea disabled rows="5" class="form-control size-11"> {{ order.get_description_by_client_lang}} </textarea>
                         </td>
                         <td class="form-group">
                             <input type="number" name="quantity" 
@@ -451,6 +451,8 @@ $(document).ready(function () {
     confirmBtn.click(function() {
         form.attr('action', '{% url "confirm-order" commercialOffer.id %}');
     });
+    
+
     
 }); 
 

@@ -34,7 +34,7 @@
             <div class="form-group row mt-2">
                 <label for="email1" class="col-sm-4 col-form-label col-form-label-sm">Country</label>
                 <div class="col-sm-8">
-                    <select class="form-select form-select-sm" name="country" aria-label=".form-select-sm example">
+                    <select required class="form-select form-select-sm" name="country" aria-label=".form-select-sm example">
                         <option value=""> Chose a country </option>
                         {% for country in countries %}
                         <option value="{{ country.id }}" {% if client.country.id == country.id %} selected {% endif %}>
@@ -54,7 +54,7 @@
             <div class="form-group row mt-2">
                 <label for="language" class="col-sm-4 col-form-label col-form-label-sm">Language</label>
                 <div class="col-sm-8">
-                    <select name="language" class="form-select form-select-sm" id="language">
+                    <select required name="language" class="form-select form-select-sm" id="language">
                         <option value=""> Chose a language </option>
                         {% for language in languages %}
                         <option value="{{language.id }}" {% if client.language.id == language.id %} selected {% endif %}>

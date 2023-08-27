@@ -12,6 +12,18 @@ translations = {
         'de': 'Damen und Herrn, erbeten Ihr günstigstes Angebot in aller Eile über',
     },
 
+    'controlling_idea_sc': {
+        'en': 'We refer to your obove mentioned quotation and send you the following purchasing order:',
+        'fr': 'Suite à votre offer citée en réf. Nous vous passons notre commande ferme comme suit :',
+        'de': 'es freut uns sehr, Ihnen heute folgenden Auftrag zu erteilen:',
+    },
+
+    'purchasing_order': {
+        'en': 'Purchasing order N°',
+        'fr': 'Bon de Commande N°',
+        'de': 'Bestellung',
+    },
+
     'signature': {
         'en': 'Best regards',
         'fr':'Meilleures Salutations',
@@ -180,5 +192,33 @@ translations = {
             +- Zolltarifnummer(n):
             +- Ursprungsland:
             +- Gefahrgut für Luft- oder Seefracht: ja / nein:""".split("+")
-        }
+        },
+
+        'command_remarks':
+            {'de':"""
+                + Bitte unbedingt stabile Verpackung vorsehen (Exportkarton auf Palette genügt), bitte keine ungeschützte
+                Ware anliefern!.
+                + Bitte Lieferantenerklärung mit Angabe des Ursprungslandes (DE, FR…) und der Zollwaren-Nr.
+                + spätestens mit der Rechnung zufaxen/zumailen
+                + Für Waren außerhalb der EG, bitte Ursprungszeugnis liefern (ggf. gegen Berechnung)
+                + Für Pakete bis 40 kg gilt unsere Hausanschrift, andernfalls folgende Lieferadresse: Spedition Navis AG -
+                + Billhorner Kanalstr. 69 - 20539 Hamburg, Kontaktperson Herr Gilbert/Frau Syring (Tel.: 040/789 48 - 266).
+                + Markierung: Unsere Bestell-Nr.""".split('+'),
+
+             'en':"""
+                + It's necessary to provide us with supplier’s declaration for products having preferential origin status
+                + according to (EC) NO. 1207/2001. See enclosed model.
+                + Delivery Adress: Spedition Navis AG
+                + Billhorner Kanalstr. 69 - D-20539 Hamurg/Germany.
+                + Att. Mrs Syring (Tel.: +49(040)78948-266).
+                + Marks: Our Purchasing Order No.""".split('+'),
+
+             'fr':"""
+                + Adresse de livraison:Notre adresse pour des packets dont le poids total n’excedant pas 30 kg.
+                + Si non à l’adresse du notre transporteur : Spedition NAVIS AG Att. Mr. Gilbert/ Mde. Syring (Marks: Our
+                + order NO.) Billhorner Kanalstr. 69 D-20539 Hamburg/
+                + Pour marchandise dont l'origine est hors CEE, veuillez livrer un certificat d'origine (à notre charge après
+                + accord)
+                .""".split('+')
+            }
 }

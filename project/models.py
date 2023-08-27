@@ -243,28 +243,49 @@ class Order(models.Model):
         return "{0} of {1}".format(self.quantity, self.article.article_name)
 
     def get_selling_price(self):
-        return (self.margin * self.quantity) or ""
+        return (self.margin * self.quantity) or 0
+    
+    def get_total_price(self):
+        return (self.article.purchase_price * self.quantity) or 0
     
     def get_description_by_client_lang(self):
         language_code = self.commercialOffer.project.client.language.language_code
-        return self.article.get_description(language_code)
+        return self.article.get_description(language_code) or ''
     
     def get_description_by_supplier_lang(self):
         language_code = self.quoteRequest.project.client.language.language_code
-        return self.article.get_description(language_code)
+        return self.article.get_description(language_code) or ''
 
 
 class SupplierCommand(models.Model):
     command_nbr = models.CharField(max_length=20, unique=True)
-    due_date = models.DateField(blank=True,null=True)
+    validity_date = models.DateField(blank=True,null=True)
     delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
     delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
-    vat = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
-    packaging = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
-    delivery_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
 
+    vat = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    packaging_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    transport_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+
+    quoteRequest = models.OneToOneField(
+        QuoteRequest,
+        on_delete=models.CASCADE,
+        null=True
+    )
+
+    def get_total_purchase(self):
+        total_purchase = 0
+        for order in self.quoteRequest.order_set.all():
+            total_purchase += order. get_total_price()
+        return round(total_purchase,2)
+    
+    def get_final_total(self):
+        return self.get_total_purchase() + self.packaging_fee + self.transport_fee
+    
+    def get_fee(self):
+        return (self.packaging_fee + self.transport_fee) or 0
 
 
 

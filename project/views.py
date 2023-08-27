@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm, Supplier_contactForm
-from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit, File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact, Order
+from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm, Supplier_contactForm, SupplierCommandForm
+from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit,\
+File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact,\
+Order, SupplierCommand
 from client.models import Client, Country, Language, Transport, Payment, Currency, Shipping
 from django.contrib import messages
 from django.http import JsonResponse
@@ -208,17 +210,15 @@ def remove_article_from_project(request, article_pk):
     messages.success(request,'Article has been removed from project succesfully')
     return redirect('project-detail', project.project_nbr)
 
-def delete_order(request, pk):
-    order = get_object_or_404(Order, pk=pk)
-    commercialOffer = order.commercialOffer
-    order.delete()
+
+def commercialOffer_detail(commercialOffer):
     timeUnits = TimeUnit.objects.all()
     payments = Payment.objects.all()
     transports = Transport.objects.all()
     destinations = Destination.objects.all()
     currencies = Currency.objects.all()
     shippings = Shipping.objects.all()
-    context = {'commercialOffer':commercialOffer,
+    return {'commercialOffer':commercialOffer,
                'currencies': currencies,
                'timeUnits':timeUnits,
                'payments':payments,
@@ -226,7 +226,20 @@ def delete_order(request, pk):
                'destinations':destinations,
                'shippings': shippings,
                'orders':commercialOffer.order_set.all()}
-    return render(request, 'commercialOffer_edit.html',context) 
+
+
+def quoteRequest_detail(quoteRequest):
+   return  {'quoteRequest':quoteRequest, 
+            'orders':quoteRequest.order_set.all()}
+
+def delete_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    commercialOffer = order.commercialOffer
+    quoteRequest = order.quoteRequest
+    order.delete()
+    if commercialOffer:
+        return render(request, 'commercialOffer_edit.html',commercialOffer_detail(commercialOffer))
+    return render(request, 'quoteRequest_edit.html', quoteRequest_detail(quoteRequest))
 
 #======================= supplier area ====================================#
 def supplier_create(request):
@@ -330,7 +343,8 @@ def create_quoteRequest(request,project_pk):
         client_nbr = project.client.client_nbr 
         articles = request.POST.getlist('article')
         suppliers = request.POST.getlist('supplier')
-        quantities = request.POST.getlist('quantities')
+        quantities = request.POST.getlist('quantity')
+        print(articles, quantities, suppliers)
         if not len(articles) or not len(suppliers):
             messages.error(request, 'Please, select at least one article and one supplier  !')
             return redirect('project-detail',project_nbr)
@@ -354,7 +368,6 @@ def create_quoteRequest(request,project_pk):
             messages.success(request, 'Quote request has been created successfully')
         except:
                 messages.error(request, 'An error occured please retry !')
-
         return redirect('project-detail',project_nbr)
     
     suppliers = Supplier.objects.all()
@@ -363,16 +376,21 @@ def create_quoteRequest(request,project_pk):
 
 def update_quoteRequest(request,pk):
     quoteRequest = get_object_or_404(QuoteRequest, id=pk)
-    project = quoteRequest.project
-    order_ids = request.POST.getlist('order')
-    quantities = request.POST.getlist('quantity')
-    for order_id, quantity in zip(order_ids, quantities):
-        order = get_object_or_404(Order, id=order_id)
-        order.quantity = quantity
-        order.save()
+    if request.method == 'POST':
+        project = quoteRequest.project
+        order_ids = request.POST.getlist('order')
+        quantities = request.POST.getlist('quantity')
+        print(order_ids, quantities)
+        try:
+            for order_id, quantity in zip(order_ids, quantities):
+                order = get_object_or_404(Order, id=order_id)
+                order.quantity = quantity
+                order.save()
+            messages.success(request, 'Quote request has been updated successfully')
+        except:
+                messages.error(request, 'An error occured please retry !')
         return redirect('project-detail',project.project_nbr)
-    context = {'quoteRequest':quoteRequest, 'orders':quoteRequest.order_set.all()}
-    return render(request, 'quoteRequest_edit.html',context) 
+    return render(request, 'quoteRequest_edit.html',context = quoteRequest_detail(quoteRequest)) 
 
 
 
@@ -381,23 +399,7 @@ def add_article_to_quoteRequest(request, request_pk, article_nbr):
     article = get_object_or_404(Article, article_nbr=article_nbr)
     order = Order(article=article, quoteRequest=quoteRequest)
     order.save()
-    context = {'quoteRequest':quoteRequest}
-    return render(request, 'quoteRequest_edit.html',context)
-   
-     
-
-def remove_article_from_quoteRequest(request, request_pk, article_pk):
-    try:
-        quoteRequest = get_object_or_404(QuoteRequest, id=request_pk)
-        article = get_object_or_404(Article, id=article_pk)
-        quoteRequest.articles.remove(article)
-    except:
-        messages.error(request, 'An error occured please retry !')
-    
-    context = {'quoteRequest':quoteRequest}
-    return render(request, 'quoteRequest_edit.html',context) 
-    
-
+    return render(request, 'quoteRequest_edit.html',context = quoteRequest_detail(quoteRequest))
 
 def create_quoteRequest_pdfReport(request, request_pk):
     quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)
@@ -587,3 +589,61 @@ def print_confirmOrder(request, offer_pk):
     context = {'commercialOffer':commercialOffer, 
                'translations':filtered_translations}
     return render(request, 'confirmOrder_print.html', context)
+
+
+def supplierCommand_detail(quoteRequest,page_name):
+    timeUnits = TimeUnit.objects.all()
+    payments = Payment.objects.all()
+    currencies = Currency.objects.all()
+    return {'quoteRequest':quoteRequest,
+               'currencies': currencies,
+               'timeUnits':timeUnits,
+               'payments':payments,
+               'page':page_name,
+               'orders':quoteRequest.order_set.all()}
+
+def supplier_command(request, request_pk):
+    quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)
+    if request.method == 'POST':
+        form = SupplierCommandForm(request.POST)
+        if form.is_valid():
+            supplier_command = form.save(commit=False)
+            supplier_command.quoteRequest = quoteRequest
+            supplier_command.command_nbr = quoteRequest.request_nbr.replace('N','B')
+            supplier_command.save()
+            messages.success(request, 'Command has been created successfully.')
+        else:
+            for err in form.errors:
+                print(err)
+            messages.error(request, 'An error occured, please retry')
+        return redirect('project-detail', quoteRequest.project.project_nbr)
+    return render(request, 'supplier_command.html', context=supplierCommand_detail(quoteRequest,'create-command'))
+
+
+def update_supplierCommand(request, pk):
+    supplierCommand = get_object_or_404(SupplierCommand, id=pk)
+    quoteRequest = supplierCommand.quoteRequest
+    if request.method == 'POST':
+        form = SupplierCommandForm(request.POST, instance=supplierCommand)
+        if form.is_valid():
+            supplierCommand.save()
+            messages.success(request, 'Command has been updated successfully.')
+        else:
+            for err in form.errors:
+                print(err)
+            messages.error(request, 'An error occured, please retry')
+        return redirect('project-detail', quoteRequest.project.project_nbr)
+    return render(request, 'supplier_command.html', context=supplierCommand_detail(quoteRequest,'update-command'))
+
+def print_supplierCommand(request, pk):
+    supplierCommand = get_object_or_404(SupplierCommand, id=pk)
+    quoteRequest = supplierCommand.quoteRequest
+    language_code = 'fr'
+    try:
+        language_code = quoteRequest.supplier.language.language_code 
+    except:
+        pass 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {'quoteRequest':quoteRequest, 
+               'translations':filtered_translations}
+    return render(request, 'supplierCommand_print.html', context)

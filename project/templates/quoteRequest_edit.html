@@ -1,4 +1,4 @@
-<form method="POST" action="{% url 'create-quoteRequest' quoteRequest.project.id %}">
+<form method="POST">
     {% csrf_token %}
     <div class="row">
         <div class="col-sm-4">
@@ -24,8 +24,6 @@
             </p>
         </div>
         <div class="col-sm-8">
-            <form>
-                {% csrf_token %}
                 <fieldset class="border p-2">
                     <p class="w-auto"> Supplier : {{ quoteRequest.supplier }}  </p>
                     <table class="table table-sm bg-white size-12" id="offer-articles-table">
@@ -41,6 +39,7 @@
                         <tbody>
                             {% for order in orders  %}
                             <input type="hidden" name="order" value="{{ order.id }}">
+                            <input type="hidden" name="article" value="{{ order.article.id }}">
                             <tr>
                                 <td>
                                     <a href="#" 
@@ -51,12 +50,10 @@
                                 <td style="width:300px">
                                 <textarea disabled rows="5" class="form-control size-11"> {{order.get_description_by_supplier_lang}} </textarea>
                                 </td>
-                                <td>
-                                    <input class="form-control form-control-sm"  value="{{ order.quantity }}" name="quantity"/>
-                                </td>
+                                <td> <input class="form-control form-control-sm" value="{{ order.quantity|default:'' }}" name="quantity"> </td>
                                 <td> {{order.article.article_unit}} </td>
                                 <td> <a href="#" class="btn btn-sm btn-remove"
-                                        onclick="load_modal('Update ','{%  url "remove-article-from-quoteRequest" quoteRequest.id order.article.id %}')"
+                                        onclick="load_modal('Update ','{%  url "delete-order" order.id %}')"
                                     > 
                                     <i class="material-icons size-11 text-danger">clear</i></a>
                                 </td>
@@ -72,9 +69,8 @@
                             </td>
                         </tfoot>
                     </table>
-                    <button class="btn btn-sm btn-dark" type="submit"> save changes</button>
+                    <button class="btn btn-sm btn-dark" type="submit"> save changes </button>
                 </fieldset>
-            </form>
         </div>
         <div class="d-flex justify-content-start mt-n3">
             <button type="submit" class="mt-n7 btn btn-warning btn-sm">
@@ -149,15 +145,33 @@
             }
         });
 
-
         $('tfoot .btn').click(function(event) {
             event.preventDefault();
-            url = "{% url 'add-article-to-quoteRequest' quoteRequest.id%}";
+            let article_nbr = $('tfoot .searchArticle').val();
+            url = "{% url 'add-article-to-quoteRequest' quoteRequest.id 'article_nbr' %}".replace('article_nbr',article_nbr);
             load_modal('Update Commercial offer', url);
         
         });
 
         
+        // Click event handler for the "Save Changes" button
+        $('.btn-dark').click(function() {
+            event.preventDefault();
+            var form = $(this).closest('form');
+            var actionUrl = '{% url "update-quoteRequest" quoteRequest.id %}';
+            form.attr('action', actionUrl);
+            form.submit();
+        });
+
+        // Click event handler for the "Duplicate" button
+        $('.btn-warning').click(function() {
+            event.preventDefault();
+            var actionUrl = '{% url "create-quoteRequest" quoteRequest.project.id %}';
+            var form = $(this).closest('form');
+            form.attr('action', actionUrl);
+            form.submit();
+        });
+
     });
 
 article_is_opned = false ;
