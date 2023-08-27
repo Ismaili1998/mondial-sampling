@@ -18,6 +18,20 @@ translations = {
         'de': 'es freut uns sehr, Ihnen heute folgenden Auftrag zu erteilen:',
     },
 
+    'controlling_idea_co': {
+        'en': 'Thank you for your enquiry. We are pleased to submit you our financial offer as follows',
+        'fr':'''Nous nous référons à votre consultation, pour laquelle nous vous remercions 
+            vivement et avons le plaisir de vous transmettre notre offre comme suit''',
+        'de':'Wir danken Ihnen für Ihre Anfrage und unterbreiten Ihnen das gewünschte Angebot wie folgt',
+    },
+
+    'controlling_idea_f': {
+        'en': 'We refer to the delivery subject to your order for which we thank you warmly and transmit our invoice as follows',
+        'fr':'''Nous nous référons à la livraison objét de votre commande citée en référence pour laquelle
+                nous vous remercions vivement et vous transmettons ci-après notre facture:''',
+        'de':'Wir beziehen uns auf die gem. Ihrem Auftrag gelieferten Waren und berechnen Ihnen wie folgt',
+    },
+
     'purchasing_order': {
         'en': 'Purchasing order N°',
         'fr': 'Bon de Commande N°',
@@ -52,13 +66,6 @@ translations = {
         'en': 'Inquiry',
         'fr':'Demande',
         'de':'Anfrage',
-    },
-
-    'controlling_idea_co': {
-        'en': 'Thank you for your enquiry. We are pleased to submit you our financial offer as follows',
-        'fr':'''Nous nous référons à votre consultation, pour laquelle nous vous remercions 
-            vivement et avons le plaisir de vous transmettre notre offre comme suit''',
-        'de':'Wir danken Ihnen für Ihre Anfrage und unterbreiten Ihnen das gewünschte Angebot wie folgt',
     },
 
     'columns_name': {
@@ -194,31 +201,63 @@ translations = {
             +- Gefahrgut für Luft- oder Seefracht: ja / nein:""".split("+")
         },
 
-        'command_remarks':
-            {'de':"""
-                + Bitte unbedingt stabile Verpackung vorsehen (Exportkarton auf Palette genügt), bitte keine ungeschützte
-                Ware anliefern!.
-                + Bitte Lieferantenerklärung mit Angabe des Ursprungslandes (DE, FR…) und der Zollwaren-Nr.
-                + spätestens mit der Rechnung zufaxen/zumailen
-                + Für Waren außerhalb der EG, bitte Ursprungszeugnis liefern (ggf. gegen Berechnung)
-                + Für Pakete bis 40 kg gilt unsere Hausanschrift, andernfalls folgende Lieferadresse: Spedition Navis AG -
-                + Billhorner Kanalstr. 69 - 20539 Hamburg, Kontaktperson Herr Gilbert/Frau Syring (Tel.: 040/789 48 - 266).
-                + Markierung: Unsere Bestell-Nr.""".split('+'),
+    'command_remarks':
+        {'de':"""
+            + Bitte unbedingt stabile Verpackung vorsehen (Exportkarton auf Palette genügt), bitte keine ungeschützte
+            Ware anliefern!.
+            + Bitte Lieferantenerklärung mit Angabe des Ursprungslandes (DE, FR…) und der Zollwaren-Nr.
+            + spätestens mit der Rechnung zufaxen/zumailen
+            + Für Waren außerhalb der EG, bitte Ursprungszeugnis liefern (ggf. gegen Berechnung)
+            + Für Pakete bis 40 kg gilt unsere Hausanschrift, andernfalls folgende Lieferadresse: Spedition Navis AG -
+            + Billhorner Kanalstr. 69 - 20539 Hamburg, Kontaktperson Herr Gilbert/Frau Syring (Tel.: 040/789 48 - 266).
+            + Markierung: Unsere Bestell-Nr.""".split('+'),
 
-             'en':"""
-                + It's necessary to provide us with supplier’s declaration for products having preferential origin status
-                + according to (EC) NO. 1207/2001. See enclosed model.
-                + Delivery Adress: Spedition Navis AG
-                + Billhorner Kanalstr. 69 - D-20539 Hamurg/Germany.
-                + Att. Mrs Syring (Tel.: +49(040)78948-266).
-                + Marks: Our Purchasing Order No.""".split('+'),
+            'en':"""
+            + It's necessary to provide us with supplier’s declaration for products having preferential origin status
+            + according to (EC) NO. 1207/2001. See enclosed model.
+            + Delivery Adress: Spedition Navis AG
+            + Billhorner Kanalstr. 69 - D-20539 Hamurg/Germany.
+            + Att. Mrs Syring (Tel.: +49(040)78948-266).
+            + Marks: Our Purchasing Order No.""".split('+'),
 
-             'fr':"""
-                + Adresse de livraison:Notre adresse pour des packets dont le poids total n’excedant pas 30 kg.
-                + Si non à l’adresse du notre transporteur : Spedition NAVIS AG Att. Mr. Gilbert/ Mde. Syring (Marks: Our
-                + order NO.) Billhorner Kanalstr. 69 D-20539 Hamburg/
-                + Pour marchandise dont l'origine est hors CEE, veuillez livrer un certificat d'origine (à notre charge après
-                + accord)
-                .""".split('+')
-            }
+            'fr':"""
+            + Adresse de livraison:Notre adresse pour des packets dont le poids total n’excedant pas 30 kg.
+            + Si non à l’adresse du notre transporteur : Spedition NAVIS AG Att. Mr. Gilbert/ Mde. Syring (Marks: Our
+            + order NO.) Billhorner Kanalstr. 69 D-20539 Hamburg/
+            + Pour marchandise dont l'origine est hors CEE, veuillez livrer un certificat d'origine (à notre charge après
+            + accord)
+            .""".split('+')
+        },
+
+    'bank_name':{
+            'fr': 'Notre Bank',
+            'en': 'Our bank',
+            'de': 'Bankverbindung'
+        },
+
+    'invoice':{
+        'fr': 'Facture',
+        'en': 'Invoice',
+        'de': 'Rechnung'
+    },
+
+    'payments_infos':
+    {
+        'de':"""
+            Déclaration pour EUR.1 (pour Factures de valeurs inférieures à EUR6.000,00)
+            L'exportateur des produits couverts par le présent document (autorisation douanière n°...)
+            déclare que, sauf indication claire du contraire, ces produits ont 
+            l'origine préférentielle CEE""",
+
+        'en':""" Déclaration pour EUR.1 (pour Factures de valeurs inférieures à EUR6.000,00)
+            L'exportateur des produits couverts par le présent document (autorisation douanière n°...)
+            déclare que, sauf indication claire du contraire, ces produits ont l'origine préférentielle CEE""",
+
+        'fr':"""
+            Erklärung für EUR.1 (für Rechnungen mit einem Wert von weniger als EUR 6.000,00)
+            Der Ausführer der unter dieses Dokument fallenden Waren (Zollbewilligung Nr. ...)
+            erklärt, dass diese Waren, sofern nicht eindeutig etwas anderes angegeben ist, den Präferenzursprung EWG haben
+            """
+    }
+        
 }
