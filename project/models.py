@@ -94,7 +94,6 @@ class Article(models.Model):
     project = models.ForeignKey(Project,on_delete=models.PROTECT,null=True,blank=True)
     article_unit = models.ForeignKey(ArticleUnit,on_delete=models.PROTECT,null=True, blank= True)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
-    selling_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
     net_weight = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
     customs_tariff =  models.CharField(max_length=150, null= True, blank= True)
     customs_description = models.TextField(blank=True, max_length=500, null= True)
@@ -112,9 +111,7 @@ class Article(models.Model):
 
    
     def get_description(self, language_code):
-        if language_code == 'fr':
-            return self.description_fr
-        elif language_code == 'en':
+        if language_code == 'en':
             return self.description_en
         elif language_code == 'de':
             return self.description_de
@@ -167,7 +164,6 @@ class TimeUnit(models.Model):
     
 class CommercialOffer(models.Model):
     offer_nbr = models.CharField(max_length=20, unique=True)
-    confirmation_nbr = models.CharField(max_length=20, unique=True, null=True) 
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
     margin = models.DecimalField(max_digits=4, decimal_places=2) 
@@ -177,14 +173,14 @@ class CommercialOffer(models.Model):
     transport = models.ForeignKey(Transport,on_delete=models.PROTECT, blank=True,null=True)
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
     local_contact = models.BooleanField(default=1)
+    confirmed = models.BooleanField(default=0)
     destination = models.ForeignKey(Destination,on_delete=models.PROTECT, blank=True,null=True)
     delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
     delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
     duration_in_days = models.IntegerField(blank=True,null=True) 
-    validity_date = models.DateField(blank=True,null=True)
+    valid_date = models.DateField(blank=True,null=True)
     shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
     transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
-    confirmed = models.BooleanField(default=0)
 
     class Meta:
         db_table = 'commercial_offer'
@@ -221,13 +217,25 @@ class CommercialOffer(models.Model):
             discount_price = self.get_total_selling() * (self.discount / 100)
             return round(discount_price,2)
 
-
     def get_total_fee(self):
         return (self.transport_fee or 0) + (self.shipping_fee or 0)
 
     def get_total_selling_withFee(self):
         return (self.get_discounted_price() or self.get_total_selling()) + self.get_total_fee()
 
+class Confirmed_commercialOffer(models.Model):
+    confirmation_nbr = models.CharField(max_length=20, unique=True)
+    client_nbr = models.CharField(max_length=20, unique=True)
+    commission = models.DecimalField(max_digits=4, decimal_places=2)
+    commercialOffer = models.OneToOneField(
+        CommercialOffer,
+        on_delete=models.CASCADE) 
+    
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+    
+    def get_commission(self):
+        return self.commercialOffer.get_total_selling_withFee() * (self.commission / 100)
 
 class Order(models.Model):
     article = models.ForeignKey(Article,on_delete=models.PROTECT)

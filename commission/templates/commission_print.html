@@ -1,0 +1,115 @@
+
+{% load format_numbers %}
+{% load static %}
+<div class="container-fluid item-to-print">
+     <!-- Header, logo section -->
+    <div class="row">
+        <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
+    </div>
+    <div class="row mt-4">
+        <div class="text-left">
+            <h6>  Rapport commission provisoires : </h6>
+            <h6>  Represenatnt: {{ representative }} </h6>
+            <h6>  Pays: </h6>
+        </div>
+    </div>
+    <table class="table table-sm mt-5 size-12">
+        <thead>
+            <tr>
+                <th>Client</th>
+                <th>Project</th>
+                <th>Invoice / Confirmation Ref</th>
+                <th>Date </th>
+                <th>Client Ref </th>
+                <th>Sales </th>
+                <th>Commission</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.commercialOffer.project.client }}</td>
+                <td>{{ invoice.commercialOffer.project }}</td>
+                <td>{{ invoice.confirmation_nbr }}</td>
+                <td>{{ invoice.created_at }}</td>
+                <td>{{ invoice.client_nbr }}</td>
+                <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
+                <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.commercialOffer.currency }} </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No invoice available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="mt-5 d-flex justify-content-between">
+        <div>
+            <strong> Calculation  </strong>
+            <table class="table table-sm size-13 mt-2">
+                <tbody>
+                    <tr>
+                        <th>Total Sales:</th>
+                        <td>{{ total_sales|thousand_separator }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Commission:</th>
+                        <td>{{ total_commission|thousand_separator }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Advances:</th>
+                        <td>{{ total_advances|thousand_separator }}</td>
+                    </tr>
+                    <tr>
+                        <th>Remaining:</th>
+                        <td class="text-primary">{{ remaining|thousand_separator }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <strong> Advance Payments  </strong>
+            <table class="table table-sm size-13 mt-2">
+                <thead>
+                    <tr>
+                        <th>Advance</th>
+                        <th>Comment</th>
+                        <th>Date </th>
+                        <th>Date de modification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for advancepayment in advancePayments %}
+                    <tr>
+                        <td>{{ advancepayment.amount|thousand_separator }}</td>
+                        <td>{{ advancepayment.comment }}</td>
+                        <td>{{ advancepayment.created_at|date:'d.m.Y' }}</td>
+                        <td>{{ advancepayment.updated_at|date:'d.m.Y' }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No Advance Payments available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <td colspan="4"> <strong> {{ total_advances }}  {{ invoice.commercialOffer.currency }} </strong> </td>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-4">
+           <p> Je confirme avoir recu les montants objets de ce rapport.</p>
+           <p> ...................... le ....................................</p>
+           <p> ...................... le ....................................</p>
+    </div>
+</div>
+<button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
+<script>
+    function printPage() {
+        var printContent = document.querySelector('.item-to-print');
+        document.body.innerHTML = printContent.outerHTML;
+        window.print();
+        window.location.reload();
+    }
+</script>

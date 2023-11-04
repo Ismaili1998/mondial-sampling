@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm, Supplier_contactForm, SupplierCommandForm
+from .forms import ProjectForm, SupplierForm, ArticleForm, CommercialOfferForm, Supplier_contactForm, SupplierCommandForm, Confirmed_commercialOfferForm
 from .models import Project, Supplier, Article, QuoteRequest,ArticleUnit,\
 File, CommercialOffer, TimeUnit, Destination, Local_contact, Client_contact,\
 Order, SupplierCommand
@@ -564,17 +564,34 @@ def print_technicalOffer(request, offer_pk):
     return render(request, 'technicalOffer_print.html', context)
 
 
-def confirm_order(request,pk):
+def confirm_commercialOffer(request,pk):
     commercialOffer = get_object_or_404(CommercialOffer, id=pk)
-    if not commercialOffer.confirmed:
-        commercialOffer.confirmed = True
-        commercialOffer.save()
-    return redirect('project-detail', commercialOffer.project.project_nbr)
+    if request.method == 'POST':
+        if commercialOffer.confirmed:
+            messages.error(request, 'Offer already confirmed !')
+            return redirect('project-detail', commercialOffer.project.project_nbr)
+        confirmedOffer = Confirmed_commercialOfferForm(request.POST)
+        if  confirmedOffer.is_valid():
+            commercialOffer.confirmed = True
+            commercialOffer.save()
+            confirmedOffer = confirmedOffer.save(commit=False)
+            confirmedOffer.confirmation_nbr = commercialOffer.offer_nbr.replace('G','C') 
+            confirmedOffer.commercialOffer = commercialOffer
+            confirmedOffer.save()
+            messages.success(request, 'Project has been created successfully')
+        else:
+            messages.error(request, 'An error occured, please retry')
+        return redirect('project-detail', commercialOffer.project.project_nbr)
+    
+    context = {"commercialOffer":commercialOffer}
+    return render(request, 'confirme_commercialOffer.html', context)
 
 def cancel_confirmedOrder(request,pk):
     commercialOffer = get_object_or_404(CommercialOffer, id=pk)
     if commercialOffer.confirmed:
         commercialOffer.confirmed = False
+        confirmedOffer = commercialOffer.confirmed_commercialoffer
+        confirmedOffer.delete()
         commercialOffer.save()
     return redirect('project-detail', commercialOffer.project.project_nbr)
 

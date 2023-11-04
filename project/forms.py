@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, Supplier, Article, CommercialOffer, Supplier_contact, Client_contact, SupplierCommand
+from .models import Project, Supplier, Article, CommercialOffer, Supplier_contact, Client_contact, SupplierCommand, Confirmed_commercialOffer
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -19,7 +19,12 @@ class ArticleForm(forms.ModelForm):
 class CommercialOfferForm(forms.ModelForm):
     class Meta:
         model = CommercialOffer
-        exclude = ['offer_nbr', 'confirmation_nbr']
+        exclude = ['offer_nbr', 'confirmed']
+
+class Confirmed_commercialOfferForm(forms.ModelForm):
+    class Meta:
+        model = Confirmed_commercialOffer
+        exclude = ['created_at', 'updated_at','confirmation_nbr', 'commercialOffer']
 
 class SupplierCommandForm(forms.ModelForm):
     class Meta:

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Client, Country, Language, Local_contact
+from .models import Client, Country, Language, Local_contact, Representative
 from .forms import ClientForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -30,15 +30,16 @@ def client_create(request):
         for err in form.errors:
             print(err)
         return JsonResponse({'message':'An error occured ! please retry again'})
-        
     page_name = 'add-client'
     nbr_clients = Client.objects.all().count()
     client_nbr  = "C{0}".format(nbr_clients + 1)
     countries = Country.objects.all()
     languages = Language.objects.all()
+    representatives = Representative.objects.all()
     context = {'client_nbr':client_nbr,
                'countries':countries,
                'languages':languages,
+               'representatives':representatives,
                'page':page_name}
     return render(request, 'client.html', context)
 
@@ -56,9 +57,11 @@ def client_edit(request, pk):
     
     countries = Country.objects.all()
     page_name = 'update-client'
+    representatives = Representative.objects.all()
     languages = Language.objects.all()
     context = {'client':client,
                'countries':countries,
+               'representatives':representatives,
                'languages':languages,
                'page':page_name}
     return render(request, 'client.html', context)

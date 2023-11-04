@@ -1,125 +1,206 @@
-<form method="POST" class="submit-form" action="{% url 'manage-commission' %}">
-    {% csrf_token %}
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label col-form-label-sm">Start date </label>
-                <div class="col-sm-8">
-                    <input type="text" name="start_date" class="form-control form-control-sm" value="{{ start_date }}"
-                        required />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label col-form-label-sm">End date </label>
-                <div class="col-sm-8">
-                    <input type="text" name="end_date" class="form-control form-control-sm" value="{{ end_date }}"
-                        required />
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group row mt-2">
-                <label class="col-sm-4 col-form-label col-form-label-sm">representative </label>
-                <div class="col-sm-8">
-                    <select required name="representative" class="form-select form-select-sm">
-                        <option value=""> Chose a Representative </option>
-                        {% for representative in representatives %}
-                        <option value="{{representative.id}}" {% if advancePayment.representative.id==representative.id
-                            %} selected {% endif %}>
-                            {{ representative }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label class="col-sm-4 col-form-label col-form-label-sm">Filter By:</label>
-                <div class="col-sm-8">
-                    <select required name="filter_type" class="form-select form-select-sm">
-                        <option value="invoice"> invoice </option>
-                        <option value="command"> command </option>
-                    </select>
-                </div>
-            </div>
+{% extends 'main.html' %}
+{% block content %}
+{% load format_numbers %}
+<main class="container-fluid">
+    <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
+        <div class="lh-1">
+            <strong> <a href="{% url 'project-home' %}" class="text-white"> Project</a> / Manage commission </strong>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
+    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+        {% include 'alert.html' %}
+        <form method="GET" class="submit-form" action="{% url 'manage-commission' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Start date </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="start_date" class="form-control form-control-sm"
+                                value="{{ request.session.start_date }}" required />
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">End date </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="end_date" class="form-control form-control-sm"
+                                value="{{ request.session.end_date }}" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Representative </label>
+                        <div class="col-sm-8">
+                            <select required name="representative" class="form-select form-select-sm">
+                                <option value=""> Chose a Representative </option>
+                                {% for representative in representatives %}
+                                <option value="{{representative.id}}" {% if request.session.representative_pk == representative.pk %} selected {% endif %}>
+                                    {{ representative }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Filter By:</label>
+                        <div class="col-sm-8">
+                            <select required name="filter_type" class="form-select form-select-sm">
+                                <option value="invoice"> invoice </option>
+                                <option value="command"> command </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="mt-2 btn btn-dark btn-sm"> Search </button>
+                </div>
+            </div>
+        </form>
+        <div class="mt-5 container-fluid size-13">
             <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>Client</th>
-                        <th>Invoice Ref</th>
+                        <th>Project</th>
+                        <th>Invoice / Confirmation Ref</th>
                         <th>Date </th>
-                        <th>Total sales </th>
+                        <th>Client Ref </th>
+                        <th>Sales </th>
                         <th>Commission</th>
-                        <th>Last update</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for invoice in invoices %}
                     <tr>
+                        <td>{{ invoice.commercialOffer.project.client }}</td>
                         <td>{{ invoice.commercialOffer.project }}</td>
+                        <td>{{ invoice.confirmation_nbr }}</td>
+                        <td>{{ invoice.created_at }}</td>
+                        <td>{{ invoice.client_nbr }}</td>
+                        <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
+                        <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.commercialOffer.currency }} </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5">No invoice available.</td>
+                        <td colspan="6">No invoice available.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="col-md-4">
-            <table class="table table-sm">
-                <thead>
-                    <tr>
-                        <th>Advance</th>
-                        <th>Amount</th>
-                        <th>Comment</th>
-                        <th>Created At</th>
-                        <th>Last update</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for advancepayment in advancePayments %}
-                    <tr>
-                        <td>{{ advancepayment.amount }}</td>
-                        <td>{{ advancepayment.comment }}</td>
-                        <td>{{ advancepayment.created_at }}</td>
-                        <td>{{ advancepayment.updated_at }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5">No Advance Payments available.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <strong> Calculation  </strong>
+                <table class="table table-sm size-13 mt-2">
+                    <tbody>
+                        <tr>
+                            <th>Total Sales:</th>
+                            <td>{{ total_sales|thousand_separator }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Commission:</th>
+                            <td>{{ total_commission|thousand_separator }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Advances:</th>
+                            <td>{{ total_advances|thousand_separator }}</td>
+                        </tr>
+                        <tr>
+                            <th>Remaining:</th>
+                            <td class="text-primary">{{ remaining|thousand_separator }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <strong> Advance Payments  </strong>
+                <table class="table table-sm size-13 mt-2">
+                    <thead>
+                        <tr>
+                            <th>Advance</th>
+                            <th>Comment</th>
+                            <th>Date de modification</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for advancepayment in advancePayments %}
+                        <tr>
+                            <td>{{ advancepayment.amount|thousand_separator }}</td>
+                            <td>{{ advancepayment.comment }}</td>
+                            <td>{{ advancepayment.updated_at|date:'d.m.Y' }}</td>
+                            <td>
+                                <a class="text-warning" href="{% url 'update-advancePayment' advancepayment.id %}"><i class="material-icons size-13">edit</i></a>
+                            </td>
+                            <td>
+                                <a class="text-danger" href="{% url 'delete-advancePayment' advancepayment.id %}"><i class="material-icons size-13">clear</i></a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No Advance Payments available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <td colspan="4"> <strong> {{ total_advances|thousand_separator }}  {{ invoice.commercialOffer.currency }} </strong> </td>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <strong> New Advance  </strong>
+                <form
+                    method="POST"
+                    class="mt-2"
+                    action="{% if advancePayment or 1 %} {% url 'create-advancePayment' %} {% else %} {% url 'update-advancePayment' advancePayment.id %} {% endif %}">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">representative </label>
+                        <div class="col-sm-8">
+                            <select required name="representative" class="form-select form-select-sm">
+                                <option value=""> Chose a Representative </option>
+                                {% for representative in representatives %}
+                                <option value="{{representative.id}}" {% if advancePayment.representative.id == representative.id %} selected {% endif %}>
+                                    {{ representative }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Amount </label>
+                        <div class="col-sm-8">
+                            <input type="number" name="amount" class="form-control form-control-sm"
+                                value="{{ advancePayment.amount }}" required />
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Comment </label>
+                        <div class="col-sm-8">
+                            <textarea name="comment" rows="3" class="form-control">{{ advancePayment.comment }}</textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-success btn-sm"> Save changes </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="col-md-4">
-            <form action="{% if advancePayment %} {% url 'create-advancePayment' %} {% else %} 
-                {% url 'update-advancePayment' advancePayment.id %} {% endif %}">
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Amount </label>
-                    <div class="col-sm-8">
-                        <input type="text" name="amount" class="form-control form-control-sm"
-                            value="{{ advancePayment.amount }}" required />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Comment </label>
-                    <div class="col-sm-8">
-                        <textarea name="comment" rows="3">  {{ advancePayment.comment }} </textarea>
-                    </div>
-                </div>
-            </form>
+        <div>
+            <a class="btn btn-success btn-sm" onclick="load_modal('print commission','{%  url "print-commission" %}')"> Get Report </a>
         </div>
     </div>
-    <button type="submit" class="mt-2 btn btn-dark btn-sm">
-        Save changes </button>
-</form>
+</main>
+{% endblock %}
+{% block javascript %}
 <script>
-    $(document).ready(function () {
-
-    });
+        // load page by url, and display it in modal  
+        function load_modal(title, page_url) {
+            $('.modal-title').text(title);
+            $('.modal-body').load(page_url);
+            $('#Modal').modal('show');
+        }
 </script>
+{% endblock %}

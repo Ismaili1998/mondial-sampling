@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'account',
     'client',
     'project',
+    'commission',
+    
 ]
 
 MIDDLEWARE = [
@@ -82,7 +84,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ESS_MONDIAL',
+        'NAME': 'ESS_MONDIAL1',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST':'localhost',

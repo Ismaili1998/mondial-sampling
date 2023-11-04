@@ -65,11 +65,23 @@ class Currency(models.Model):
     def __str__(self) -> str:
         return self.symbol
     
+class Representative(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(null= True, blank=True)
+    fax = models.CharField(max_length=50, blank=True, null= True)
+    phone_number = models.CharField(max_length=40, blank=True, null= True)
+
+    class Meta:
+        db_table = 'representative'
+        
+    def __str__(self) -> str:
+        return self.name
 
 class Client(models.Model):
     client_nbr = models.CharField(max_length=30,unique=True)
     client_name = models.CharField(max_length=150, null=True)
     
+    representative = models.ForeignKey(Representative,on_delete=models.PROTECT,null= True)
     email1 = models.EmailField(unique=True,null= True, blank= True)
     email2 = models.EmailField(unique=True, null=True, blank=True)
     fax = models.CharField(max_length=40,blank=True,null= True)
@@ -89,6 +101,7 @@ class Client(models.Model):
 
     class Meta:
         db_table = 'client'
+        ordering = ['client_nbr']
 
     def __str__(self):
         return self.client_name

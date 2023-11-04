@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('project.urls')),
     path('', include('account.urls')),
     path('client_list/', include('client.urls')),
+    path('', include('commission.urls')),
 ]
