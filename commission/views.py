@@ -9,25 +9,32 @@ from datetime import datetime
 from .models import AdvancePayment
 
 def get_representativeInvoices(request):
+    invoices = representative = None 
     if request.GET:
+        # get filters data  
         start_date = request.GET.get('start_date')
-        request.session['start_date'] = start_date 
         end_date = request.GET.get('end_date')
-        request.session['end_date'] = end_date 
         representative_pk= request.GET.get('representative')
-        request.session['representative_pk'] = representative_pk
         filter_type = request.GET.get('filter_type')
-        request.session['filter_type'] = filter_type
+        # store filters data into session 
+        search_filters = {}
+        search_filters['start_date'] = start_date 
+        search_filters['end_date'] = end_date 
+        search_filters['representative_pk'] = representative_pk
+        search_filters['filter_type'] = filter_type
+        request.session['search_filters'] = search_filters
     else:
-        start_date = request.session['start_date']
-        end_date = request.session['end_date']
-        representative_pk = request.session['representative_pk']
-        filter_type = request.session['filter_type']
-    
-    invoices = representative = {}
-    if representative_pk:
+        if "search_filters" in request.session:
+            search_filters = request.session['search_filters']
+            start_date = search_filters['start_date']
+            end_date = search_filters['end_date']
+            representative_pk = search_filters['representative_pk']
+            filter_type = search_filters['filter_type']
+
+        else:
+            return  representative, invoices
+    if start_date and end_date and representative_pk:
         representative = get_object_or_404(Representative, id=representative_pk)
-    if start_date and end_date and representative:
         start_date = datetime.strptime(start_date, '%Y-%m-%d')
         end_date = datetime.strptime(end_date, '%Y-%m-%d')
         start_date = timezone.make_aware(start_date)
@@ -42,15 +49,15 @@ def get_representativeInvoices(request):
 
 def get_context(request):
     representative, invoices =  get_representativeInvoices(request)
-    advancePayments = representative.advancepayment_set.all() if representative else None 
-    total_advances = 0 
-    for advance in advancePayments:
-        total_advances += advance.amount
-    total_commissions = 0
-    total_sales = 0
-    for invoice in invoices:
-        total_commissions += invoice.get_commission()
-        total_sales += invoice.commercialOffer.get_total_selling_withFee()
+    advancePayments = None
+    total_advances = total_commissions = total_sales = 0 
+    if representative:
+        advancePayments = representative.advancepayment_set.all()
+        for advance in advancePayments:
+            total_advances += advance.amount
+        for invoice in invoices:
+            total_commissions += invoice.get_commission()
+            total_sales += invoice.commercialOffer.get_total_selling_withFee()
     context = {
         "representatives":Representative.objects.all(),
         'invoices': invoices,
@@ -59,13 +66,14 @@ def get_context(request):
         'total_advances':total_advances,
         "total_sales":total_sales,
         "total_commission":total_commissions,
-        'representative':representative 
+        'representative':representative,
+        'search_filters':request.session['search_filters'] if "search_filters" in request.session else None,
     }
-    
     return context
 
 def manage_commission(request):
     context = get_context(request)
+    context['form_name'] = "create"
     return render(request, 'commission.html', context)
 
 
@@ -73,8 +81,8 @@ def create_advancePayment(request):
     if request.method == 'POST':
         form = AdvancePaymentForm(request.POST)
         if form.is_valid():
-            a = form.save()
-            messages.success(request, 'Payment advance has been modified successfully !')
+            advance = form.save()
+            messages.success(request, f'Payment advance has been added successfully to : {advance.representative}')
         else:
             for err in form.errors:
                 print(err)
@@ -83,22 +91,30 @@ def create_advancePayment(request):
 
 def update_advancePayment(request, pk):
     advancePayment = get_object_or_404(AdvancePayment, pk=pk)
-    print(advancePayment)
     if request.method == 'POST':
         form = AdvancePaymentForm(request.POST, instance=advancePayment)
         if form.is_valid():
-            form.save()
+            form.save()  # This should update the existing record
             messages.success(request, 'Payment advance has been modified successfully !')
+            return redirect('manage-commission')
         else:
-            messages.error(request, 'An error occured, please retry')
+            messages.error(request, 'An error occurred, please retry')
+
+    # Assuming get_context is a function defined elsewhere
     context = get_context(request)
+    context['form_name'] = "update"
     context['advancePayment'] = advancePayment
     return render(request, 'commission.html', context)
+
+    # Make sure to return the context or an HTTP response at the end of your view function
+    # For example:
+    # return render(request, 'your_template.html', context)
+
 
 def delete_advancePayment(request, pk):
     advancePayment = get_object_or_404(AdvancePayment, pk=pk)
     advancePayment.delete()
-    messages.success(request, 'Payment advance has been modified successfully !')
+    messages.success(request, 'Payment advance has been deleted successfully !')
     return redirect('manage-commission')
 
 

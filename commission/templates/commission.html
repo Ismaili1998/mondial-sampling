@@ -10,21 +10,20 @@
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
         {% include 'alert.html' %}
         <form method="GET" class="submit-form" action="{% url 'manage-commission' %}">
-            {% csrf_token %}
             <div class="row">
                 <div class="col-md-5">
                     <div class="form-group row mt-2">
                         <label class="col-sm-4 col-form-label col-form-label-sm">Start date </label>
                         <div class="col-sm-8">
                             <input type="date" name="start_date" class="form-control form-control-sm"
-                                value="{{ request.session.start_date }}" required />
+                                value="{{ search_filters.start_date }}" required />
                         </div>
                     </div>
                     <div class="form-group row mt-2">
                         <label class="col-sm-4 col-form-label col-form-label-sm">End date </label>
                         <div class="col-sm-8">
                             <input type="date" name="end_date" class="form-control form-control-sm"
-                                value="{{ request.session.end_date }}" required />
+                                value="{{ search_filters.end_date }}" required />
                         </div>
                     </div>
                 </div>
@@ -33,10 +32,10 @@
                         <label class="col-sm-4 col-form-label col-form-label-sm">Representative </label>
                         <div class="col-sm-8">
                             <select required name="representative" class="form-select form-select-sm">
-                                <option value=""> Chose a Representative </option>
-                                {% for representative in representatives %}
-                                <option value="{{representative.id}}" {% if request.session.representative_pk == representative.pk %} selected {% endif %}>
-                                    {{ representative }}
+                                <option value=""> Chose a Representative</option>
+                                {% for rep in representatives %}
+                                <option value="{{rep.id}}" {% if rep.id ==  representative.id %} selected {% endif %}>
+                                    {{ rep }}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -120,7 +119,7 @@
                         <tr>
                             <th>Advance</th>
                             <th>Comment</th>
-                            <th>Date de modification</th>
+                            <th>Date</th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -154,16 +153,16 @@
                 <form
                     method="POST"
                     class="mt-2"
-                    action="{% if advancePayment or 1 %} {% url 'create-advancePayment' %} {% else %} {% url 'update-advancePayment' advancePayment.id %} {% endif %}">
+                    action="{% if form_name == "create" %} {% url 'create-advancePayment' %} {% else %} {% url 'update-advancePayment' advancePayment.id %} {% endif %}">
                     {% csrf_token %}
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label col-form-label-sm">representative </label>
                         <div class="col-sm-8">
                             <select required name="representative" class="form-select form-select-sm">
                                 <option value=""> Chose a Representative </option>
-                                {% for representative in representatives %}
-                                <option value="{{representative.id}}" {% if advancePayment.representative.id == representative.id %} selected {% endif %}>
-                                    {{ representative }}
+                                {% for rep in representatives %}
+                                <option value="{{rep.id}}" {% if rep.id == representative.id %} selected {% endif %}>
+                                    {{ rep }}
                                 </option>
                                 {% endfor %}
                             </select>
