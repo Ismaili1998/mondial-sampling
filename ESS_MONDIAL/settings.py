@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'client',
     'project',
     'commission',
+    "django_celery_results",
     
 ]
 
@@ -72,6 +73,14 @@ TEMPLATES = [
         },
     },
 ]
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TIMEZONE = 'Africa/Casablanca' 
+
 
 WSGI_APPLICATION = 'ESS_MONDIAL.wsgi.application'
 

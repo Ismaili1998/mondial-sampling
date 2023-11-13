@@ -25,7 +25,7 @@ translations = {
         'de':'Wir danken Ihnen für Ihre Anfrage und unterbreiten Ihnen das gewünschte Angebot wie folgt',
     },
 
-    'controlling_idea_f': {
+    'controlling_idea_in': {
         'en': 'We refer to the delivery subject to your order for which we thank you warmly and transmit our invoice as follows',
         'fr':'''Nous nous référons à la livraison objét de votre commande citée en référence pour laquelle
                 nous vous remercions vivement et vous transmettons ci-après notre facture:''',
@@ -70,7 +70,7 @@ translations = {
 
     'columns_name': {
         'en':['Pos', 'Article code','Designation','Qty','U','P.U','P.T'],
-        'fr':['Pos', 'Code Art','Désignation','Qté','U','P.U','P.T'],
+        'fr':['Pos', 'Code Art', 'Désignation', 'Qté', 'U', 'P.U', 'P.T', 'Hs-Code'],
         'de':['Pos','Artikel-Nr','Bezeichnung','Menge','U','EP','GP']
     },
 
@@ -241,7 +241,7 @@ translations = {
         'de': 'Rechnung'
     },
 
-    'payments_infos':
+    'payment_infos':
     {
         'de':"""
             Déclaration pour EUR.1 (pour Factures de valeurs inférieures à EUR6.000,00)

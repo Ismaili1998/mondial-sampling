@@ -95,7 +95,7 @@ class Article(models.Model):
     article_unit = models.ForeignKey(ArticleUnit,on_delete=models.PROTECT,null=True, blank= True)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
     net_weight = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
-    customs_tariff =  models.CharField(max_length=150, null= True, blank= True)
+    hs_code =  models.CharField(max_length=150, null= True, blank= True)
     customs_description = models.TextField(blank=True, max_length=500, null= True)
     comment = models.TextField(blank=True, max_length=500, null= True)
 
@@ -233,10 +233,34 @@ class Confirmed_commercialOffer(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        db_table = 'confirmed_commercial_offer'
+        ordering = ['-id']
     
     def get_commission(self):
         return self.commercialOffer.get_total_selling_withFee() * (self.commission / 100)
+    
 
+    
+
+class Invoice(models.Model):
+    invoice_nbr = models.CharField(max_length=20, unique=True)
+    client_nbr = models.CharField(max_length=20, unique=True)
+    commercialOffer = models.OneToOneField(
+        CommercialOffer,
+        on_delete=models.CASCADE) 
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+
+    class Meta:
+        db_table = 'invoice'
+        ordering = ['-id']
+    
+    def get_commission(self):
+        return self.commercialOffer.get_total_selling_withFee() * (self.commission / 100)
+    
 class Order(models.Model):
     article = models.ForeignKey(Article,on_delete=models.PROTECT)
     commercialOffer = models.ForeignKey(CommercialOffer,on_delete=models.CASCADE,null=True)
@@ -246,12 +270,13 @@ class Order(models.Model):
 
     class Meta:
         db_table = 'order'
+        ordering = ['-id']
 
     def __str__(self):
         return "{0} of {1}".format(self.quantity, self.article.article_name)
 
     def get_selling_price(self):
-        return (self.margin * self.quantity) or 0
+        return ((self.margin / 100) * self.get_total_price()) or 0
     
     def get_total_price(self):
         return (self.article.purchase_price * self.quantity) or 0
@@ -267,7 +292,7 @@ class Order(models.Model):
 
 class SupplierCommand(models.Model):
     command_nbr = models.CharField(max_length=20, unique=True)
-    validity_date = models.DateField(blank=True,null=True)
+    payment_date = models.DateField(blank=True,null=True)
     delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
     delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
@@ -283,6 +308,10 @@ class SupplierCommand(models.Model):
         null=True
     )
 
+    class Meta:
+        db_table = 'supplier_command'
+        ordering = ['-id']
+
     def get_total_purchase(self):
         total_purchase = 0
         for order in self.quoteRequest.order_set.all():
@@ -296,7 +325,19 @@ class SupplierCommand(models.Model):
         return (self.packaging_fee + self.transport_fee) or 0
 
 
+class Packing(models.Model):
+    invoice = models.OneToOneField(
+        Invoice,
+        on_delete=models.CASCADE) 
+    weight = models.DecimalField(max_digits=8, decimal_places=2)
+    length = models.DecimalField(max_digits=8, decimal_places=2)
+    width = models.DecimalField(max_digits=8, decimal_places=2)
+    height =  models.DecimalField(max_digits=8, decimal_places=2)
+    quantity = models.IntegerField()
+    comment = models.TextField(blank=True,null=True)
 
+    def __str__(self):
+        return f"Packing #{self.id} - for {self.invoice} invoice"
 
 
 

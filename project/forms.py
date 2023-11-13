@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, Supplier, Article, CommercialOffer, Supplier_contact, Client_contact, SupplierCommand, Confirmed_commercialOffer
+from .models import Project, Supplier, Article, CommercialOffer, Supplier_contact, Client_contact, SupplierCommand, Confirmed_commercialOffer, Invoice, Packing
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -41,5 +41,13 @@ class Client_contactForm(forms.ModelForm):
         model = Client_contact
         fields = '__all__'
 
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ['client_nbr']
 
-
+class PackingForm(forms.ModelForm):
+    class Meta:
+        model = Packing
+        fields = '__all__'
+        exclude = ['invoice']

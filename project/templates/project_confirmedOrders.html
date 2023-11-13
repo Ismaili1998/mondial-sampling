@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>Confirmed Order Number</th>
+            <th>Invoice </th>
             <th> </th>
         </tr>
     </thead>
@@ -14,6 +15,16 @@
                                 onclick="load_modal('Confirmed order','{%  url "print-confirmedOrder" offer.id %}')">
                                 {{ offer.confirmed_commercialoffer.confirmation_nbr }}
                             </a>
+                        </td>
+                         <td>
+                            {% if not offer.invoice %}
+                                <a href="#" class="text-info"
+                                    onclick="load_modal('Create invoice','{%  url "create-invoice" offer.id %}')">
+                                    Create Invoice 
+                                </a>
+                                {% else %}
+                                Invoice created 
+                            {% endif %}
                         </td>
                         <td>
                             <div class="dropdown-item">
