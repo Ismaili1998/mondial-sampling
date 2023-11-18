@@ -58,6 +58,8 @@ urlpatterns = [
 
     path('create-packing/<str:invoice_pk>',views.create_packing,name='create-packing'),
     path('update-packing/<str:pk>',views.update_packing,name='update-packing'),
+    path('print-packing/<str:pk>',views.print_packing,name='print-packing'),
+    path('print-tag/<str:pk>',views.print_tag, name='print-tag'),
 
 
 

@@ -4,6 +4,7 @@
             <th>Invoices</th>
             <th>Customs Report</th>
             <th>Packing </th>
+            <th>Print tag </th>
             <th> </th>
         </tr>
     </thead>
@@ -31,6 +32,12 @@
                                     onclick="load_modal('Create packing','{%  url "create-packing" offer.invoice.id %}')"
                                 {% endif %}>
                                 create packing  
+                            </a>
+                        </td>
+                         <td> 
+                            <a href="#" class="text-dark"
+                                    onclick="load_modal('Print tag','{%  url "print-tag" offer.invoice.id %}')">
+                                print tag  
                             </a>
                         </td>
                         <td>

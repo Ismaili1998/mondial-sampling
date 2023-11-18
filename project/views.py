@@ -686,7 +686,7 @@ def update_supplierCommand(request, pk):
             supplierCommand.save()
             due_date = supplierCommand.payment_date 
             create_payment_alert.delay(120)
-            messages.success(request, 'Command has + been updated successfully.')
+            messages.success(request, 'Command has been updated successfully.')
         else:
             for err in form.errors:
                 print(err)
@@ -767,9 +767,9 @@ def update_packing(request, pk):
     return render(request,'create_packing.html', context)
         
 def print_packing(request, pk):
-    invoice = get_object_or_404(Invoice, id=pk)
+    packing = get_object_or_404(Packing, id=pk)
+    invoice = packing.invoice
     commercialOffer = invoice.commercialOffer
-    packing = invoice.packing
     language_code = 'fr'
     try:
         language_code = commercialOffer.supplier.language.language_code 
@@ -780,4 +780,20 @@ def print_packing(request, pk):
             "packing":packing,
             "invoice":invoice, 
             "translations":filtered_translations, }
-    return render(request,'customs_report.html', context)
+    return render(request,'packing_print.html', context)
+
+
+
+def print_tag(request, pk):
+    invoice = get_object_or_404(Invoice, id=pk)
+    commercialOffer = invoice.commercialOffer
+    language_code = 'fr'
+    try:
+        language_code = commercialOffer.supplier.language.language_code 
+    except:
+        pass 
+    filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
+    context = {"commercialOffer":commercialOffer,
+            "invoice":invoice, 
+            "translations":filtered_translations, }
+    return render(request,'tag_print.html', context)

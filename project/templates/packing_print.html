@@ -96,6 +96,26 @@
             </div>
         </div>
         <div class="row mt-4">
+            <div class="col-md-6">
+                <table class="table table-sm bg-white">
+                    <thead>
+                        <tr class="size-13">
+                            <th> Poids de la marchandise </th>
+                            <th> [kg] Volume [cm³] </th>
+                            <th> Nombre de colis </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="size-13">
+                            <td> {{ packing.weight }} </td>
+                            <td> {{ packing.width }} {{ packing.height }} {{ packing.length }} </td>
+                            <td> {{ packing.quantity }} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-4">
             <div class="col-12">
                 <p class="text-left size-14"> {{ translations.signature }} <br/> Team ESS-Mondial GmbH </p>
             </div>

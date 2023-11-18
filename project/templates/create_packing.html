@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label class="col-sm-4 col-form-label col-form-label-sm"> HeightxWidthxLength </label>
+                <label class="col-sm-4 col-form-label col-form-label-sm"> Height x Width x Length </label>
                 <div class="col-sm-8 d-flex justify-content-around">
                     <input type="number" name="width" value = "{{ packing.width }}" class="form-control form-control-sm" required/>
                     <input type="number" name="height" value = "{{ packing.height }}" class="form-control form-control-sm" required/>
@@ -36,5 +36,11 @@
         <button type="submit" class="btn btn-dark btn-sm mr-4">
             save changes
         </button>
+        {% if form_name == "create" %}  {% else %} 
+            <a onclick="load_modal('Generate pdf','{%  url "print-packing" packing.id %}')"
+                class="btn btn-dark btn-sm mr-4">
+                print 
+            </a>
+        {% endif %}
     </div>
 </form>
