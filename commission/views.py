@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from functools import reduce 
-from client.models import Representative
-from project.models import Confirmed_commercialOffer
+from project.models import Representative
+from commercialOffer.models import Confirmed_commercialOffer
 from django.contrib import messages
 from .forms import AdvancePaymentForm
 from django.utils import timezone

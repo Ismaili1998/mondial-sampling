@@ -1,5 +1,5 @@
 from django.db import models
-from client.models import Representative
+from project.models import Representative
 
 class AdvancePayment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)

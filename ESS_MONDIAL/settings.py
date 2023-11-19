@@ -38,11 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'account',
-    'client',
-    'project',
-    'commission',
     "django_celery_results",
+    'account',
+    'commercialOffer',
+    'commission',
+    'quoteRequest',
+    'order',
+    'invoice',
+    'project',
     
 ]
 
@@ -93,7 +96,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ESS_MONDIAL1',
+        'NAME': 'ESS_MONDIAL2',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST':'localhost',

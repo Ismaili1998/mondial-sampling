@@ -1,0 +1,62 @@
+{% load static %}
+{% load format_numbers %}
+<div class="container">
+    <div class="item-to-print font-arial" contentEditable="true">
+        <!-- Header section -->
+        <div class="header-pdf">
+            <div class="header-img row">
+                <div class="col-12">
+                    <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
+                </div>
+            </div>
+        </div>
+         <!-- Body section -->
+        <div class="contact-section d-flex justify-content-between">
+            
+            <div class="size-13">
+                
+            </div>
+
+            <div>
+                
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <p class="text-left size-14"> {{ translations.signature }} <br/> Team ESS-Mondial GmbH </p>
+            </div>
+        </div>
+    </div>
+    <button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
+</div>
+<script>
+
+    function printPage() {
+        var printContent = document.querySelector('.item-to-print');
+        document.body.innerHTML = printContent.outerHTML;
+        window.print();
+        window.location.reload();
+    }
+
+    $(document).ready(function() {
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1; 
+        var year = currentDate.getFullYear();
+
+        var formattedDate = day + '.' + month + '.' + year;
+        $('#currentDate').text(formattedDate);
+    });
+
+
+    $("#orders-list tbody").sortable({
+            helper: "clone", // Display a clone of the row while dragging
+            update: function(event, ui) {
+                // Update the Pos numbers based on the new order
+                $("#orders-list tbody tr").each(function(index) {
+                    $(this).find("td:first-child").text(index + 1);
+                });
+            }
+    }).disableSelection();
+
+</script>

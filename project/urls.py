@@ -1,6 +1,5 @@
 from django.urls import path, include
 from . import views
-from django.conf.urls.static import static
 
 urlpatterns = [
     path('',views.project_home,name='project-home'),
@@ -8,60 +7,19 @@ urlpatterns = [
     path('get-project/<str:project_nbr>',views.project_detail,name='project-detail'),
     path('update-project/<str:pk>',views.project_edit,name='update-project'),
     path('delete-project/<str:pk>',views.project_delete,name='delete-project'),
+    path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
+    path('remove-article-from-project/<str:article_pk>',views.remove_article_from_project,name='remove-article-from-project'),
     path('get-projectsByKeyWord',views.get_projectsByKeyWord,name='get-projectsByKeyWord'),
+
     path('upload-file-to-project/<str:project_pk>',views.upload_file_to_project,name='upload-file-to-project'),
     path('download-file/<str:file_pk>',views.download_file,name='download-file'),
 
-    path('create-article',views.article_create,name='create-article'),
-    path('add-article-to-commercialOffer/<str:offer_pk>/<str:article_nbr>',views.add_article_to_commercialOffer,name='add-article-to-commercialOffer'),
-    path('update-article/<str:pk>',views.article_edit,name='update-article'),
-    path('get-article/<str:article_nbr>',views.article_detail,name='article-detail'),
-    path('remove-article-from-project/<str:article_pk>',views.remove_article_from_project,name='remove-article-from-project'),
-    path('get-articlesByKeyWord',views.get_articlesByKeyWord,name='get-articlesByKeyWord'),
-    path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
-    path('delete-order/<str:pk>',views.delete_order ,name='delete-order'),
-
-
-
+    path('create-client',views.client_create,name='create-client'),
+    path('update-client/<str:pk>',views.client_edit,name='update-client'),
+    
     path('create-supplier',views.supplier_create,name='create-supplier'),
     path('update-supplier/<str:pk>',views.update_supplier,name='update-supplier'),
     path('get-suppliersByKeyWord/', views.get_suppliersByKeyWord, name='get-suppliersByKeyWord'),
-
-    path('create-quoteRequest/<str:project_pk>', views.create_quoteRequest, name='create-quoteRequest'),
-    path('add-article-to-quoteRequest/<str:request_pk>/<str:article_nbr>', views.add_article_to_quoteRequest, name='add-article-to-quoteRequest'),
-    path('update-quoteRequest/<str:pk>', views.update_quoteRequest, name='update-quoteRequest'),
-    path('delete-quoteRequest/<str:pk>', views.delete_quoteRequest, name='delete-quoteRequest'),
-    path('create-quoteRequest-pdfReport/<str:request_pk>', views.create_quoteRequest_pdfReport, name='create-quoteRequest-pdfReport'),
-
-    path('create-commercialOffer/<str:project_pk>', views.create_commercialOffer, name='create-commercialOffer'),
-    path('delete-commercialOffer/<str:pk>', views.delete_commercialOffer, name='delete-commercialOffer'),
-    path('update-commercialOffer/<str:pk>', views.update_commercialOffer, name='update-commercialOffer'),
-    path('print-commercialOffer/<str:offer_pk>/', views.print_commercialOffer, name='print-commercialOffer'),
-    path('print-technicalOffer/<str:offer_pk>/', views.print_technicalOffer, name='print-technicalOffer'),
-
-
-    path('cancel-confirmedOrder/<str:pk>', views.cancel_confirmedOrder, name='cancel-confirmedOrder'),
-    path('confirm-commercialOffer/<str:pk>', views.confirm_commercialOffer, name='confirm-commercialOffer'),
-    path('print-confirmedOrder/<str:offer_pk>/', views.print_confirmOrder, name='print-confirmedOrder'),
-
-
-    path('supplier-command/<str:request_pk>/', views.supplier_command, name='supplier-command'),
-    path('print-supplierCommand/<str:pk>/', views.print_supplierCommand, name='print-supplierCommand'),
-    path('update-supplierCommand/<str:pk>/', views.update_supplierCommand, name='update-supplierCommand'),
-
-
-    path('create-invoice/<str:offer_pk>',views.create_invoice,name='create-invoice'),
-    path('print-invoice/<str:pk>',views.print_invoice,name='print-invoice'),
-    path('delete-invoice/<str:pk>',views.delete_invoice,name='delete-invoice'),
-    path('print-customsReport/<str:pk>',views.print_customsReport,name='print-customsReport'),
-
-
-    path('create-packing/<str:invoice_pk>',views.create_packing,name='create-packing'),
-    path('update-packing/<str:pk>',views.update_packing,name='update-packing'),
-    path('print-packing/<str:pk>',views.print_packing,name='print-packing'),
-    path('print-tag/<str:pk>',views.print_tag, name='print-tag'),
-
-
 
 ]
 
