@@ -11,9 +11,9 @@
                     <tr>
                         <th>Article nbr</th>
                         <th>Description</th>
+                        <th>Purchase price </th>
                         <th>Qty</th>
                         <th>Unit</th>
-                        <th>Purchase price </th>
                         <th>Total Purchase price </th>
                     </tr>
                 </thead>
@@ -28,17 +28,25 @@
                             <td style="width:300px">
                             <textarea disabled rows="5" class="form-control size-11"> {{ order.get_description_by_supplier_lang}} </textarea>
                             </td>
+                            <td> {{order.purchase_price|thousand_separator}} 
+                                {{ quoteRequest.suppliercommand.currency }} 
+                            </td>
                             <td class="article-quantity">
                                 {{order.quantity}}
                             </td>
                             <td> {{order.article.article_unit}} </td>
-                            <td class="purchase-price"> {{order.article.purchase_price|thousand_separator}} </td>
-                            <td> {{order.get_total_price}} </td>
+                            <td> {{order.get_total_purchase|thousand_separator}} 
+                                {{ quoteRequest.suppliercommand.currency }}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    <td colspan="6" align="right"> Total Purchase  = <strong class="sum-total-purchase mr-4"></strong></td>
+                    <td colspan="6" align="right"> Total Purchase  = <strong class="sum-total-purchase">  
+                        {{ quoteRequest.suppliercommand.get_total_purchase|thousand_separator }}
+                        {{ quoteRequest.suppliercommand.currency }}
+                     </strong>
+                    </td>
                 </tfoot>
             </table>
         </div>
@@ -119,7 +127,7 @@
                     <label for="final-total" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Final Total: </label>
                     <div class="col-sm-4">
                         <input type="number" class="form-control form-control-sm"
-                            id="total-price"  disabled step="any" />
+                            id="total-price" value="{{ quoteRequest.suppliercommand.get_final_total }}"  disabled step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -146,54 +154,6 @@
 <script>   
 $(document).ready(function () {
 
-    let isFirstExecution = true;
-    function calculate_purchasePrice() {
-        let purchasePrice = 0;
-        let articleQuantity = 0;
-        let row = NaN;
-        let sum_total_purchase = 0;
-
-        $('#offer-articles-table tbody tr').each(function () {
-            row = $(this);
-            articleQuantity = parseInt(row.find('.article-quantity').text()) || 0;
-            purchasePrice = parseFloat(row.find('.purchase-price').text()
-            .replace(/\./g, '').replace(',', '.')) || 0;
-            totalPurchase = purchasePrice * articleQuantity;
-            sum_total_purchase += totalPurchase;
-            row.find('.total-purchase').text(formatNumber(totalPurchase));
-        });
-        // display the sum total purchase and sum total selling
-        $('tfoot .sum-total-purchase').text(formatNumber(sum_total_purchase));
-      
-    }
-    
-    function calculate_total_price() {
-        let transport_fee = parseFloat($('#transport_fee').val()) || 0;
-        let packaging_fee = parseFloat($('#packaging_fee').val()) || 0;
-        let vat = (parseFloat($('#vat').val()) / 100) || 0;
-        let sum_total_purchase = parseFloat($('tfoot .sum-total-purchase').text() 
-        .replace(/\./g, '').replace(',', '.')) || 0;
-        let total_fee = transport_fee + packaging_fee + vat * sum_total_purchase;
-        let total_price = sum_total_purchase + total_fee;
-        $('#total-price').val(total_price.toFixed(2));
-
-        
-    }
-
-  
-
-    $('#transport_fee, #packaging_fee, #vat').on('input', function() {
-        calculate_total_price();
-    });
-
-  
-    // Execute recalculate function once on initial page load
-    if (isFirstExecution) {
-        calculate_purchasePrice();
-        calculate_total_price();
-        isFirstExecution = false;
-    }
-
     $('#number_of_days').on('input', function() {
         var days = parseInt($(this).val());
         if (!isNaN(days)) {
@@ -207,24 +167,23 @@ $(document).ready(function () {
         }
     });
 
-    function formatNumber(number) {
-        // Convert the number to a string
-        number = number.toFixed(2)
-        var strNumber = number.toString();
+    function calculate_total_price() {
+        let transport_fee = parseFloat($('#transport_fee').val()) || 0;
+        let packaging_fee = parseFloat($('#packaging_fee').val()) || 0;
+        let vat = (parseFloat($('#vat').val()) / 100) || 0;
+        let sum_total_purchase = parseFloat($('tfoot .sum-total-purchase').text() 
+        .replace(/\./g, '').replace(',', '.')) || 0;
+        let total_fee = transport_fee + packaging_fee + vat * sum_total_purchase;
+        let total_price = sum_total_purchase + total_fee;
+        $('#total-price').val(total_price.toFixed(2));
         
-        // Split the number into integer and decimal parts
-        var parts = strNumber.split(".");
-        
-        // Format the integer part with thousands separators
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        
-        // Join the integer and decimal parts with a comma
-        var formattedNumber = parts.join(",");
-        
-        return formattedNumber;
     }
+
+    $('#vat').on('input', function() {
+        calculate_total_price();
+    });
+
 
     
 });
-
 </script>

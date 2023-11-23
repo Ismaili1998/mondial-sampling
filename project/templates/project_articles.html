@@ -8,7 +8,7 @@
       <th> pos </th>
       <th> Article Number </th>
       <th> Article Description </th>
-      <th> Action </th>
+      <th>  </th>
     </tr>
   </thead>
   <tbody>
@@ -24,9 +24,14 @@
         <textarea disabled rows="5" class="form-control size-12"> {{ article.description_fr}} </textarea>
       </td>
       <td>
-        <a class="text-danger" href="{% url 'remove-article-from-project' article.id %}"><i class="material-icons">clear</i>
-
-        </a>
+        <div class="dropdown-item">
+            <form method="POST" action="{% url 'remove-article-from-project' article.id  %}">
+                {% csrf_token %}
+                <a class="text-danger delete-btn" href="#" title="delete this offer">
+                    <i class="material-icons size-11">clear</i>
+                </a>
+            </form>
+        </div>
       </td>
     </tr>
     {% endfor %}

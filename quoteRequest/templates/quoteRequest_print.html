@@ -11,10 +11,10 @@
         <div class="mt-2 d-flex justify-content-between">
             <div class="size-13">
                 {{ quoteRequest.supplier }} <br/>
-                {{ quoteRequest.supplier.country.country_name_fr }} <br/>
-                Phone :{{ quoteRequest.supplier.phone_number }} <br/>
-                Email :{{ quoteRequest.supplier.email }} <br/>
-                Fax :{{ quoteRequest.supplier.fax }}
+                {{ quoteRequest.supplier.country.country_name_fr|default:"" }} <br/>
+                Phone :{{ quoteRequest.supplier.phone_number|default:"" }} <br/>
+                Email :{{ quoteRequest.supplier.email|default:"" }} <br/>
+                Fax :{{ quoteRequest.supplier.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -23,17 +23,18 @@
             </div>
             <div class="size-13">
                 <p>
-                    {{ translations.contact_name }} <br/>
-                    Mr: {{ request.user.first_name }} <br/>
-                    Tel: {{ request.user.phone_number }} <br/>
-                    Fax: {{ request.user.fax }}
+                    <strong> {{ translations.contact_name }} </strong> <br/>
+                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Email :{{ request.user.email|default:"" }} <br/>
+                    Tel: {{ request.user.phone_number|default:"" }} <br/>
+                    Fax: {{ request.user.fax|default:"" }}
                 </p>
             </div>
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
-                <p> {{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
-                    {{translations.our_ref}} : {{ quoteRequest.request_nbr }}<br/>
+                <p> ddddd{{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
+                    {{translations.our_ref }} : {{ quoteRequest.request_nbr }}<br/>
                 </p>
             </div>
             <div class="ml-10 size-12">

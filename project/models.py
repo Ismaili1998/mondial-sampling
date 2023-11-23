@@ -33,35 +33,23 @@ class Representative(models.Model):
     def __str__(self) -> str:
         return self.name
     
-class Client_contact(models.Model):
+class Buyer(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(null= True, blank=True)
     phone_number = models.CharField(max_length=40, blank=True, null= True)
 
     class Meta:
-        db_table = 'client_contact'
+        db_table = 'buyer'
         
     def __str__(self) -> str:
         return self.name 
 
-class Local_contact(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True,null=True)
 
-    fax = models.CharField(max_length=50, blank=True, null= True)
-    phone_number = models.CharField(max_length=20, blank=True,null=True)
-
-    class Meta:
-        db_table = 'local_contact'
-        
-    def __str__(self) -> str:
-        return self.name
     
 class Client(models.Model):
     client_nbr = models.CharField(max_length=30,unique=True)
     client_name = models.CharField(max_length=150, null=True)
     
-    representative = models.ForeignKey(Representative,on_delete=models.PROTECT,null= True)
     email1 = models.EmailField(unique=True,null= True, blank= True)
     email2 = models.EmailField(unique=True, null=True, blank=True)
     fax = models.CharField(max_length=40,blank=True,null= True)
@@ -96,8 +84,8 @@ class Project(models.Model):
     project_description = models.TextField(blank=True,max_length=500, null= True)
     to_do = models.TextField(blank=True,max_length=500, null= True)
     client = models.ForeignKey(Client,on_delete=models.PROTECT)
-    local_contact =  models.ForeignKey(Local_contact,on_delete=models.PROTECT,null=True,blank=True)
-    client_contact =  models.ForeignKey(Client_contact,on_delete=models.PROTECT,null=True,blank=True)
+    representative =  models.ForeignKey(Representative,on_delete=models.PROTECT,null=True,blank=True)
+    client_contact =  models.ForeignKey(Buyer,on_delete=models.PROTECT,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null= True)
 

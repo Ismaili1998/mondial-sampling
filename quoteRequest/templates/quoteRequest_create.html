@@ -51,14 +51,14 @@
                 // Create a new table row element
                 var newRow = $('<tr>');
                 // Create a new table data (cell) element and set its text content to the option text
-                var order =$(this).closest('tr').find('td:lt(3)')
+                var order =$(this).closest('tr').find('td:lt(3)').clone();
                 order.appendTo(newRow);
                 // Create an input element with the specified attributes
                 var quantityInput = $('<input>').attr({
                     type: 'number',
                     name: 'quantity',
                     class: 'form-control form-control-sm',
-                    value: ''
+                    value: '1'
                 });
                 $('<td>').append(quantityInput).appendTo(newRow);
                 // Append the new row to the articles table body

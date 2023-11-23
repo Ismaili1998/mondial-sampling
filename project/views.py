@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProjectForm, SupplierForm, Supplier_contactForm, ClientForm
-from .models import Project, Supplier, Client, Country, Language, File, Local_contact, Client_contact, Representative
+from .models import Project, Supplier, Client, Country, Language, File, Representative, Buyer, Representative
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -16,12 +16,12 @@ def project_home(request):
     latest_project = Project.objects.order_by('-id').first()
     last_id = latest_project.id if latest_project else 0 
     project_nbr  = "A{0}".format(last_id + 1)
-    local_contacts = Local_contact.objects.all()
-    client_contacts = Client_contact.objects.all()
+    representatives = Representative.objects.all()
+    buyers = Buyer.objects.all()
     context = {'clients':clients,
                'page':'add-project',
-               'local_contacts': local_contacts,
-               'client_contacts': client_contacts,
+               'representatives': representatives,
+               'buyers': buyers,
                'project_nbr':project_nbr}
     return render(request, 'project_home.html',context)
 
@@ -31,12 +31,12 @@ def project_detail(request, project_nbr):
     clients = Client.objects.all()
     articles = project.article_set.all()[:50]
     page_name = 'update-project'
-    local_contacts = Local_contact.objects.all()
-    client_contacts = Client_contact.objects.all()
+    Representatives = Representative.objects.all()
+    buyers = Buyer.objects.all()
     context = {'project':project,
                'clients':clients, 
-               'local_contacts':local_contacts,
-               'client_contacts': client_contacts,
+               'representatives':Representatives,
+               'buyers': buyers,
                'page':page_name,
                'articles':articles}
     return render(request, 'project_home.html', context)
@@ -86,10 +86,11 @@ def add_article_to_project(request):
 
 def remove_article_from_project(request, article_pk):
     article = Article.objects.get(id=article_pk)
-    project = article.project 
-    article.project = None
-    article.save()
-    messages.success(request,'Article has been removed from project succesfully')
+    project = article.project
+    if request.method == "POST": 
+        article.project = None
+        article.save()
+        messages.success(request,'Article has been removed from project succesfully')
     return redirect('project-detail', project.project_nbr)
   
 @csrf_exempt

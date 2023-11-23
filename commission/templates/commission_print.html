@@ -75,7 +75,6 @@
                         <th>Advance</th>
                         <th>Comment</th>
                         <th>Date </th>
-                        <th>Date de modification</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,7 +82,6 @@
                     <tr>
                         <td>{{ advancepayment.amount|thousand_separator }}</td>
                         <td>{{ advancepayment.comment }}</td>
-                        <td>{{ advancepayment.created_at|date:'d.m.Y' }}</td>
                         <td>{{ advancepayment.updated_at|date:'d.m.Y' }}</td>
                     </tr>
                     {% empty %}

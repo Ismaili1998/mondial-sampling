@@ -54,23 +54,8 @@
     border-style: outset;
 }
 
-
-@media print {
-
-    /* .header-img {
-        position: fixed;
-        top: 0;
-        left: 0;
-    } */
-
-    .header-img+* {
-        margin-top: 200px;
-    }
-}
-
-@page {
-    margin-top: 0.5cm;
-    margin-bottom: 0mm;
+.doc-header {
+    margin-bottom: 10px;
 }
 
 .login-container {
@@ -100,4 +85,24 @@
 
 .ui-autocomplete {
     z-index: 9999;
+}
+
+@media print {
+    @page {
+        margin-top: 3cm;
+        margin-bottom: 2cm;
+    }
+
+    @page :first {
+        margin-top: 0;
+        /* Override margin for the first page */
+    }
+}
+
+.modal-expand {
+    width: 100%;
+}
+
+i {
+    translate: none;
 }

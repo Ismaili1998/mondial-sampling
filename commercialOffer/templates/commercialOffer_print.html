@@ -3,21 +3,22 @@
 <div class="container">
     <div class="item-to-print font-arial" contentEditable="true">
         <!-- Header section -->
-        <div class="header-pdf">
-            <div class="header-img row">
+        <div class="row">
                 <div class="col-12">
                     <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
                 </div>
-            </div>
         </div>
         <!-- Contact section -->
-        <div class="contact-section d-flex justify-content-between">
+        <div class="mt-2 contact-section d-flex justify-content-between">
             <div class="size-13">
-                {{ commercialOffer.project.client }} <br />
-                {{ commercialOffer.project.client.address }} <br />
-                Phone :{{ commercialOffer.project.client.phone_number1 }} <br />
-                Email :{{ commercialOffer.project.client.email1 }} <br />
-                Fax :{{ commercialOffer.project.client.fax }}
+                <p>
+                    {{ commercialOffer.project.client }} <br />
+                    {{ commercialOffer.project.client.address|default:"" }} <br />
+                    Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
+                    Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
+                    Fax :{{ commercialOffer.project.client.fax|default:"" }}
+
+                </p>
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -27,16 +28,16 @@
             <div class="size-13">
                 <p>
                     {{ translations.contact_name }} <br/>
-                    Mr: {{ request.user.first_name }} <br/>
-                    Tel: {{ request.user.phone_number }} <br/>
-                    Fax: {{ request.user.fax }}
+                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Tel: {{ request.user.phone_numbe|default:"" }} <br/>
+                    Fax: {{ request.user.fax |default:""}}
                 </p>
                 <p>
                     {% if commercialOffer.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ commercialOffer.project.local_contact.name }} <br/>
-                       Tel: {{ commercialOffer.project.local_contact.email }} <br/>
-                       Fax: {{ commercialOffer.project.local_contact.fax }} <br/>
+                    Mr:  {{ commercialOffer.project.representative.name|default:"" }} <br/>
+                    Tel: {{ commercialOffer.project.representative.email|default:"" }} <br/>
+                    Fax: {{ commercialOffer.project.representative.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
@@ -45,7 +46,7 @@
             <div>
                 <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
-                    {{translations.client_ref}} : {{ commercialOffer.project.client_ref }}
+                    {{translations.client_ref}} : {{ commercialOffer.client_nbr }}
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -61,7 +62,7 @@
                 <table class="table table-sm bg-white" id="orders-list">
                     <thead>
                         <tr class="size-13">
-                            {% for column_name in translations.columns_name %}
+                            {% for column_name in translations.columns_name|slice:":7" %}
                                 <th> {{ column_name }} </th>
                             {% endfor %}
                         </tr>
@@ -77,10 +78,10 @@
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
                             <td> {{order.selling_price|thousand_separator  }}
-                                 {{commercialOffer.currency}}
+                                {{commercialOffer.currency}}
                             </td>
                             <td> {{order.total_selling_price|thousand_separator}} 
-                                 {{commercialOffer.currency}}
+                                {{commercialOffer.currency}}
                             </td>
                         </tr>
                         {% endfor %}
@@ -90,7 +91,7 @@
                     <tbody class="size-13">
                         <tr>
                             <td colspan="4">
-                                {{translations.validity_date}}: {{ commercialOffer.validity_date|date:'d.m.Y' }}
+                                {{translations.payment_date}}: {{ commercialOffer.payment_date|date:'d.m.Y' }}
                             </td>
                             <td class="size-14">
                                 {{translations.total_EXW}}:
@@ -124,7 +125,7 @@
                             <td></td>
                             <td>
                                 {{ commercialOffer.get_discounted_price|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -135,10 +136,10 @@
                             <td class="size-14" >
                                 {{translations.incoterm}}:
                             </td>
-                            <td> {{commercialOffer.shipping }} </td>
+                            <td> {{commercialOffer.shipping|default:"" }} </td>
                             <td>
                                 {{ commercialOffer.shipping_fee|thousand_separator }}
-                                {{ commercialOffer.currency}}
+                                {{ commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -148,10 +149,10 @@
                             <td class="size-14" >
                                 {{translations.transportation}}:
                             </td>
-                            <td> {{commercialOffer.transport}} </td>
+                            <td> {{commercialOffer.transport|default:""}} </td>
                             <td>
                                 {{ commercialOffer.transport_fee|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -161,22 +162,22 @@
                                 {{translations.total_price}}:
                             </td>
                             <td>
-                                {{ commercialOffer.destination }}
+                                {{ commercialOffer.destination|default:"" }}
                             </td>
                             <td>
                                 {{ commercialOffer.get_total_selling_withFee|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ commercialOffer.delivery_time_interval }} {{ commercialOffer.delivery_time_unit }}
+                        {{ commercialOffer.delivery_time_interval|default:"" }} {{ commercialOffer.delivery_time_unit|default:"" }}
                         <br/> 
-                        {{translations.payment_mode}}: {{ commercialOffer.payment }}
+                        {{translations.payment_mode}}: {{ commercialOffer.payment|default:"" }}
                         <br/>
-                        {{translations.warranty_period}}: 12 mois aprés livraison
+                        {{translations.warranty_period}}: {{commercialOffer.warranty_period|default:""}}
                     </p>
                 </div>
             </div>
@@ -204,6 +205,20 @@
         document.body.innerHTML = printContent.outerHTML;
         window.print();
         window.location.reload();
+    }
+
+    // Add JavaScript to ensure the header is repeated on each printed page
+    if (window.matchMedia) {
+      let mediaQueryList = window.matchMedia('print');
+      mediaQueryList.addListener(function (mql) {
+        if (mql.matches) {
+          // If the media query matches, add a class to the header for printing
+          document.querySelector('.doc-header').classList.add('print-header');
+        } else {
+          // Remove the class when not printing
+          document.querySelector('.doc-header').classList.remove('print-header');
+        }
+      });
     }
 
     $(document).ready(function() {

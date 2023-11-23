@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from project.models import Project, TimeUnit, Currency, Payment, Supplier
 from .models import QuoteRequest, SupplierCommand
 from .forms import SupplierCommandForm
-from project.translations import translations
+from project import translations
 from django.contrib import messages
 from order.models  import Article, Order 
 import re
@@ -28,11 +28,11 @@ def create_quoteRequest(request,project_pk):
                 supplier = Supplier.objects.get(id=supplier_id)
                 quoteRequests = project.quoterequest_set.all()
                 if len(quoteRequests):
-                    last_request = quoteRequests.order_by('-request_nbr').first()
+                    last_request = quoteRequests.order_by('-id').first()
                     request_nbr = last_request.request_nbr
                     pattern = r'N(\d+)-'
                     index = int(re.search(pattern, request_nbr).group(1)) + 1
-                request_nbr = "{0}/N{1}-{2}".format(project_nbr,index, client_nbr)      
+                request_nbr = "{0}/N{1}-{2}".format(project_nbr,index, client_nbr)
                 quoteRequest = QuoteRequest.objects.create(project = project,
                                                         supplier=supplier,
                                                         request_nbr=request_nbr)
@@ -54,11 +54,12 @@ def update_quoteRequest(request,pk):
         project = quoteRequest.project
         order_ids = request.POST.getlist('order')
         quantities = request.POST.getlist('quantity')
-        print(order_ids, quantities)
+        purchase_prices = request.POST.getlist('purchase-price')
         try:
-            for order_id, quantity in zip(order_ids, quantities):
+            for order_id, quantity, purchase_price in zip(order_ids, quantities, purchase_prices):
                 order = get_object_or_404(Order, id=order_id)
                 order.quantity = quantity
+                order.purchase_price = purchase_price
                 order.save()
             messages.success(request, 'Quote request has been updated successfully')
         except:
@@ -75,7 +76,7 @@ def create_quoteRequest_pdfReport(request, request_pk):
         pass 
     filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
     context = {'quoteRequest':quoteRequest,'translations':filtered_translations}
-    return render(request, 'quoteRequest_pdf.html', context)
+    return render(request, 'quoteRequest_print.html', context)
 
 
 def add_article_to_quoteRequest(request, request_pk, article_nbr):

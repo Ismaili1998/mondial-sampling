@@ -74,7 +74,12 @@
                     <tr>
                         <td>{{ invoice.commercialOffer.project.client }}</td>
                         <td>{{ invoice.commercialOffer.project }}</td>
-                        <td>{{ invoice.confirmation_nbr }}</td>
+                        <td>
+                            <a href="#" class="text-info"
+                                onclick="load_modal('Confirmed order','{%  url "get-commercialOffer" invoice.commercialOffer.id %}')">
+                                {{ invoice.confirmation_nbr }}
+                            </a>
+                        </td>
                         <td>{{ invoice.created_at }}</td>
                         <td>{{ invoice.client_nbr }}</td>
                         <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
@@ -107,7 +112,11 @@
                         </tr>
                         <tr>
                             <th>Remaining:</th>
-                            <td class="text-primary">{{ remaining|thousand_separator }}</td>
+                            <td class="{% if remaining < 0 %}text-danger{% else %}text-success{% endif %}">
+                                <strong>
+                                    {{ remaining|thousand_separator }}
+                                </strong>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -173,6 +182,13 @@
                         <div class="col-sm-8">
                             <input type="number" name="amount" class="form-control form-control-sm"
                                 value="{{ advancePayment.amount }}" required />
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Date </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="updated_at" class="form-control form-control-sm"
+                                value="{{ advancePayment.updated_at|date:'Y-m-d' }}" required />
                         </div>
                     </div>
                     <div class="form-group row mt-2">

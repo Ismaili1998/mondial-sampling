@@ -12,7 +12,7 @@
                     {% if offer.confirmed %}
                         <td> 
                             <a href="#" class="text-info"
-                                onclick="load_modal('Confirmed order','{%  url "print-confirmedOrder" offer.id %}')">
+                                onclick="load_modal('Confirmed order','{%  url "get-commercialOffer" offer.id %}')">
                                 {{ offer.confirmed_commercialoffer.confirmation_nbr }}
                             </a>
                         </td>

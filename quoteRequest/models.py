@@ -36,11 +36,11 @@ class SupplierCommand(models.Model):
     def get_total_purchase(self):
         total_purchase = 0
         for order in self.quoteRequest.order_set.all():
-            total_purchase += order. get_total_price()
-        return round(total_purchase,2)
+            total_purchase += order.get_total_purchase()
+        return round(total_purchase, 2)
     
     def get_final_total(self):
-        return self.get_total_purchase() + self.packaging_fee + self.transport_fee
+        return self.get_total_purchase() + self.get_fee()
     
     def get_fee(self):
         return (self.packaging_fee + self.transport_fee) or 0

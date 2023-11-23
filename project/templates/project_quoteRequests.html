@@ -18,7 +18,7 @@
                     </a>
                 </td>
                 <td class="size-13">
-                    {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language }})
+                    {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language|default:"No language" }})
                     <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
                         href="#"><i
                         class="material-icons align-middle size-13 text-dark">visibility</i>

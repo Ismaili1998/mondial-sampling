@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import InvoiceForm, PackingForm
 from .models import Invoice, Packing
+from project import translations
 from commercialOffer.models import CommercialOffer
-from project.translations import translations
 
 def create_invoice(request, offer_pk):
     commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
@@ -51,7 +51,7 @@ def calculate_totals_by_hsCode(orders_queryset):
             orders_by_hsCode[hs_code] = {"total_quantities": 0, "total_price": 0}
 
         orders_by_hsCode[hs_code]["total_quantities"] += order.quantity
-        orders_by_hsCode[hs_code]["total_price"] += order.get_selling_price()
+        orders_by_hsCode[hs_code]["total_price"] += order.get_total_selling()
     return orders_by_hsCode
 
 

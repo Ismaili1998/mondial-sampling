@@ -30,7 +30,25 @@
                 commissions </a>
             </div>
           </div>
-            &nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Notifications <span class="badge bg-danger">1</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                <div class="dropdown-item">
+                  <div class="alert alert-warning" role="alert">
+                    Your payment for P1180048/N10-RDC02 is due in <strong>10</strong> days.
+                  </div>
+                  <div class="alert alert-danger" role="alert">
+                    Your payment for P1180048/N7-RDC02 is due in <strong>5</strong> days.
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+          &nbsp;&nbsp;&nbsp;
           <div class="dropdown show">
             <a class="dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -106,26 +124,26 @@
         </div>
         <div class="col-md-4">
           <div class="form-group row mt-2">
-                <label for="client_contact" class="col-sm-4 col-form-label col-form-label-sm">Extern Contact</label>
+                <label for="buyer" class="col-sm-4 col-form-label col-form-label-sm">Buyer</label>
                 <div class="col-sm-8">
-                    <select name="client_contact" class="form-select form-select-sm" id="client_contact">
+                    <select name="buyer" class="form-select form-select-sm" id="buyer">
                         <option value=""> Chose a buyer </option>
-                        {% for client_contact in client_contacts %}
-                        <option value="{{client_contact.id }}" {% if project.client_contact.id == client_contact.id %} selected {% endif %}>
-                            {{ client_contact }}
+                        {% for buyer in buyers %}
+                        <option value="{{buyer.id }}" {% if project.buyer.id == buyer.id %} selected {% endif %}>
+                            {{ buyer }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="local_contact" class="col-sm-4 col-form-label col-form-label-sm">Intern Contact</label>
+                <label for="representative" class="col-sm-4 col-form-label col-form-label-sm">Representative</label>
                 <div class="col-sm-8">
-                    <select name="local_contact" class="form-select form-select-sm" id="local_contact">
+                    <select name="representative" class="form-select form-select-sm" id="representative">
                         <option value=""> Chose a representant </option>
-                        {% for local_contact in local_contacts %}
-                        <option value="{{local_contact.id }}" {% if project.local_contact.id == local_contact.id %} selected {% endif %}>
-                            {{ local_contact }}
+                        {% for representative in representatives %}
+                        <option value="{{representative.id }}" {% if project.representative.id == representative.id %} selected {% endif %}>
+                            {{ representative }}
                         </option>
                         {% endfor %}
                     </select>

@@ -11,13 +11,15 @@
             </div>
         </div>
          <!-- Contact section -->
-        <div class="contact-section d-flex justify-content-between">
+        <div class="mt-2 contact-section d-flex justify-content-between">
             <div class="size-13">
-                {{ commercialOffer.project.client }} <br />
-                {{ commercialOffer.project.client.address }} <br />
-                Phone :{{ commercialOffer.project.client.phone_number1 }} <br />
-                Email :{{ commercialOffer.project.client.email1 }} <br />
-                Fax :{{ commercialOffer.project.client.fax }}
+                <p>
+                    {{ commercialOffer.project.client }} <br />
+                    {{ commercialOffer.project.client.address|default:"" }} <br />
+                    Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
+                    Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
+                    Fax :{{ commercialOffer.project.client.fax|default:"" }}
+                </p>
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -27,16 +29,16 @@
             <div class="size-13">
                 <p>
                     {{ translations.contact_name }} <br/>
-                    Mr: {{ request.user.first_name }} <br/>
-                    Tel: {{ request.user.phone_number }} <br/>
-                    Fax: {{ request.user.fax }}
+                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Tel: {{ request.user.phone_numbe|default:"" }} <br/>
+                    Fax: {{ request.user.fax |default:""}}
                 </p>
                 <p>
                     {% if commercialOffer.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ commercialOffer.project.local_contact.name }} <br/>
-                       Tel: {{ commercialOffer.project.local_contact.email }} <br/>
-                       Fax: {{ commercialOffer.project.local_contact.fax }} <br/>
+                    Mr:  {{ commercialOffer.project.representative.name|default:"" }} <br/>
+                    Tel: {{ commercialOffer.project.representative.email|default:"" }} <br/>
+                    Fax: {{ commercialOffer.project.representative.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
@@ -45,7 +47,7 @@
             <div>
                 <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
-                    {{translations.client_ref}} : {{ commercialOffer.project.client_ref }}
+                    {{translations.client_ref}} : {{ commercialOffer.client_nbr }}
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -82,9 +84,9 @@
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ commercialOffer.delivery_time_interval }} {{ commercialOffer.delivery_time_unit }}
+                        {{ commercialOffer.delivery_time_interval|default:"" }} {{ commercialOffer.delivery_time_unit|default:"" }}
                         <br/> 
-                        {{translations.warranty_period}}: 12 mois aprés livraison
+                        {{translations.warranty_period}}: {{commercialOffer.warranty_period|default:""}}
                     </p>
                 </div>
             </div>

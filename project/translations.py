@@ -69,9 +69,9 @@ translations = {
     },
 
     'columns_name': {
-        'en':['Pos', 'Article code','Designation','Qty','U','P.U','P.T'],
+        'en':['Pos', 'Article code','Designation','Qty','U','P.U','P.T', 'Hs-Code'],
         'fr':['Pos', 'Code Art', 'Désignation', 'Qté', 'U', 'P.U', 'P.T', 'Hs-Code'],
-        'de':['Pos','Artikel-Nr','Bezeichnung','Menge','U','EP','GP']
+        'de':['Pos','Artikel-Nr','Bezeichnung','Menge','U','EP','GP', 'Hs-Code']
     },
 
     'closing_co': {
@@ -101,7 +101,7 @@ translations = {
         'de':'Garantiedauer:'
     },
 
-    'validity_date': {
+    'payment_date': {
         'en':'Offer validity date',
         'fr':'''Délai d'option''',
         'de':'Angebotsgültigkeit'

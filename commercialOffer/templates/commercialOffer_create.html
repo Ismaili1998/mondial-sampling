@@ -9,8 +9,16 @@
                 <label for="global-margin" class="col-sm-4 col-form-label col-form-label-sm"> <strong> Margin </strong></label>
                 <div class="col-sm-8">
                     <input type="number" required placeholder="margin in %" name="margin" class="form-control form-control-sm"
-                        value="{{ commercialOffer.margin }}"
                         id="global-margin" />
+                </div>
+            </div>
+            <div class="col-md-6 form-group row">
+                <label for="client_nbr" class="col-sm-4 col-form-label col-form-label-sm"> 
+                    <strong> Client Ref </strong> 
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" name="client_nbr" class="form-control form-control-sm"
+                        id="client_nbr" value="" />
                 </div>
             </div>
         </div>
@@ -20,13 +28,13 @@
                     <tr>
                         <th>Article nbr</th>
                         <th>Description</th>
+                        <th>Purchase price </th>
                         <th>Qty</th>
                         <th>Margin</th>
                         <th>Unit</th>
-                        <th>Purchase price </th>
                         <th>Selling price </th>
-                        <th>Total Purchase price </th>
-                        <th>Total Selling price </th>
+                        <th>Total Purchase </th>
+                        <th>Total Selling </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,27 +51,32 @@
                            <textarea disabled rows="5" class="form-control size-11"> {{ article.description_fr}} </textarea>
                         </td>
                         <td class="form-group">
+                            <input type="number" name="purchase-price" 
+                            class="purchase-price form-control form-control-sm"
+                            placeholder="purchase price"
+                            value="{{article.purchase_price}}"/>
+                        </td>
+                        <td class="form-group">
                             <input type="number" name="quantity" 
-                            class="article-quantity form-control form-control-sm"
-                            value="{{article.quantity|thousand_separator}}"/>
+                            value = "1"
+                            class="article-quantity form-control form-control-sm"/>
                         </td>
                         <td class="form-group">
                             <input type="number" name="article-margin" 
                             class="article-margin form-control form-control-sm"
                             placeholder="margin in %"
-                            value="{{article.margin|thousand_separator}}"/>
+                            value="{{order.margin}}"/>
                         </td>
                         <td> {{article.article_unit}} </td>
-                        <td class="purchase-price"> {{article.purchase_price|thousand_separator}} </td>
                         <td class="selling-price "> </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
                     </tr>
                     {% endfor %}
                     <tfoot>
-                        <td colspan="6"></td>
+                        <td colspan="7"></td>
                         <td> Total Purchase  = <strong class="sum-total-purchase"></strong></td>
-                        <td> Total Price EXW = <strong  class="sum-total-selling"></strong></td>
+                        <td> Total EXW = <strong  class="sum-total-selling"></strong></td>
                     </tfoot>
                 </tbody>
             </table>
@@ -78,7 +91,7 @@
                     </label>
                     <div class="col-sm-3">
                         <input type="number" name="discount" class="form-control form-control-sm"
-                            placeholder = "discount in %" id="exceptional-discount" value="{{ commercialOffer.discount }}" />
+                            placeholder = "discount in %" id="exceptional-discount" value="" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -102,7 +115,7 @@
                         <select name="transport" class="form-select form-select-sm" id="transport">
                             <option value=""> Chose a transport mode</option>
                             {% for transport in transports %}
-                            <option value="{{transport.id }}" {% if commercialOffer.transport.id == transport.id %} selected {% endif %}>
+                            <option value="{{transport.id }}" >
                                 {{ transport}}
                             </option>
                             {% endfor %}
@@ -115,7 +128,7 @@
                         <select name="destination" class="form-select form-select-sm" id="destination">
                             <option value="">Choose a destination</option>
                             {% for destination in destinations %}
-                            <option value="{{ destination.id }}" {% if commercialOffer.destination.id == destination.id %} selected {% endif %}>
+                            <option value="{{ destination.id }}">
                                 {{ destination }}
                             </option>
                             {% endfor %}
@@ -128,7 +141,7 @@
                         <select name="payment" class="form-select form-select-sm" id="payment">
                             <option value="">Choose a payment mode</option>
                             {% for payment in payments %}
-                            <option value="{{ payment.id }}" {% if commercialOffer.payment.id == payment.id %} selected {% endif %}>
+                            <option value="{{ payment.id }}">
                                 {{ payment }}
                             </option>
                             {% endfor %}
@@ -140,34 +153,42 @@
                         days</label>
                     <div class="col-sm-8">
                         <input type="number" name="duration_in_days" class="form-control form-control-sm"
-                            id="number_of_days" value="{{commercialOffer.duration_in_days}}" />
+                            id="number_of_days" value = "" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="validity_date" class="col-sm-4 col-form-label col-form-label-sm"> Validity date
+                    <label for="payment_date" class="col-sm-4 col-form-label col-form-label-sm"> Payment date
                     </label>
                     <div class="col-sm-8">
-                        <input type="date" name="validity_date" class="form-control form-control-sm"
-                            id="validity_date" value="{{commercialOffer.validity_date|date:'Y-m-d'}}" />
+                        <input type="date" name="payment_date" class="form-control form-control-sm"
+                            id="payment_date" value = "" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">delivery duration</label>
+                    <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">Delivery duration</label>
                     <div class="col-sm-8 row">
                         <div class="col-sm-4">
                             <input type="text" name="delivery_time_interval" class="form-control form-control-sm"
-                                value="{{commercialOffer.delivery_time_interval}}" placeholder="duration"/>
+                                placeholder="duration"/>
                         </div>
                         <div class="col-sm-8">
                             <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
                                 <option value="">Choose a time unit</option>
                                 {% for timeUnit in timeUnits %}
-                                <option value="{{ timeUnit.id }}" {% if commercialOffer.delivery_time_unit.id == timeUnit.id %} selected {%endif %}>
+                                <option value="{{ timeUnit.id }}">
                                     {{ timeUnit }}
                                 </option>
                                 {% endfor %}
                             </select>
                         </div>
+                    </div>
+                 </div>
+                 <div class="form-group row mt-2">
+                    <label for="warranty_period" class="col-sm-4 col-form-label col-form-label-sm"> Warranty period 
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="text" name="warranty_period" class="form-control form-control-sm"
+                            id="warranty_period" value="" />
                     </div>
                  </div>
             </div>
@@ -183,14 +204,14 @@
                     <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="shipping_fee" class="form-control form-control-sm"
-                            id="shipping_fee" value="{{commercialOffer.shipping_fee}}" step="any" />
+                            id="shipping_fee" value="" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
                     <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="transport_fee" class="form-control form-control-sm"
-                            id="transport_fee" value="{{commercialOffer.transport_fee}}" step="any" />
+                            id="transport_fee" value="" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -206,7 +227,7 @@
                         <select required name="currency" class="form-select form-select-sm">
                             <option value="">Choose a currency</option>
                             {% for currency in currencies %}
-                            <option value="{{ currency.id }}" {% if commercialOffer.currency.id == currency.id %} selected {%endif %}>
+                            <option value="{{ currency.id }}">
                                 {{ currency }}
                             </option>
                             {% endfor %}
@@ -253,8 +274,7 @@ $(document).ready(function () {
             $('#offer-articles-table tbody tr').each(function () {
                 row = $(this);
                 articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
-                purchasePrice = parseFloat(row.find('.purchase-price').text()
-                .replace(/\./g, '').replace(',', '.')) || 0;
+                purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
                 margin = (row.find('.article-margin').val() / 100) || 0;
                 sellingPrice = purchasePrice + (margin * purchasePrice);
                 totalSelling = sellingPrice * articleQuantity;
@@ -276,8 +296,7 @@ $(document).ready(function () {
         $('#offer-articles-table tbody tr').each(function () {
             row = $(this);
             articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
-            purchasePrice = parseFloat(row.find('.purchase-price').text()
-            .replace(/\./g, '').replace(',', '.')) || 0;
+            purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
             totalPurchase = purchasePrice * articleQuantity;
             sum_total_purchase += totalPurchase;
             row.find('.total-purchase').text(formatNumber(totalPurchase));
@@ -365,7 +384,7 @@ $(document).ready(function () {
             var month = String(newDate.getMonth() + 1).padStart(2, '0');
             var day = String(newDate.getDate()).padStart(2, '0');
             var formattedDate = year + '-' + month + '-' + day;
-            $('#validity_date').val(formattedDate);
+            $('#payment_date').val(formattedDate);
         }
     });
 

@@ -3,6 +3,7 @@ from project.models import Project, TimeUnit, Destination, Currency, Shipping, T
 
 class CommercialOffer(models.Model):
     offer_nbr = models.CharField(max_length=20, unique=True)
+    client_nbr = models.CharField(max_length=20, unique=True, null=True, blank=True)
     project = models.ForeignKey(Project,on_delete=models.PROTECT)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
     margin = models.DecimalField(max_digits=4, decimal_places=2) 
@@ -15,9 +16,10 @@ class CommercialOffer(models.Model):
     confirmed = models.BooleanField(default=0)
     destination = models.ForeignKey(Destination,on_delete=models.PROTECT, blank=True,null=True)
     delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
-    delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
+    delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True)
+    warranty_period = models.CharField(max_length=20, blank=True,null=True) 
     duration_in_days = models.IntegerField(blank=True,null=True) 
-    valid_date = models.DateField(blank=True,null=True)
+    payment_date = models.DateField(blank=True,null=True)
     shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
     transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
 
@@ -39,12 +41,15 @@ class CommercialOffer(models.Model):
     def get_total_purchase(self):
         total_purchase = 0
         for order in self.order_set.all():
-            total_purchase += order.quantity * order.article.purchase_price
+            total_purchase += order.get_total_purchase()
         return round(total_purchase,2)
 
     def get_total_selling(self):
-        total_selling = self.get_total_purchase() + self.get_total_purchase() * self.margin / 100
+        total_selling = 0
+        for order in self.order_set.all():
+            total_selling += order.get_total_selling()
         return round(total_selling,2)
+
     
     def get_discounted_price(self):
         if self.discount:

@@ -4,5 +4,5 @@ from .models import AdvancePayment
 class AdvancePaymentForm(forms.ModelForm):
     class Meta:
         model = AdvancePayment
-        exclude = ['created_at', 'updated_at']
+        exclude = ['created_at']
 

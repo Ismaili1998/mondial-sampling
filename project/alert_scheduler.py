@@ -1,15 +1,11 @@
-from celery import shared_task
-from django.utils import timezone
-import logging
-logger = logging.getLogger(__name__)
+from datetime import datetime, timedelta
+from apscheduler.schedulers.background import BlockingScheduler
+from .models import Buyer
 
 def calculate_alert(payment_date):
-    # Get the current date
-    current_date = timezone.now().date()
-    # Calculate the days remaining until the payment date
+    current_date = datetime.now()
     days_remaining = (payment_date - current_date).days
 
-    # Determine the alert level
     if days_remaining <= 30 and days_remaining > 20:
         alert_level = "normal"
 
@@ -21,13 +17,37 @@ def calculate_alert(payment_date):
 
     else:
         alert_level = "expired"
-        
+
     return alert_level, days_remaining
 
+def create_payment_alert():
+    due_date = datetime.now()
+    alert_level, days_remaining = calculate_alert(due_date)
+    b = Buyer(name="XXXXX", phone_number="028283", email="alal@gmail.Com")
+    b.save()
 
-@shared_task
-def create_payment_alert(due_date):
-    logger.info(f"========================================")
+def schedule_alert(run_date):
+    run_date = datetime.now() + timedelta(seconds=10)
+    scheduler = BlockingScheduler()
+    scheduler.add_job(create_payment_alert, "date", run_date = run_date)
+    scheduler.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#     return a + b
     
     # try:
 

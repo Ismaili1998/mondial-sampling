@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from django.contrib import messages
 from project.models import Project, TimeUnit, Destination, Currency, Shipping, Transport, Payment
+from project import translations
 from .models import CommercialOffer
 from .forms import CommercialOfferForm, Confirmed_commercialOfferForm
 from order.models  import Article, Order 
-from django.contrib import messages
 import re
 
 def commercialOffer_detail(commercialOffer):
@@ -32,7 +33,7 @@ def create_commercialOffer(request,project_pk):
             offers = project.commercialoffer_set.all()
             index = 1
             if len(offers):
-                last_offer = offers.order_by('-offer_nbr').first()
+                last_offer = offers.order_by('-id').first()
                 offer_nbr = last_offer.offer_nbr
                 pattern = r'G(\d+)-'
                 index = int(re.search(pattern, offer_nbr).group(1)) + 1      
@@ -47,8 +48,11 @@ def create_commercialOffer(request,project_pk):
             articles = request.POST.getlist('article')
             quantities = request.POST.getlist('quantity')
             margins = request.POST.getlist('article-margin')
-            for article, quantity, margin in zip(articles, quantities, margins):
-                order = Order(article_id=article, quantity=quantity, margin=margin, commercialOffer=commercialOffer)
+            purchase_prices = request.POST.getlist('purchase-price')
+            for article, quantity, margin, purchase_price in zip(articles, quantities, margins, purchase_prices):
+                order = Order(article_id=article, quantity=quantity,
+                              purchase_price = purchase_price, 
+                              margin=margin, commercialOffer=commercialOffer)
                 order.save()
             messages.success(request, 'Commercial offer has been created successfully')
             return redirect('project-detail', project_nbr)
@@ -94,10 +98,12 @@ def update_commercialOffer(request,pk):
             order_ids = request.POST.getlist('order')
             quantities = request.POST.getlist('quantity')
             margins = request.POST.getlist('article-margin')
-            for order_id, quantity, margin in zip(order_ids, quantities, margins):
+            purchase_prices = request.POST.getlist('purchase-price')
+            for order_id, quantity, margin,  purchase_price in zip(order_ids, quantities, margins, purchase_prices):
                 order = get_object_or_404(Order, id=order_id)
                 order.quantity = quantity
                 order.margin = margin
+                order.purchase_price = purchase_price
                 order.save()
             messages.success(request, 'Commercial offer has been updated successfully')
         else:
@@ -126,7 +132,7 @@ def add_article_to_commercialOffer(request, offer_pk, article_nbr):
     try:
         commercialOffer = get_object_or_404(CommercialOffer, id=offer_pk)
         article = get_object_or_404(Article, article_nbr=article_nbr)
-        order = Order(article=article, quantity=0, margin=0, commercialOffer=commercialOffer)
+        order = Order(article=article, quantity=1, margin=0, commercialOffer=commercialOffer)
         order.save()
     except Article.DoesNotExist or CommercialOffer.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Article or offer not found'})
@@ -225,3 +231,9 @@ def delete_order_from_commercialOffer(request, pk):
     commercialOffer = order.commercialOffer 
     order.delete()
     return render(request, 'commercialOffer_edit.html', commercialOffer_detail(commercialOffer))
+
+
+def get_commercialOffer(request, pk):
+    commercialOffer = get_object_or_404(CommercialOffer, id=pk)
+    context = {"commercialOffer":commercialOffer}
+    return render(request, 'commercialOffer_detail.html', context)
