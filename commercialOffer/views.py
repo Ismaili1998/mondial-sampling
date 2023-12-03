@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from project.models import Project, TimeUnit, Destination, Currency, Shipping, Transport, Payment
 from project import translations
-from .models import CommercialOffer
+from .models import CommercialOffer, Confirmed_commercialOffer
 from .forms import CommercialOfferForm, Confirmed_commercialOfferForm
 from order.models  import Article, Order 
 import re
@@ -132,7 +132,9 @@ def add_article_to_commercialOffer(request, offer_pk, article_nbr):
     try:
         commercialOffer = get_object_or_404(CommercialOffer, id=offer_pk)
         article = get_object_or_404(Article, article_nbr=article_nbr)
-        order = Order(article=article, quantity=1, margin=0, commercialOffer=commercialOffer)
+        order = Order(article=article, quantity=1, margin=0, 
+                      purchase_price=article.purchase_price, 
+                      commercialOffer=commercialOffer)
         order.save()
     except Article.DoesNotExist or CommercialOffer.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Article or offer not found'})
@@ -233,7 +235,16 @@ def delete_order_from_commercialOffer(request, pk):
     return render(request, 'commercialOffer_edit.html', commercialOffer_detail(commercialOffer))
 
 
-def get_commercialOffer(request, pk):
-    commercialOffer = get_object_or_404(CommercialOffer, id=pk)
-    context = {"commercialOffer":commercialOffer}
-    return render(request, 'commercialOffer_detail.html', context)
+def update_confirmed_commercialOffer(request, pk):
+    confirmedOffer = get_object_or_404(Confirmed_commercialOffer, id=pk)
+    commercialOffer = confirmedOffer.commercialOffer
+    if request.method == 'POST':
+        confirmedOffer = Confirmed_commercialOfferForm(request.POST, instance=confirmedOffer)
+        if  confirmedOffer.is_valid():
+            confirmedOffer.save()
+            messages.success(request, 'Confirmed offer has been created successfully')
+            return redirect('project-detail', commercialOffer.project.project_nbr)
+    context = {"commercialOffer":commercialOffer,
+               "confirmedOffer":confirmedOffer
+               }
+    return render(request, 'confirmed_commercialOffer_edit.html', context)

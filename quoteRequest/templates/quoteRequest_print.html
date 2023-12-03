@@ -1,4 +1,5 @@
 {% load static %}
+{% load format_numbers %}
 <div class="container-fluid">
     <div class="item-to-print font-arial" contenteditable="true">
         <!-- Header, logo section -->
@@ -33,7 +34,7 @@
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
-                <p> ddddd{{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
+                <p> {{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
                     {{translations.our_ref }} : {{ quoteRequest.request_nbr }}<br/>
                 </p>
             </div>
@@ -64,7 +65,7 @@
                             <td class="text-description"> 
                                 <pre>{{ order.get_description_by_supplier_lang }}</pre>
                             </td>
-                            <td> {{ order.quantity }} </td>
+                            <td> {{ order.quantity|thousand_separator  }} </td>
                             <td> {{ order.article.article_unit }} </td>
                         </tr>
                         {% endfor %}

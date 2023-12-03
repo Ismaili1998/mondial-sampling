@@ -77,10 +77,10 @@
                             </td>
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
-                            <td> {{order.selling_price|thousand_separator  }}
+                            <td> {{order.get_selling_price|thousand_separator  }}
                                 {{commercialOffer.currency}}
                             </td>
-                            <td> {{order.total_selling_price|thousand_separator}} 
+                            <td> {{order.get_total_selling|thousand_separator}} 
                                 {{commercialOffer.currency}}
                             </td>
                         </tr>

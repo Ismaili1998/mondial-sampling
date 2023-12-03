@@ -21,5 +21,8 @@ urlpatterns = [
     path('update-supplier/<str:pk>',views.update_supplier,name='update-supplier'),
     path('get-suppliersByKeyWord/', views.get_suppliersByKeyWord, name='get-suppliersByKeyWord'),
 
+    path('create-buyer',views.create_buyer,name='create-buyer'),
+    path('create-representative',views.create_representative,name='create-representative'),
+
 ]
 

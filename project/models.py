@@ -37,7 +37,7 @@ class Buyer(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(null= True, blank=True)
     phone_number = models.CharField(max_length=40, blank=True, null= True)
-
+    
     class Meta:
         db_table = 'buyer'
         
@@ -45,7 +45,6 @@ class Buyer(models.Model):
         return self.name 
 
 
-    
 class Client(models.Model):
     client_nbr = models.CharField(max_length=30,unique=True)
     client_name = models.CharField(max_length=150, null=True)
@@ -85,7 +84,7 @@ class Project(models.Model):
     to_do = models.TextField(blank=True,max_length=500, null= True)
     client = models.ForeignKey(Client,on_delete=models.PROTECT)
     representative =  models.ForeignKey(Representative,on_delete=models.PROTECT,null=True,blank=True)
-    client_contact =  models.ForeignKey(Buyer,on_delete=models.PROTECT,null=True,blank=True)
+    buyer =  models.ForeignKey(Buyer,on_delete=models.PROTECT,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null= True)
 
@@ -145,6 +144,7 @@ class Supplier_contact(models.Model):
     
 class Payment(models.Model):
     mode = models.CharField(max_length=150)
+    nbr_days = models.IntegerField(null=True, blank=True)
     class Meta:
         db_table = 'payment'
     def __str__(self) -> str:

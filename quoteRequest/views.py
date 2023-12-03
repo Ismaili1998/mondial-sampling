@@ -36,8 +36,11 @@ def create_quoteRequest(request,project_pk):
                 quoteRequest = QuoteRequest.objects.create(project = project,
                                                         supplier=supplier,
                                                         request_nbr=request_nbr)
-                for article, quantity in zip(articles, quantities):
-                    order = Order(article_id=article, quantity=quantity, quoteRequest=quoteRequest)
+                for article_id, quantity in zip(articles, quantities):
+                    article = get_object_or_404(Article, id=article_id)
+                    order = Order(article=article, quantity=quantity,
+                                  purchase_price = article.purchase_price,
+                                  quoteRequest=quoteRequest)
                     order.save()
             messages.success(request, 'Quote request has been created successfully')
         except:
@@ -95,7 +98,7 @@ def delete_quoteRequest(request, pk):
         messages.success(request, 'quoteRequest has been deleted successfully')
     return redirect('project-detail',project.project_nbr)
 
-def supplierCommand_detail(quoteRequest,page_name):
+def supplierCommand_detail(quoteRequest):
     timeUnits = TimeUnit.objects.all()
     payments = Payment.objects.all()
     currencies = Currency.objects.all()
@@ -103,7 +106,6 @@ def supplierCommand_detail(quoteRequest,page_name):
                'currencies': currencies,
                'timeUnits':timeUnits,
                'payments':payments,
-               'page':page_name,
                'orders':quoteRequest.order_set.all()}
 
 def supplier_command(request, request_pk):
@@ -115,15 +117,13 @@ def supplier_command(request, request_pk):
             supplierCommand.quoteRequest = quoteRequest
             supplierCommand.command_nbr = quoteRequest.request_nbr.replace('N','B')
             supplierCommand.save()
-            due_date = supplierCommand.payment_date 
-            # create_payment_alert.apply_async(args=[due_date], eta=due_date)
             messages.success(request, 'Command has been created successfully.')
         else:
             for err in form.errors:
                 print(err)
             messages.error(request, 'An error occured, please retry')
         return redirect('project-detail', quoteRequest.project.project_nbr)
-    return render(request, 'supplier_command.html', context=supplierCommand_detail(quoteRequest,'create-command'))
+    return render(request, 'supplierCommand_create.html', context=supplierCommand_detail(quoteRequest))
 
 def update_supplierCommand(request, pk):
     supplierCommand = get_object_or_404(SupplierCommand, id=pk)
@@ -132,15 +132,13 @@ def update_supplierCommand(request, pk):
         form = SupplierCommandForm(request.POST, instance=supplierCommand)
         if form.is_valid():
             supplierCommand.save()
-            due_date = supplierCommand.payment_date 
-            # create_payment_alert.delay(120)
             messages.success(request, 'Command has been updated successfully.')
         else:
             for err in form.errors:
                 print(err)
             messages.error(request, 'An error occured, please retry')
         return redirect('project-detail', quoteRequest.project.project_nbr)
-    return render(request, 'supplier_command.html', context = supplierCommand_detail(quoteRequest,'update-command'))
+    return render(request, 'supplierCommand_edit.html', context = supplierCommand_detail(quoteRequest))
 
 def print_supplierCommand(request, pk):
     supplierCommand = get_object_or_404(SupplierCommand, id=pk)
@@ -158,8 +156,15 @@ def print_supplierCommand(request, pk):
 
 def delete_order_from_quoteRequest(request, pk):
     order = get_object_or_404(Order, pk=pk)
-    quoteRequest = order.commercialOffer 
+    quoteRequest = order.quoteRequest
     order.delete()
-    return render(request, 'commercialOffer_edit.html', context = quoteRequest_detail(quoteRequest))
+    return render(request, 'quoteRequest_edit.html', context = quoteRequest_detail(quoteRequest))
 
 
+def delete_supplierCommand(request, pk):
+    supplierCommand = get_object_or_404(SupplierCommand, id=pk)
+    project_nbr = supplierCommand.quoteRequest.project.project_nbr
+    if request.method == "POST":
+        messages.success(request, 'Supplier command has been deleted successfully !')
+        supplierCommand.delete()
+    return redirect('project-detail', project_nbr)

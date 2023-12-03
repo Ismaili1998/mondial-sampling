@@ -14,10 +14,10 @@
         <div class="mt-2 contact-section d-flex justify-content-between">
             <div class="size-13">
                 <p>
-                    {{ commercialOffer.project.client }} <br />
-                    {{ commercialOffer.project.client.address|default:"" }} <br />
-                    Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
-                    Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
+                    {{ commercialOffer.project.client }} <br/>
+                    {{ commercialOffer.project.client.address|default:"" }} <br/>
+                    Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br/>
+                    Email :{{ commercialOffer.project.client.email1|default:"" }} <br/>
                     Fax :{{ commercialOffer.project.client.fax|default:"" }}
                 </p>
             </div>
@@ -29,13 +29,13 @@
             <div class="size-13">
                 <p>
                     {{ translations.contact_name }} <br/>
-                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Mr:  {{ request.user.first_name|default:"" }} <br/>
                     Tel: {{ request.user.phone_numbe|default:"" }} <br/>
-                    Fax: {{ request.user.fax |default:""}}
+                    Fax: {{ request.user.fax |default:"" }}
                 </p>
                 <p>
                     {% if commercialOffer.local_contact %}
-                        {{translations.local_contact }} <br/>
+                         {{ translations.local_contact }} <br/>
                     Mr:  {{ commercialOffer.project.representative.name|default:"" }} <br/>
                     Tel: {{ commercialOffer.project.representative.email|default:"" }} <br/>
                     Fax: {{ commercialOffer.project.representative.fax|default:"" }} <br/>
@@ -126,15 +126,13 @@
         $('#currentDate').text(formattedDate);
     });
 
-
     $("#orders-list tbody").sortable({
-            helper: "clone", // Display a clone of the row while dragging
+            helper: "clone", 
             update: function(event, ui) {
-                // Update the Pos numbers based on the new order
                 $("#orders-list tbody tr").each(function(index) {
                     $(this).find("td:first-child").text(index + 1);
                 });
             }
         }).disableSelection();
-
+        
 </script>

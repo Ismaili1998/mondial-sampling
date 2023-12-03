@@ -6,7 +6,7 @@ register = template.Library()
 @register.filter
 def thousand_separator(value):
     if not value:
-        return '' 
+        return '0,00' 
 
     # Set the desired locale
     locale.setlocale(locale.LC_ALL, 'de_DE.utf8')

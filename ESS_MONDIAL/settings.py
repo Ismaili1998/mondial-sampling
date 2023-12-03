@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'order',
     'invoice',
     'project',
+    'payment'
     
 ]
 

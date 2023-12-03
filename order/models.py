@@ -68,9 +68,15 @@ class Order(models.Model):
         return (self.purchase_price *  (1 + self.margin / 100)) or 0
     
     def get_description_by_client_lang(self):
-        language_code = self.commercialOffer.project.client.language.language_code
+        try:
+            language_code = self.commercialOffer.project.client.language.language_code
+        except:
+            language_code = "fr"
         return self.article.get_description(language_code) or ''
     
     def get_description_by_supplier_lang(self):
-        language_code = self.quoteRequest.project.client.language.language_code
+        try:
+            language_code = self.quoteRequest.supplier.language.language_code
+        except:
+            language_code = "fr"
         return self.article.get_description(language_code) or ''

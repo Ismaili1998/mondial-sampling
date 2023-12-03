@@ -1,0 +1,119 @@
+{% extends 'main.html' %}
+{% block content %}
+{% load format_numbers %}
+<main class="container-fluid">
+    <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
+        <div class="lh-1">
+            <strong> <a href="{% url 'project-home' %}" class="text-white"> Project</a> / Manage payment </strong>
+        </div>
+    </div>
+    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+        {% include 'alert.html' %}
+        <form method="GET" class="submit-form" action="{% url 'manage-payment' %}">
+            <div class="row">
+                {% comment %} <div class="col-md-5">
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Start date </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="start_date" class="form-control form-control-sm"
+                                value="{{ payment_filters.start_date }}" required />
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">End date </label>
+                        <div class="col-sm-8">
+                            <input type="date" name="end_date" class="form-control form-control-sm"
+                                value="{{ payment_filters.end_date }}" required />
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+                <div class="col-md-5">
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Filter By:</label>
+                        <div class="col-sm-8">
+                            <select required name="filter_type" class="form-select form-select-sm">
+                                <option value="income" {% if payment_filters.filter_type == "income" %} selected="selected" {% endif %}>Income</option>
+                                <option value="expense" {% if payment_filters.filter_type == "expense" %} selected="selected" {% endif %}>Expense</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm">Number of Days:</label>
+                        <div class="col-sm-8">
+                            <input type="number" name="nbr_days" class="form-control form-control-sm" value="{{ payment_filters.nbr_days }}" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="mt-2 btn btn-dark btn-sm"> Search </button>
+                </div>
+            </div>
+        </form>
+        <div class="mt-5 container-fluid size-13">
+            <table class="table table-sm" id="income-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Project</th>
+                        <th>Invoice Ref</th>
+                        <th>Date </th>
+                        <th>Client Ref </th>
+                        <th>Sales </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.commercialOffer.project.client }}</td>
+                        <td>{{ invoice.commercialOffer.project }}</td>
+                        <td>
+                            <a href="#" class="text-info"
+                                onclick="load_modal('Confirmed order','{%  url "get-commercialOffer" invoice.commercialOffer.id %}')">
+                                {% if invoice.confirmation_nbr %} 
+                                    {{ invoice.confirmation_nbr }}
+                                {% else %}
+                                    {{ invoice.invoice_nbr }}
+                                {% endif %} 
+                            </a>
+                        </td>
+                        <td>{{ invoice.commercialOffer.payment_date|date:'d.m.Y' }}</td>
+                        <td>{{ invoice.client_nbr }}</td>
+                        <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No invoice available.</td>
+                    </tr>
+                    {% endfor %}
+                    <tfoot>
+                        <td colspan="5"> </td>
+                        <td> Total sales = <strong> {{ total_sales }} </strong> </td>
+                    </tfoot>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2 mt-2">
+            <button class="btn btn-success btn-export"> Export Excel </button>
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block javascript %}
+<script src="https://cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+<script>
+        
+        function load_modal(title, page_url) {
+            $('.modal-title').text(title);
+            $('.modal-body').load(page_url);
+            $('#Modal').modal('show');
+        }
+
+        $(document).ready(function() {
+            $(".btn-export").click(function() {
+                $("#income-table").table2excel({
+                filename: "payment_table.xls" // Specify the filename for the exported file
+                });
+            });
+        });
+</script>
+{% endblock %}

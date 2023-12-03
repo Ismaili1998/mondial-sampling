@@ -258,6 +258,14 @@ translations = {
             Der Ausführer der unter dieses Dokument fallenden Waren (Zollbewilligung Nr. ...)
             erklärt, dass diese Waren, sofern nicht eindeutig etwas anderes angegeben ist, den Präferenzursprung EWG haben
             """
-    }
+    },
+
+     'freight_packaging':{
+        'en': 'Freight | Packaging',
+        'fr': 'Fret | Emballage',
+        'de': 'Fracht | Verpackung:'
+    },
+
+
         
 }

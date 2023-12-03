@@ -1,15 +1,15 @@
 
 {% load format_numbers %}
 {% load static %}
-<div class="container-fluid item-to-print">
+<div class="container-fluid item-to-print" contenteditable="true">
      <!-- Header, logo section -->
     <div class="row">
         <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
     </div>
     <div class="row mt-4">
         <div class="text-left">
-            <h6>  Rapport commission provisoires : </h6>
-            <h6>  Represenatnt: {{ representative }} </h6>
+            <h6>  Provisionszahlungen / Rapport commission provisoires  </h6>
+            <h6>  Vertreter / Represenatnt: {{ representative }} </h6>
             <h6>  Pays: </h6>
         </div>
     </div>
@@ -30,8 +30,14 @@
             <tr>
                 <td>{{ invoice.commercialOffer.project.client }}</td>
                 <td>{{ invoice.commercialOffer.project }}</td>
-                <td>{{ invoice.confirmation_nbr }}</td>
-                <td>{{ invoice.created_at }}</td>
+                <td>
+                    {% if invoice.confirmation_nbr %} 
+                        {{ invoice.confirmation_nbr }}
+                    {% else %}
+                        {{ invoice.invoice_nbr }}
+                    {% endif %} 
+                </td>
+                <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
                 <td>{{ invoice.client_nbr }}</td>
                 <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
                 <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.commercialOffer.currency }} </td>
@@ -45,7 +51,7 @@
     </table>
     <div class="mt-5 d-flex justify-content-between">
         <div>
-            <strong> Calculation  </strong>
+            <strong> Appercu/Übersicht/Calculation  </strong>
             <table class="table table-sm size-13 mt-2">
                 <tbody>
                     <tr>
@@ -68,7 +74,7 @@
             </table>
         </div>
         <div>
-            <strong> Advance Payments  </strong>
+            <strong> Les avances/Advance Payments/Abschläge </strong>
             <table class="table table-sm size-13 mt-2">
                 <thead>
                     <tr>
@@ -98,6 +104,7 @@
     </div>
     <div class="row mt-4">
            <p> Je confirme avoir recu les montants objets de ce rapport.</p>
+           <p> Ich bestätigen, den Betrag/Provi.-Bericht erhalten zu haben.</p>
            <p> ...................... le ....................................</p>
            <p> ...................... le ....................................</p>
     </div>

@@ -45,8 +45,8 @@
                         <label class="col-sm-4 col-form-label col-form-label-sm">Filter By:</label>
                         <div class="col-sm-8">
                             <select required name="filter_type" class="form-select form-select-sm">
-                                <option value="invoice"> invoice </option>
-                                <option value="command"> command </option>
+                                <option value="invoice" {% if search_filters.filter_type == "invoice" %} selected="selected" {% endif %}>invoice</option>
+                                <option value="command" {% if search_filters.filter_type == "command" %} selected="selected" {% endif %}>command</option>
                             </select>
                         </div>
                     </div>
@@ -77,19 +77,28 @@
                         <td>
                             <a href="#" class="text-info"
                                 onclick="load_modal('Confirmed order','{%  url "get-commercialOffer" invoice.commercialOffer.id %}')">
-                                {{ invoice.confirmation_nbr }}
+                                {% if invoice.confirmation_nbr %} 
+                                    {{ invoice.confirmation_nbr }}
+                                {% else %}
+                                    {{ invoice.invoice_nbr }}
+                                {% endif %} 
                             </a>
                         </td>
-                        <td>{{ invoice.created_at }}</td>
+                        <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
                         <td>{{ invoice.client_nbr }}</td>
                         <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
                         <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.commercialOffer.currency }} </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">No invoice available.</td>
+                        <td colspan="7">No invoice available.</td>
                     </tr>
                     {% endfor %}
+                    <tfoot>
+                        <td colspan="5"> </td>
+                        <td> Total sales = <strong> {{ total_sales }} </strong> </td>
+                        <td> Total commission = <strong> {{ total_commission }} </strong> </td>
+                    </tfoot>
                 </tbody>
             </table>
         </div>

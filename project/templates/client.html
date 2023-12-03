@@ -65,19 +65,6 @@
                 </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="email1" class="col-sm-4 col-form-label col-form-label-sm">Representative</label>
-                <div class="col-sm-8">
-                    <select required class="form-select form-select-sm" name="representative" aria-label=".form-select-sm example">
-                        <option value=""> Chose a representative </option>
-                        {% for representative in representatives %}
-                        <option value="{{ representative.id }}" {% if client.representative.id == representative.id %} selected {% endif %}>
-                            {{ representative }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
                 <label for="id_fax" class="col-sm-4 col-form-label col-form-label-sm">Fax</label>
                 <div class="col-sm-8">
                     <input type="text" name="fax" class="form-control form-control-sm" id="id_fax"

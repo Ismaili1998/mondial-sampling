@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import ProjectForm, SupplierForm, Supplier_contactForm, ClientForm
+from .forms import ProjectForm, SupplierForm, Supplier_contactForm, ClientForm, RepresentativeForm, BuyerForm
 from .models import Project, Supplier, Client, Country, Language, File, Representative, Buyer, Representative
 from django.contrib import messages
 from django.http import JsonResponse
@@ -19,7 +19,6 @@ def project_home(request):
     representatives = Representative.objects.all()
     buyers = Buyer.objects.all()
     context = {'clients':clients,
-               'page':'add-project',
                'representatives': representatives,
                'buyers': buyers,
                'project_nbr':project_nbr}
@@ -30,14 +29,12 @@ def project_detail(request, project_nbr):
     project = get_object_or_404(Project, project_nbr=project_nbr)
     clients = Client.objects.all()
     articles = project.article_set.all()[:50]
-    page_name = 'update-project'
     Representatives = Representative.objects.all()
     buyers = Buyer.objects.all()
     context = {'project':project,
                'clients':clients, 
                'representatives':Representatives,
                'buyers': buyers,
-               'page':page_name,
                'articles':articles}
     return render(request, 'project_home.html', context)
 
@@ -273,8 +270,30 @@ def get_suppliersByKeyWord(request):
     # Return the suppliers' data as JSON response
     return JsonResponse({'suppliers': supplier_data})
 
+def create_representative(request): 
+    if request.method == 'POST':
+        form = RepresentativeForm(request.POST)
+        if form.is_valid():
+            representative = form.save()
+            representative  = {
+                'id': representative.id,
+                'name': representative.name,
+            }
+            return JsonResponse({'representative': representative})
+    return render(request, 'create_representative.html')
 
 
+def create_buyer(request): 
+    if request.method == 'POST':
+        form = BuyerForm(request.POST)
+        if form.is_valid():
+            buyer = form.save()
+            buyer = {
+                'id': buyer.id,
+                'name': buyer.name,
+            }
+            return JsonResponse({'buyer': buyer})
+    return render(request, 'create_buyer.html')
 
 
 

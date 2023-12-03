@@ -49,7 +49,7 @@ def article_edit(request, pk):
 @csrf_exempt
 def get_articlesByKeyWord(request):
     keyword = request.GET.get('keyword', '')
-    articles = Article.objects.filter(article_nbr__icontains=keyword).values_list('article_nbr', flat=True)[:10]
+    articles = Article.objects.filter(project=None, article_nbr__icontains=keyword).values_list('article_nbr', flat=True)[:10]
     return JsonResponse(list(articles), safe=False)
 
 

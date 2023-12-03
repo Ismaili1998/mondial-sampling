@@ -13,4 +13,5 @@ urlpatterns = [
     path('supplier-command/<str:request_pk>/', views.supplier_command, name='supplier-command'),
     path('print-supplierCommand/<str:pk>/', views.print_supplierCommand, name='print-supplierCommand'),
     path('update-supplierCommand/<str:pk>/', views.update_supplierCommand, name='update-supplierCommand'),
+    path('delete-supplierCommand/<str:pk>/', views.delete_supplierCommand, name='delete-supplierCommand'),
 ]

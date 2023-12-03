@@ -1,4 +1,4 @@
-<table class="table table-sm mt-3 bg-white">
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable ">
     <thead>
         <tr>
             <th>Confirmed Order Number</th>
@@ -11,15 +11,15 @@
                 <tr>
                     {% if offer.confirmed %}
                         <td> 
-                            <a href="#" class="text-info"
-                                onclick="load_modal('Confirmed order','{%  url "get-commercialOffer" offer.id %}')">
+                            <a href="#" 
+                                onclick="load_modal('Confirmed offer','{%  url "update-confirmed-commercialOffer"  offer.confirmed_commercialoffer.id %}')">
                                 {{ offer.confirmed_commercialoffer.confirmation_nbr }}
                             </a>
                         </td>
                          <td>
-                            {% if not offer.invoice %}
-                                <a href="#" class="text-info"
-                                    onclick="load_modal('Create invoice','{%  url "create-invoice" offer.id %}')">
+                            {% if not offer.confirmed_commercialoffer.invoice %}
+                                <a href="#" 
+                                    onclick="load_modal('Create invoice','{%  url "create-invoice" offer.confirmed_commercialoffer.id %}')">
                                     Create Invoice 
                                 </a>
                                 {% else %}
@@ -38,6 +38,10 @@
                         </td>
                     {% endif %}
                 </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">No confirmed offer available.</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>

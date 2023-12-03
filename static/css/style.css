@@ -90,12 +90,11 @@
 @media print {
     @page {
         margin-top: 3cm;
-        margin-bottom: 2cm;
+        margin-bottom: 1cm;
     }
 
     @page :first {
         margin-top: 0;
-        /* Override margin for the first page */
     }
 }
 
@@ -105,4 +104,13 @@
 
 i {
     translate: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.table-scrollable {
+    max-height: 100px;
+    overflow-y: auto;
 }

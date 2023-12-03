@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from functools import reduce 
 from project.models import Representative
 from commercialOffer.models import Confirmed_commercialOffer
+from invoice.models import Invoice
 from django.contrib import messages
 from .forms import AdvancePaymentForm
 from django.utils import timezone
@@ -39,11 +40,11 @@ def get_representativeInvoices(request):
         end_date = datetime.strptime(end_date, '%Y-%m-%d')
         start_date = timezone.make_aware(start_date)
         end_date = timezone.make_aware(end_date)
-        if filter_type == 'invoice':
+        if filter_type == 'command':
             invoices = Confirmed_commercialOffer.objects.filter(created_at__range=[start_date, end_date], 
                                                                 commercialOffer__project__representative=representative)
         else:
-            invoices = Confirmed_commercialOffer.objects.filter(created_at__range=[start_date, end_date], 
+            invoices = Invoice.objects.filter(created_at__range=[start_date, end_date], 
                                                                 commercialOffer__project__representative=representative)
     return  representative, invoices 
 

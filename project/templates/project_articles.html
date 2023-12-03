@@ -1,5 +1,5 @@
 
-<table class="table table-sm mt-3 bg-white" id="articles-table">
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable" id="articles-table">
   <thead>
     <tr>
       <th> 
@@ -20,8 +20,12 @@
          <a  href="#" class="text-info"
             onclick="load_modal('Article detail','{%  url "update-article" article.id %}')">{{ article.article_nbr }}</a>
       </td>
-      <td>
-        <textarea disabled rows="5" class="form-control size-12"> {{ article.description_fr}} </textarea>
+      <td style="width:300px">
+          <details>
+              <summary>Article Description</summary>
+              <textarea disabled rows="5"
+                  class="form-control size-11">{{ article.description_fr }}</textarea>
+          </details>
       </td>
       <td>
         <div class="dropdown-item">
@@ -34,6 +38,10 @@
         </div>
       </td>
     </tr>
+    {% empty %}
+      <tr>
+          <td colspan="7">No article available.</td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>

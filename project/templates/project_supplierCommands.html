@@ -1,8 +1,9 @@
-<table class="table table-sm mt-3 bg-white">
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable">
     <thead>
         <tr>
-            <th>Command Number</th>
+            <th>Supplier command Number</th>
             <th>Print</th>
+            <th>Action </th>
         </tr>
     </thead>
     <tbody>
@@ -10,7 +11,7 @@
             {% if quoteRequest.suppliercommand %}
             <tr>
                 <td>
-                    <a class="text-info" onclick="load_modal('Update command','{%  url "update-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                    <a onclick="load_modal('Update command','{%  url "update-supplierCommand"  quoteRequest.suppliercommand.id %}')"
                         href="#">
                         {{ quoteRequest.suppliercommand.command_nbr }}
                     </a>
@@ -21,8 +22,22 @@
                         <i class="material-icons align-middle text-dark">picture_as_pdf</i>
                     </a>
                 </td>
+                <td>
+                    <div class="dropdown-item">
+                        <form method="POST" action="{% url 'delete-supplierCommand' quoteRequest.suppliercommand.id  %}">
+                            {% csrf_token %}
+                            <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
+                                <i class="material-icons size-11">clear</i>
+                            </a>
+                        </form>
+                    </div>
+                </td>
             </tr>
             {% endif %}
+        {% empty %}
+            <tr>
+                <td colspan="7">No command available.</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>

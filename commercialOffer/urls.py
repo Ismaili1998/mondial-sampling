@@ -14,7 +14,7 @@ urlpatterns = [
     path('confirm-commercialOffer/<str:pk>', views.confirm_commercialOffer, name='confirm-commercialOffer'),
     path('cancel-confirmedOrder/<str:pk>', views.cancel_confirmedOrder, name='cancel-confirmedOrder'),
     path('print-confirmedOrder/<str:offer_pk>/', views.print_confirmOrder, name='print-confirmedOrder'),
-    path('get-commercialOffer/<str:pk>/', views.get_commercialOffer, name='get-commercialOffer'),
+    path('update-confirmed-commercialOffer/<str:pk>/', views.update_confirmed_commercialOffer, name='update-confirmed-commercialOffer'),
 
 
 ]

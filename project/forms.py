@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project, Client, Supplier, Supplier_contact
+from .models import Project, Client, Supplier, Supplier_contact, Representative, Buyer
 
 class ClientForm(forms.ModelForm):
     class Meta:
@@ -21,5 +21,12 @@ class Supplier_contactForm(forms.ModelForm):
         model = Supplier_contact
         fields = '__all__'
             
+class RepresentativeForm(forms.ModelForm):
+    class Meta:
+        model = Representative
+        fields = '__all__'
 
-
+class BuyerForm(forms.ModelForm):
+    class Meta:
+        model = Buyer
+        fields = '__all__'
