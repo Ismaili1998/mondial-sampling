@@ -10,3 +10,7 @@ class AdvancePayment(models.Model):
 
     def __str__(self):
         return str(self.amount)
+    
+    class Meta:
+        db_table = 'advance_payment'
+        ordering = ['-created_at']

@@ -13,7 +13,7 @@ class Invoice(models.Model):
 
     class Meta:
         db_table = 'invoice'
-        ordering = ['-id']
+        ordering = ['-created_at']
     
     def get_commission(self):
         return self.confirmed_commercialOffer.get_commission()

@@ -14,7 +14,7 @@ class QuoteRequest(models.Model):
         return round(total_purchase, 2)
 
     class Meta:
-        db_table = 'quoteRequest'
+        db_table = 'quote_request'
         ordering = ['-id']
 
 class SupplierCommand(models.Model):
