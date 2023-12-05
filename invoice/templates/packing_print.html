@@ -10,33 +10,33 @@
                 </div>
             </div>
         </div>
-         <!-- Contact section -->
+        <!-- Contact section -->
         <div class="contact-section d-flex justify-content-between">
             <div class="size-13">
                 {{ commercialOffer.project.client }} <br />
-                {{ commercialOffer.project.client.address }} <br />
-                Phone :{{ commercialOffer.project.client.phone_number1 }} <br />
-                Email :{{ commercialOffer.project.client.email1 }} <br />
-                Fax :{{ commercialOffer.project.client.fax }}
+                {{ commercialOffer.project.client.address|default:"" }} <br />
+                Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
+                Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
+                Fax :{{ commercialOffer.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
-                    PROFORMA <br/> {{ commercialOffer.offer_nbr }} 
+                    {{ translations.delivery_note }} <br/> {{ invoice.invoice_nbr }} 
                 </h6>
             </div>
             <div class="size-13">
                 <p>
                     {{ translations.contact_name }} <br/>
-                    Mr: {{ request.user.first_name }} <br/>
-                    Tel: {{ request.user.phone_number }} <br/>
-                    Fax: {{ request.user.fax }}
+                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Tel: {{ request.user.phone_number|default:"" }} <br/>
+                    Fax: {{ request.user.fax|default:"" }}
                 </p>
                 <p>
                     {% if commercialOffer.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ commercialOffer.project.local_contact.name }} <br/>
-                       Tel: {{ commercialOffer.project.local_contact.email }} <br/>
-                       Fax: {{ commercialOffer.project.local_contact.fax }} <br/>
+                       Mr:  {{ commercialOffer.project.local_contact.name|default:"" }} <br/>
+                       Tel: {{ commercialOffer.project.local_contact.email|default:"" }} <br/>
+                       Fax: {{ commercialOffer.project.local_contact.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
@@ -45,7 +45,7 @@
             <div>
                 <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
-                    {{translations.client_ref}} : {{ commercialOffer.project.client_ref }}
+                    {{translations.client_ref}} : {{ invoice.client_nbr }}
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -61,7 +61,7 @@
                 <table class="table table-sm bg-white" id="orders-list">
                     <thead>
                         <tr class="size-13">
-                            {% for column_name in translations.columns_name|slice:":4" %}
+                            {% for column_name in translations.columns_name|slice:":5" %}
                                 <th> {{ column_name }} </th>
                             {% endfor %}
                         </tr>
@@ -100,15 +100,15 @@
                 <table class="table table-sm bg-white">
                     <thead>
                         <tr class="size-13">
-                            <th> Poids de la marchandise </th>
-                            <th> [kg] Volume [cm³] </th>
-                            <th> Nombre de colis </th>
+                            {% for column_name in translations.packaging_infos %}
+                                <th> {{ column_name }} </th>
+                            {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="size-13">
-                            <td> {{ packing.weight }} </td>
-                            <td> {{ packing.width }} {{ packing.height }} {{ packing.length }} </td>
+                            <td> {{ packing.get_weight }} </td>
+                            <td> {{ packing.get_size }} </td>
                             <td> {{ packing.quantity }} </td>
                         </tr>
                     </tbody>

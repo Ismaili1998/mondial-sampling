@@ -13,8 +13,8 @@
             <div class="form-group row mt-2">
                 <label for="id_article_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
                 <div class="col-sm-8">
-                   <select class="form-select form-select-sm" id="id_article_unit" name="article_unit" aria-label=".form-select-sm example">
-                        <option> Chose an unit </option>
+                   <select required class="form-select form-select-sm" id="id_article_unit" name="article_unit" aria-label=".form-select-sm example">
+                        <option value=""> Chose an unit </option>
                         {% for article_unit in article_units %}
                         <option value="{{ article_unit.id }}" {% if article.article_unit.id == article_unit.id %} selected {% endif%}>
                             {{ article_unit|default:'' }}
@@ -26,8 +26,8 @@
             <div class="form-group row mt-2">
                 <label for="id_purchase_price" class="col-sm-4 col-form-label col-form-label-sm">Purchase Price</label>
                 <div class="col-sm-8">
-                    <input type="number" name="purchase_price" class="form-control form-control-sm"
-                        id="id_purchase_price" value="{{article.purchase_price|default:''}}" step="any" />
+                    <input required type="number" name="purchase_price" class="form-control form-control-sm"
+                        id="id_purchase_price" value="{{article.purchase_price|default:'0.00'}}" step="any" />
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@
                 <a href="#" id="translate" class="size-12"> Translate </a>
             </label>
             <div class="col-sm-10">
-                <textarea name="description_fr" rows="12" class="form-control form-control-sm"
+                <textarea required name="description_fr" rows="12" class="form-control form-control-sm"
                     id="id_description_fr">{{article.description_fr|default:''}}</textarea>
             </div>
         </div>

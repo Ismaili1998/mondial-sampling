@@ -19,7 +19,7 @@
         <div class="col-sm-4 mt-1">
             <div class="form-group">
                 <label for="selected-suppliers">Suppliers:</label>
-                <select id="selected-suppliers" name="supplier" multiple class="form-control">
+                <select id="selected-suppliers" name="supplier" required multiple class="form-control">
                 </select>
             </div>
             <div class="mt-2">
@@ -58,7 +58,8 @@
                     type: 'number',
                     name: 'quantity',
                     class: 'form-control form-control-sm',
-                    value: '1'
+                    value: '1',
+                    required:true
                 });
                 $('<td>').append(quantityInput).appendTo(newRow);
                 // Append the new row to the articles table body

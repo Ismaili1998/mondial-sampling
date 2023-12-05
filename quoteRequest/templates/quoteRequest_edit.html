@@ -16,7 +16,7 @@
             </table>
             <div class="form-group">
                 <label for="selected-suppliers">Chosen suppliers:</label>
-                <select id="selected-suppliers" required name="supplier" multiple class="form-control">
+                <select id="selected-suppliers"  name="supplier" multiple class="form-control">
                 </select>
             </div>
             <p class="mt-3 size-13"> By clicking the button below, you'll be able to conveniently initiate a new quote request 
@@ -56,11 +56,15 @@
                                 </td>
                                 <td class="form-group">
                                     <input type="number" name="purchase-price" 
-                                    class="form-control form-control-sm"
+                                    class="form-control form-control-sm" 
+                                    required
                                     placeholder="purchase price"
-                                    value="{{order.purchase_price|default:order.article.purchase_price}}"/>
+                                    value="{{order.purchase_price}}"/>
                                 </td>
-                                <td> <input class="form-control form-control-sm" value="{{ order.quantity|default:'1' }}" name="quantity"> </td>
+                                <td> 
+                                    <input class="form-control form-control-sm" required
+                                     value="{{ order.quantity|default:'1' }}" name="quantity"> 
+                                </td>
                                 <td> {{order.article.article_unit}} </td>
                                 <td> <a href="#" class="btn btn-sm btn-remove"
                                         onclick="load_modal('Update ','{%  url "delete-order-from-quoteRequest" order.id %}')"

@@ -18,6 +18,12 @@ class Invoice(models.Model):
     def get_commission(self):
         return self.confirmed_commercialOffer.get_commission()
     
+    def get_total_selling_withFee(self):
+        return self.confirmed_commercialOffer.get_total_selling_withFee()
+    
+    def get_currency(self):
+        return self.confirmed_commercialOffer.get_currency()
+    
 class Packing(models.Model):
     invoice = models.OneToOneField(
         Invoice,
@@ -31,3 +37,9 @@ class Packing(models.Model):
 
     def __str__(self):
         return f"Packing #{self.id} - for {self.invoice} invoice"
+    
+    def get_weight(self):
+        return f"{self.weight} Kg"
+    
+    def get_size(self):
+        return f"{self.width}x{self.height}x{self.length} cm³"

@@ -280,7 +280,10 @@ def create_representative(request):
                 'name': representative.name,
             }
             return JsonResponse({'representative': representative})
-    return render(request, 'create_representative.html')
+        else:
+            return JsonResponse({'error': 'error occured !'})
+        
+    return render(request, 'representative_edit.html')
 
 
 def create_buyer(request): 
@@ -293,8 +296,31 @@ def create_buyer(request):
                 'name': buyer.name,
             }
             return JsonResponse({'buyer': buyer})
-    return render(request, 'create_buyer.html')
+        else:
+            return JsonResponse({'error': 'error occured !'})
+    return render(request, 'buyer_edit.html')
 
+def update_representative(request, pk):
+    representative = get_object_or_404(Representative, id=pk) 
+    if request.method == 'POST':
+        form = RepresentativeForm(request.POST, instance=representative)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'message': 'representative updated successfully'})
+        return JsonResponse({'message': 'error occured !'})
+    context = {'representative': representative}
+    return render(request, 'representative_edit.html', context)
+
+def update_buyer(request, pk):
+    buyer = get_object_or_404(Buyer, id=pk) 
+    if request.method == 'POST':
+        form = RepresentativeForm(request.POST, instance=buyer)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'message': 'buyer updated successfully'})
+        return JsonResponse({'message': 'error occured !'})
+    context = {'buyer': buyer}
+    return render(request, 'buyer_edit.html', context)
 
 
 

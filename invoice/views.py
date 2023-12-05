@@ -75,7 +75,7 @@ def create_packing(request,invoice_pk):
             packing.save()
         else:
             messages.error(request, 'an error occured, plase retry !')
-        return redirect('project-detail', invoice.commercialOffer.project.project_nbr)
+        return redirect('project-detail', invoice.confirmed_commercialOffer.commercialOffer.project.project_nbr)
     context = {"invoice":invoice, "form_name":"create"}
     return render(request,'create_packing.html', context)
 
@@ -88,7 +88,7 @@ def update_packing(request, pk):
             packing.save()
         else:
             messages.error(request, 'an error occured, plase retry !')
-        return redirect('project-detail', invoice.commercialOffer.project.project_nbr)
+        return redirect('project-detail', invoice.confirmed_commercialOffer.commercialOffer.project.project_nbr)
     context = {"invoice":invoice, 
                 "packing":packing, 
                 "form_name":"update"}

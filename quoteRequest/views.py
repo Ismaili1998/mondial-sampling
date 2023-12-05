@@ -20,7 +20,7 @@ def create_quoteRequest(request,project_pk):
         suppliers = request.POST.getlist('supplier')
         quantities = request.POST.getlist('quantity')
         if not len(articles) or not len(suppliers):
-            messages.error(request, 'Please, select at least one article and one supplier  !')
+            messages.error(request, 'An error occured, please retry !')
             return redirect('project-detail',project_nbr)
         index = 1
         try:

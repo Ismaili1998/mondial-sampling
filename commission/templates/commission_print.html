@@ -10,15 +10,19 @@
         <div class="text-left">
             <h6>  Provisionszahlungen / Rapport commission provisoires  </h6>
             <h6>  Vertreter / Represenatnt: {{ representative }} </h6>
-            <h6>  Pays: </h6>
+            <h6>  Pays: {{ invoices.0.commercialOffer.project.client.country }}
+                        {{ invoices.0.confirmed_commercialOffer.project.client.country }}
+            </h6>
         </div>
     </div>
-    <table class="table table-sm mt-5 size-12">
+    <table class="table table-sm mt-5 size-11">
         <thead>
             <tr>
                 <th>Client</th>
+                <th>Buyer </th>
                 <th>Project</th>
                 <th>Invoice / Confirmation Ref</th>
+                <th>Payment date </th>
                 <th>Date </th>
                 <th>Client Ref </th>
                 <th>Sales </th>
@@ -28,47 +32,69 @@
         <tbody>
             {% for invoice in invoices %}
             <tr>
-                <td>{{ invoice.commercialOffer.project.client }}</td>
-                <td>{{ invoice.commercialOffer.project }}</td>
-                <td>
-                    {% if invoice.confirmation_nbr %} 
+                {% if invoice.confirmation_nbr %}
+                    <td>{{ invoice.commercialOffer.project.client }}</td>
+                    <td>{{ invoice.commercialOffer.project.buyer }}</td>
+                    <td>{{ invoice.commercialOffer.project }}</td>
+                    <td>
                         {{ invoice.confirmation_nbr }}
-                    {% else %}
-                        {{ invoice.invoice_nbr }}
-                    {% endif %} 
-                </td>
-                <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
-                <td>{{ invoice.client_nbr }}</td>
-                <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
-                <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.commercialOffer.currency }} </td>
+                    </td>
+                    <td>{{ invoice.commercialOffer.payment_date|date:'d.m.Y' }}</td>
+                    <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
+                    <td>{{ invoice.client_nbr }}</td>
+                    <td>{{ invoice.get_total_selling_withFee|thousand_separator }}
+                        {{ invoice.get_currency }}
+                    </td>
+                    <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>
+                {% else %}
+                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project.client }}</td>
+                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project.buyer }}</td>
+                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project }}</td>
+                    <td> <a href="#" class="text-info"
+                        onclick="load_modal('Invoice','{%  url "update-invoice" invoice.id %}')"> 
+                        {{ invoice.invoice_nbr }} </a>
+                    </td>  
+                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.payment_date|date:'d.m.Y' }}</td>
+                    <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
+                    <td>{{ invoice.client_nbr }}</td>
+                    <td>
+                        {{ invoice.get_total_selling_withFee|thousand_separator }}
+                        {{ invoice.get_currency }}
+                    </td>
+                    <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>                          
+                {% endif %} 
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6">No invoice available.</td>
+                <td colspan="9">No invoice available.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <div class="mt-5 d-flex justify-content-between">
+    <div class="mt-5 d-flex justify-content-between size-12">
         <div>
             <strong> Appercu/Übersicht/Calculation  </strong>
             <table class="table table-sm size-13 mt-2">
                 <tbody>
                     <tr>
                         <th>Total Sales:</th>
-                        <td>{{ total_sales|thousand_separator }}</td>
+                        <td>{{ total_sales|thousand_separator }} {{ invoices.0.get_currency }} </td>
                     </tr>
                     <tr>
                         <th>Total Commission:</th>
-                        <td>{{ total_commission|thousand_separator }}</td>
+                        <td>{{ total_commission|thousand_separator }} {{ invoices.0.get_currency }}</td>
                     </tr>
                     <tr>
                         <th>Total Advances:</th>
-                        <td>{{ total_advances|thousand_separator }}</td>
+                        <td>{{ total_advances|thousand_separator }} {{ invoices.0.get_currency }}</td>
                     </tr>
                     <tr>
                         <th>Remaining:</th>
-                        <td class="text-primary">{{ remaining|thousand_separator }}</td>
+                        <td class="{% if remaining < 0 %}text-danger{% else %}text-success{% endif %}">
+                            <strong>
+                                {{ remaining|thousand_separator }} {{ invoices.0.get_currency  }}
+                            </strong>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -109,7 +135,7 @@
            <p> ...................... le ....................................</p>
     </div>
 </div>
-<button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
+<button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> Print </button>
 <script>
     function printPage() {
         var printContent = document.querySelector('.item-to-print');

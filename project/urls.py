@@ -24,5 +24,8 @@ urlpatterns = [
     path('create-buyer',views.create_buyer,name='create-buyer'),
     path('create-representative',views.create_representative,name='create-representative'),
 
+    path('update-buyer/<str:pk>',views.update_buyer,name='update-buyer'),
+    path('update-representative/<str:pk>',views.update_representative,name='update-representative'),
+
 ]
 

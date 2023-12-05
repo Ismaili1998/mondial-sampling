@@ -27,8 +27,8 @@ def get_payment_filters(request):
 def filter_invoices(start_date, end_date, nbr_days):
     current_date = timezone.now()
     future_date = current_date + timedelta(days=int(nbr_days))
-    return Invoice.objects.filter(commercialOffer__payment_date__gte=current_date, 
-                                  commercialOffer__payment_date__lte=future_date)
+    return Invoice.objects.filter(confirmed_commercialOffer__commercialOffer__payment_date__gte=current_date, 
+                                  confirmed_commercialOffer__commercialOffer__payment_date__lte=future_date)
 
 def filter_supplierCommands(start_date, end_date, nbr_days):
     current_date = timezone.now()
@@ -58,7 +58,7 @@ def manage_payment(request):
 
     else:
         invoices = filter_invoices(start_date, end_date, nbr_days)
-        total_sales = sum(invoice.commercialOffer.get_total_selling_withFee() for invoice in invoices)
+        total_sales = sum(invoice.get_total_selling_withFee() for invoice in invoices)
         context = {
             'invoices': invoices,
             'total_sales': total_sales,

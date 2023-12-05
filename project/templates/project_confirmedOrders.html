@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>Confirmed Order Number</th>
+            <th>Print </th>
             <th>Invoice </th>
             <th> </th>
         </tr>
@@ -16,7 +17,13 @@
                                 {{ offer.confirmed_commercialoffer.confirmation_nbr }}
                             </a>
                         </td>
-                         <td>
+                        <td> 
+                            <a href="#"
+                                onclick="load_modal('Generate pdf','{%  url "print-confirmedOrder" offer.confirmed_commercialoffer.id %}')">
+                                <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                            </a>
+                        </td>
+                        <td>
                             {% if not offer.confirmed_commercialoffer.invoice %}
                                 <a href="#" 
                                     onclick="load_modal('Create invoice','{%  url "create-invoice" offer.confirmed_commercialoffer.id %}')">

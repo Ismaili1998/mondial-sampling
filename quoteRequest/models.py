@@ -20,14 +20,14 @@ class QuoteRequest(models.Model):
 class SupplierCommand(models.Model):
     command_nbr = models.CharField(max_length=40, unique=True)
     payment_date = models.DateField(blank=True,null=True)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
     delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)
     delivery_time_unit = models.ForeignKey(TimeUnit,on_delete=models.PROTECT, blank=True,null=True) 
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
-    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
 
     vat = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
-    packaging_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
-    transport_fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
+    packaging_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    transport_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     quoteRequest = models.OneToOneField(
         QuoteRequest,
@@ -43,4 +43,4 @@ class SupplierCommand(models.Model):
         return self.quoteRequest.get_total_purchase() + self.get_fee()
     
     def get_fee(self):
-        return (self.packaging_fee + self.transport_fee) or 0
+        return self.packaging_fee + self.transport_fee

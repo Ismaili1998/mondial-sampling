@@ -1,28 +1,29 @@
-<form action="{% url 'create-representative' %}"  class="repForm" method="POST">
+<form action="{% if representative %}{% url 'update-representative' representative.id %}{% else %}{% url 'create-representative' %}{% endif %}"
+     method="POST" class="repForm">
     {% csrf_token %}
-    <div class="row">
+    <div class="row col-md-6">
         <div class="form-group row">
             <label class="col-sm-4 col-form-label col-form-label-sm"> Representative name </label>
             <div class="col-sm-8">
-                <input type="text" name="name" class="form-control form-control-sm" required/>
+                <input type="text" name="name" class="form-control form-control-sm" value="{% if representative %}{{ representative.name }}{% endif %}" required/>
             </div>
         </div>
         <div class="form-group row mt-2">
             <label class="col-sm-4 col-form-label col-form-label-sm"> Representative email </label>
             <div class="col-sm-8">
-                <input type="text" name="email" class="form-control form-control-sm" required/>
+                <input type="text" name="email" class="form-control form-control-sm" value="{% if representative %}{{ representative.email }}{% endif %}" required/>
             </div>
         </div>
         <div class="form-group row mt-2">
             <label class="col-sm-4 col-form-label col-form-label-sm"> Representative phone </label>
             <div class="col-sm-8">
-                <input type="text" name="phone_number" class="form-control form-control-sm" required/>
+                <input type="text" name="phone_number" class="form-control form-control-sm" value="{% if representative %}{{ representative.phone_number }}{% endif %}" required/>
             </div>
         </div>
     </div>
     <div class="mt-4">
         <button type="submit" class="btn btn-dark btn-sm mr-4">
-            Save changes
+            {% if representative %} Update {% else %} Save {% endif %}
         </button>
     </div>
 </form>
@@ -37,7 +38,6 @@
                 if (response) {
                     representative = response.representative;
                     var representativeName = representative.name;
-                    alert(representativeName)
                     var representativeId = representative.id;
                     $('#representative').append(`<option selected value="${representativeId}">${representativeName}</option>`);
                 } else {

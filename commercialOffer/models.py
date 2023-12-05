@@ -4,11 +4,11 @@ from project.models import Project, TimeUnit, Destination, Currency, Shipping, T
 class CommercialOffer(models.Model):
     offer_nbr = models.CharField(max_length=40, unique=True)
     client_nbr = models.CharField(max_length=100, unique=True, null=True, blank=True)
-    project = models.ForeignKey(Project,on_delete=models.PROTECT)
-    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, null=True)
-    margin = models.DecimalField(max_digits=4, decimal_places=2) 
+    project = models.ForeignKey(Project,on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT,null=True)
+    margin = models.DecimalField(max_digits=4, decimal_places=2, default=0) 
 
-    discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True,null=True)
+    discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True, default=0)
     shipping = models.ForeignKey(Shipping, on_delete=models.PROTECT, blank=True,null=True)
     transport = models.ForeignKey(Transport,on_delete=models.PROTECT, blank=True,null=True)
     payment = models.ForeignKey(Payment,on_delete=models.PROTECT, blank=True,null=True)
@@ -20,8 +20,8 @@ class CommercialOffer(models.Model):
     warranty_period = models.CharField(max_length=200, blank=True,null=True) 
     duration_in_days = models.IntegerField(blank=True,null=True) 
     payment_date = models.DateField(blank=True,null=True)
-    shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True) 
-    transport_fee = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
+    shipping_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0) 
+    transport_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     class Meta:
         db_table = 'commercial_offer'
@@ -59,7 +59,7 @@ class CommercialOffer(models.Model):
         return 0.00
 
     def get_total_fee(self):
-        return (self.transport_fee or 0) + (self.shipping_fee or 0)
+        return self.transport_fee  + self.shipping_fee 
 
     def get_total_selling_withFee(self):
         return (self.get_discounted_price() or self.get_total_selling()) + self.get_total_fee()
@@ -81,3 +81,9 @@ class Confirmed_commercialOffer(models.Model):
     
     def get_commission(self):
         return self.commercialOffer.get_total_selling_withFee() * (self.commission / 100)
+    
+    def get_total_selling_withFee(self):
+        return self.commercialOffer.get_total_selling_withFee()
+    
+    def get_currency(self):
+        return self.commercialOffer.currency

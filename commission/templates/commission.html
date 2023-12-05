@@ -4,7 +4,7 @@
 <main class="container-fluid">
     <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
         <div class="lh-1">
-            <strong> <a href="{% url 'project-home' %}" class="text-white"> Project</a> / Manage commission </strong>
+            <strong> <a href="{% url 'project-home' %}" class="text-white"> Home</a> / Manage commission </strong>
         </div>
     </div>
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
@@ -61,8 +61,10 @@
                 <thead>
                     <tr>
                         <th>Client</th>
+                        <th>Buyer </th>
                         <th>Project</th>
                         <th>Invoice / Confirmation Ref</th>
+                        <th>Payment date </th>
                         <th>Date </th>
                         <th>Client Ref </th>
                         <th>Sales </th>
@@ -72,32 +74,49 @@
                 <tbody>
                     {% for invoice in invoices %}
                     <tr>
-                        <td>{{ invoice.commercialOffer.project.client }}</td>
-                        <td>{{ invoice.commercialOffer.project }}</td>
-                        <td>
-                            <a href="#" class="text-info"
-                                onclick="load_modal('Confirmed order','{%  url "get-commercialOffer" invoice.commercialOffer.id %}')">
-                                {% if invoice.confirmation_nbr %} 
-                                    {{ invoice.confirmation_nbr }}
-                                {% else %}
-                                    {{ invoice.invoice_nbr }}
-                                {% endif %} 
-                            </a>
-                        </td>
-                        <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
-                        <td>{{ invoice.client_nbr }}</td>
-                        <td>{{ invoice.commercialOffer.get_total_selling_withFee|thousand_separator }}</td>
-                        <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.commercialOffer.currency }} </td>
+                        {% if invoice.confirmation_nbr %}
+                            <td>{{ invoice.commercialOffer.project.client }}</td>
+                            <td>{{ invoice.commercialOffer.project.buyer }}</td>
+                            <td>{{ invoice.commercialOffer.project }}</td>
+                            <td>
+                                <a href="#" class="text-info"
+                                    onclick="load_modal('Confirmed order','{%  url "update-confirmed-commercialOffer" invoice.id %}')"> 
+                                    {{ invoice.confirmation_nbr }} </a>
+                            </td>
+                            <td>{{ invoice.commercialOffer.payment_date|date:'d.m.Y' }}</td>
+                            <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
+                            <td>{{ invoice.client_nbr }}</td>
+                            <td>{{ invoice.get_total_selling_withFee|thousand_separator }}
+                                {{ invoice.get_currency }}
+                            </td>
+                            <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>
+                        {% else %}
+                            <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project.client }}</td>
+                            <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project.buyer }}</td>
+                            <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project }}</td>
+                            <td> <a href="#" class="text-info"
+                                onclick="load_modal('Invoice','{%  url "update-invoice" invoice.id %}')"> 
+                                {{ invoice.invoice_nbr }} </a>
+                            </td>  
+                            <td>{{ invoice.confirmed_commercialOffer.commercialOffer.payment_date|date:'d.m.Y' }}</td>
+                            <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
+                            <td>{{ invoice.client_nbr }}</td>
+                            <td>
+                                {{ invoice.get_total_selling_withFee|thousand_separator }}
+                                {{ invoice.get_currency }}
+                            </td>
+                            <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>                          
+                        {% endif %} 
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7">No invoice available.</td>
+                        <td colspan="9">No invoice available.</td>
                     </tr>
                     {% endfor %}
                     <tfoot>
-                        <td colspan="5"> </td>
-                        <td> Total sales = <strong> {{ total_sales }} </strong> </td>
-                        <td> Total commission = <strong> {{ total_commission }} </strong> </td>
+                        <td colspan="7"> </td>
+                        <td> Total sales = <strong> {{ total_sales }} {{ invoice.get_currency }} {{ invoices.0.get_currency  }}</strong> </td>
+                        <td> Total commission = <strong> {{ total_commission }} {{ invoice.get_currency }} {{ invoices.0.get_currency  }}</strong> </td>
                     </tfoot>
                 </tbody>
             </table>
@@ -109,21 +128,21 @@
                     <tbody>
                         <tr>
                             <th>Total Sales:</th>
-                            <td>{{ total_sales|thousand_separator }}</td>
+                            <td>{{ total_sales|thousand_separator }} {{ invoices.0.get_currency  }}</td>
                         </tr>
                         <tr>
                             <th>Total Commission:</th>
-                            <td>{{ total_commission|thousand_separator }}</td>
+                            <td>{{ total_commission|thousand_separator }} {{ invoices.0.get_currency  }}</td>
                         </tr>
                         <tr>
                             <th>Total Advances:</th>
-                            <td>{{ total_advances|thousand_separator }}</td>
+                            <td>{{ total_advances|thousand_separator }} {{ invoices.0.get_currency  }}</td>
                         </tr>
                         <tr>
                             <th>Remaining:</th>
                             <td class="{% if remaining < 0 %}text-danger{% else %}text-success{% endif %}">
                                 <strong>
-                                    {{ remaining|thousand_separator }}
+                                    {{ remaining|thousand_separator }} {{ invoices.0.get_currency  }}
                                 </strong>
                             </td>
                         </tr>

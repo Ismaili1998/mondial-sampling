@@ -14,29 +14,30 @@
         <div class="contact-section d-flex justify-content-between">
             <div class="size-13">
                 {{ commercialOffer.project.client }} <br />
-                {{ commercialOffer.project.client.address }} <br />
-                Phone :{{ commercialOffer.project.client.phone_number1 }} <br />
-                Email :{{ commercialOffer.project.client.email1 }} <br />
-                Fax :{{ commercialOffer.project.client.fax }}
+                {{ commercialOffer.project.client.address|default:"" }} <br />
+                Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
+                Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
+                Fax :{{ commercialOffer.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
-                    PROFORMA <br/> {{ commercialOffer.offer_nbr }} 
+                    {{ translations.customs_report }} <br/>
+                    {{ translations.invoice }} <br/> {{ invoice.invoice_nbr }} 
                 </h6>
             </div>
             <div class="size-13">
                 <p>
                     {{ translations.contact_name }} <br/>
-                    Mr: {{ request.user.first_name }} <br/>
-                    Tel: {{ request.user.phone_number }} <br/>
-                    Fax: {{ request.user.fax }}
+                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Tel: {{ request.user.phone_number|default:"" }} <br/>
+                    Fax: {{ request.user.fax|default:"" }}
                 </p>
                 <p>
                     {% if commercialOffer.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ commercialOffer.project.local_contact.name }} <br/>
-                       Tel: {{ commercialOffer.project.local_contact.email }} <br/>
-                       Fax: {{ commercialOffer.project.local_contact.fax }} <br/>
+                       Mr:  {{ commercialOffer.project.local_contact.name|default:"" }} <br/>
+                       Tel: {{ commercialOffer.project.local_contact.email|default:"" }} <br/>
+                       Fax: {{ commercialOffer.project.local_contact.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
@@ -45,7 +46,7 @@
             <div>
                 <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
-                    {{translations.client_ref}} : {{ commercialOffer.project.client_ref }}
+                    {{translations.client_ref}} : {{ invoice.client_nbr }}
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -72,14 +73,14 @@
                             <td> {{ forloop.counter }} </td>
                             <td> {{ order.article.article_nbr }} </td>
                             <td class="text-description"> 
-                                <pre> {{ order.get_description_by_client_lang }} </pre>
+                                <pre>{{ order.get_description_by_client_lang }}</pre>
                             </td>
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
-                            <td> {{order.selling_price|thousand_separator }}
+                            <td> {{order.get_selling_price|thousand_separator }}
                                  {{commercialOffer.currency}}
                             </td>
-                            <td> {{order.total_selling_price|thousand_separator}} 
+                            <td> {{order.get_total_selling|thousand_separator}} 
                                  {{commercialOffer.currency}}
                             </td>
                             <td> 
@@ -93,7 +94,7 @@
                     <tbody class="size-13">
                         <tr>
                             <td colspan="4">
-                                {{translations.validity_date}}: {{ commercialOffer.validity_date|date:'d.m.Y' }}
+                                {{translations.payment_date}}: {{ commercialOffer.payment_date|date:'d.m.Y' }}
                             </td>
                             <td class="size-14">
                                 {{translations.total_EXW}}:

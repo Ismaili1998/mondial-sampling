@@ -96,9 +96,9 @@ translations = {
     },
 
     'warranty_period': {
-        'en':'''Contact's Name''',
+        'en':'Warranty period',
         'fr':'Délai de garantie',
-        'de':'Garantiedauer:'
+        'de':'Garantiedauer'
     },
 
     'payment_date': {
@@ -260,12 +260,36 @@ translations = {
             """
     },
 
-     'freight_packaging':{
+    'freight_packaging':{
         'en': 'Freight | Packaging',
         'fr': 'Fret | Emballage',
-        'de': 'Fracht | Verpackung:'
+        'de': 'Fracht | Verpackung'
     },
 
+    'packaging_infos':{
+        'en': ['Weight of the Goods', 'Volume [cm³]', 'Number of Packages'],
+        'fr': ['Poids de la marchandise', '[kg] Volume [cm³]', 'Nombre de colis'],
+        'de': ['Gesamtgewicht', 'Volumen[cm³]', 'Anzahl Packstücke']
+    },
 
+    'delivery_note':{
+        'en': 'Delivery note',
+        'fr': 'Bon de livraison',
+        'de': 'Lieferschein'
+    },
+
+    'destination':{
+        'en': 'Destination',
+        'fr': 'Destination',
+        'de': 'Ziel'
+    },
+
+    'customs_report':{
+        'en': 'Customs report',
+        'fr': 'Rapport douanière',
+        'de': 'Zollbericht'
+    },
+
+    
         
 }

@@ -45,7 +45,7 @@ def get_representativeInvoices(request):
                                                                 commercialOffer__project__representative=representative)
         else:
             invoices = Invoice.objects.filter(created_at__range=[start_date, end_date], 
-                                                                commercialOffer__project__representative=representative)
+                                                                confirmed_commercialOffer__commercialOffer__project__representative=representative)
     return  representative, invoices 
 
 def get_context(request):
@@ -58,7 +58,7 @@ def get_context(request):
             total_advances += advance.amount
         for invoice in invoices:
             total_commissions += invoice.get_commission()
-            total_sales += invoice.commercialOffer.get_total_selling_withFee()
+            total_sales += invoice.get_total_selling_withFee()
     context = {
         "representatives":Representative.objects.all(),
         'invoices': invoices,

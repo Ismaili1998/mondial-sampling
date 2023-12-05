@@ -21,7 +21,7 @@
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
-                    {{ translations.confirmation_order }} <br/> {{ commercialOffer.offer_nbr }} 
+                    {{ translations.confirmation_order }} <br/> {{ confirmedOffer.confirmation_nbr }} 
                 </h6>
             </div>
             <div class="size-13">
@@ -45,7 +45,7 @@
             <div>
                 <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
-                    {{translations.client_ref}} : {{ commercialOffer.client_nbr }}
+                    {{translations.client_ref}} : {{ confirmedOffer.client_nbr }}
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -76,10 +76,10 @@
                             </td>
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
-                            <td> {{order.selling_price|thousand_separator  }}
+                            <td> {{order.get_selling_price|thousand_separator  }}
                                  {{commercialOffer.currency}}
                             </td>
-                            <td> {{order.total_selling_price|thousand_separator}} 
+                            <td> {{order.get_total_selling|thousand_separator}} 
                                  {{commercialOffer.currency}}
                             </td>
                         </tr>

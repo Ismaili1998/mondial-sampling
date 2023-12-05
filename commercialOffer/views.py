@@ -215,17 +215,19 @@ def print_technicalOffer(request, offer_pk):
     context = {'commercialOffer':commercialOffer, 'translations':filtered_translations}
     return render(request, 'technicalOffer_print.html', context)
 
-def print_confirmOrder(request, offer_pk):
-    commercialOffer = get_object_or_404(CommercialOffer, pk=offer_pk)
+def print_confirmedOrder(request, offer_pk):
+    confirmedOffer = get_object_or_404(Confirmed_commercialOffer, pk=offer_pk)
+    commercialOffer = confirmedOffer.commercialOffer
     language_code = 'fr'
     try:
         language_code = commercialOffer.project.client.language.language_code 
     except:
         pass 
     filtered_translations = {key:value[language_code] for key, value in translations.translations.items()}
-    context = {'commercialOffer':commercialOffer, 
+    context = {'commercialOffer':commercialOffer,
+               'confirmedOffer':confirmedOffer, 
                'translations':filtered_translations}
-    return render(request, 'confirmOrder_print.html', context)
+    return render(request, 'confirmedOrder_print.html', context)
 
 
 def delete_order_from_commercialOffer(request, pk):
