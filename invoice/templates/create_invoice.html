@@ -1,0 +1,16 @@
+<form action="{% url 'create-invoice' confirmedOffer.id %}"  method="POST">
+    {% csrf_token %}
+    <div class="row col-md-6">
+        <div class="form-group row">
+            <label class="col-sm-4 col-form-label col-form-label-sm"> Client number </label>
+            <div class="col-sm-8">
+                <input type="text" name="client_nbr" class="form-control form-control-sm" required/>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-dark btn-sm mr-4">
+            save changes
+        </button>
+    </div>
+</form>

@@ -1,0 +1,168 @@
+{% load static %}
+{% load format_numbers %}
+<div class="container-fluid">
+    <div class="item-to-print font-arial" contenteditable="true">
+        <!-- Header, logo section -->
+        <div class="row">
+            <div class="col-12">
+                <img src="{% static 'img/print_header.png' %}" class="img-fluid" alt="Header Image">
+            </div>
+        </div>
+        <!-- Contact section -->
+        <div class="mt-2 d-flex justify-content-between">
+            <div class="size-13">
+                {{ quoteRequest.supplier }} <br/>
+                {{ quoteRequest.supplier.country.country_name_fr|default:"" }} <br/>
+                Phone :{{ quoteRequest.supplier.phone_number|default:"" }} <br/>
+                Email :{{ quoteRequest.supplier.email|default:"" }} <br/>
+                Fax :{{ quoteRequest.supplier.fax|default:"" }}
+            </div>
+            <div>
+                <h6 class="mt-5 text-center outset-border py-2 px-5">
+                   {{ translations.purchasing_order }} <br/> {{ quoteRequest.suppliercommand.command_nbr }} 
+                </h6>
+            </div>
+            <div class="size-13">
+                <p>
+                    {{ translations.contact_name }} <br/>
+                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Tel: {{ request.user.phone_number|default:"" }} <br/>
+                    Fax: {{ request.user.fax|default:"" }}
+                </p>
+            </div>
+        </div>
+        <div class="mt-2 d-flex justify-content-between">
+            <div>
+                <p> {{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
+                    {{translations.our_ref}} : {{ quoteRequest.suppliercommand.command_nbr }}<br/>
+                </p>
+            </div>
+            <div class="ml-10 size-12">
+                <p> Reinbek/Hamburg, <span id="currentDate"></span> </p>
+            </div>
+        </div>
+        <div class="size-13 row mt-4">
+            <p> {{ translations.greeting }}, <br/> {{ translations.controlling_idea_sc }} </p>
+        </div>
+        <!-- Body section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <table class="table table-sm bg-white size-13" id="orders-list">
+                    <thead>
+                        <tr>
+                            {% for column_name in translations.columns_name|slice:":7" %}
+                                <th> {{ column_name }} </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in quoteRequest.order_set.all %}
+                        <tr>
+                            <td> {{ forloop.counter }} </td>
+                            <td> {{ order.article.article_nbr }} </td>
+                            <td class="text-description"> 
+                                <pre>{{ order.get_description_by_supplier_lang }}</pre>
+                            </td>
+                            <td> {{ order.quantity|thousand_separator  }} </td>
+                            <td> {{ order.article.article_unit }} </td>
+                            <td> {{ order.purchase_price|thousand_separator  }} {{ quoteRequest.suppliercommand.currency }} </td>
+                            <td> {{ order.get_total_purchase|thousand_separator }} {{ quoteRequest.suppliercommand.currency }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <table class="table table-sm table-borderless">
+                    <tbody class="size-13">
+                        <tr>
+                            <td>
+                                {{translations.payment_date}}: {{  quoteRequest.suppliercommand.payment_date|date:'d.m.Y' }}
+                            </td>
+                            <td class="size-13">
+                                {{translations.time_delivery }}: 
+                                {{ quoteRequest.suppliercommand.delivery_time_interval}}
+                                {{ quoteRequest.suppliercommand.delivery_time_unit}}
+                            </td>
+                            <td></td>
+                            <td>
+                                Total: 
+                                <strong>
+                                {{ quoteRequest.get_total_purchase|thousand_separator }}
+                                {{ quoteRequest.suppliercommand.currency }} </strong>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td colspan="3"></td>
+                            <td>
+                                {{ translations.freight_packaging }} :
+                                <strong> {{ quoteRequest.suppliercommand.get_fee|thousand_separator }}
+                                    {{ quoteRequest.suppliercommand.currency }}
+                                </strong>
+                            </td>
+                        </tr>    
+                        <tr>
+                            <td colspan="3">
+                            </td>
+                            <td>
+                                Final Total:
+                                <strong> {{ quoteRequest.suppliercommand.get_final_total|thousand_separator }}
+                                    {{ quoteRequest.suppliercommand.currency }}
+                                </strong>
+                            </td>
+                        </tr>                  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <p class="size-13"> {{translations.payment_mode}}: {{ quoteRequest.suppliercommand.payment }} </p>
+        </div>
+        <!-- Footer section -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <p class="text-left size-12">
+                    {% for phrase in translations.command_remarks %}
+                        {{  phrase }} <br/>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <p class="text-left size-14"> {{ translations.signature }} <br/> Team ESS-Mondial GmbH </p>
+            </div>
+        </div>
+    </div>
+    <button onclick="printPage()" class="mt-2 btn btn-dark btn-sm"> print </button>
+</div>
+<script>
+
+    function printPage() {
+        var printContent = document.querySelector('.item-to-print');
+        document.body.innerHTML = printContent.outerHTML;
+        window.print();
+        window.location.reload();
+    }
+
+    $(document).ready(function() {
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1; 
+        var year = currentDate.getFullYear();
+
+        var formattedDate = day + '.' + month + '.' + year;
+        $('#currentDate').text(formattedDate);
+
+
+        $("#orders-list tbody").sortable({
+            helper: "clone", // Display a clone of the row while dragging
+            update: function(event, ui) {
+                // Update the Pos numbers based on the new order
+                $("#orders-list tbody tr").each(function(index) {
+                    $(this).find("td:first-child").text(index + 1);
+                });
+            }
+        }).disableSelection();
+
+    });
+
+</script>

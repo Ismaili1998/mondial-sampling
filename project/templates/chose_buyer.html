@@ -1,0 +1,88 @@
+<div>
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Buyer search section -->
+            <div class="form-group">
+                <label for="searchBuyer"> Search Buyer:</label>
+                <input type="text" id="searchBuyer" class="form-control form-control-sm" placeholder="Enter keyword...">
+                <ul id="buyerList" class="list-group mt-2"></ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Buyer details section -->
+            <div class="row">
+                <input type="hidden" id="buyerId" name="postId" value="" />
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="buyerName">Buyer name:</label>
+                        <input type="text" id="name" name="name" class="form-control form-control-sm" disabled value="{{buyer.name|default:''}}" required/>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2">
+                    <div class="form-group">
+                        <label for="buyerEmail">Buyer email:</label>
+                        <input type="email" id="email" name="email" class="form-control form-control-sm" disabled value="{{buyer.email|default:''}}" />
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2">
+                    <div class="form-group">
+                        <label for="buyerPhone">Buyer phone:</label>
+                        <input type="text" id="phone" name="phone_number" class="form-control form-control-sm" disabled value="{{buyer.phone_number|default:''}}" />
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button  id="confirmSelectionBtn" class="btn btn-dark btn-sm mr-4" disabled>
+                        Confirm selection 
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+$(document).ready(function () {
+    $('#confirmSelectionBtn').on('click', function() {
+        let buyerId = $('#buyerId').val();
+        let buyerName = $('#name').val();
+        $('#buyer').empty();
+        $('#buyer').append(`<option selected value="${buyerId}">${buyerName}</option>`);
+        $('#Modal').modal('hide');
+
+    });
+   
+    // AJAX request to fetch buyers by keyword
+    $('#searchBuyer').on('input', function() {
+        var keyword = $(this).val();
+        $.ajax({
+            url: "{% url 'get-buyersByKeyWord' %}",
+            data: { keyword: keyword },
+            success: function(data) {
+                displayBuyers(data);
+            }
+        });
+    });
+
+    // Function to display buyers in the list
+    function displayBuyers(data) {
+        buyers = data.buyers;
+        var buyerList = $('#buyerList');
+        buyerList.empty();
+        buyers.forEach(function(buyer) {
+            var listItem = $('<li class="list-group-item">').text(buyer.name);
+            listItem.click(function() {
+                $('#buyerId').val(buyer.id);
+                $('#name').val(buyer.name);
+                $('#email').val(buyer.email);
+                $('#phone').val(buyer.phone_number);
+                $('#confirmSelectionBtn').prop('disabled', false);
+                $('.list-group-item').removeClass('bg-info'); // Remove active class from all items
+                $(this).addClass('bg-info'); // Add active class to the clicked item
+            });
+            buyerList.append(listItem);
+        });
+    }
+});
+</script>
