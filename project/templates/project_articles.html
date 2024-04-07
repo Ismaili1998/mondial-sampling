@@ -1,5 +1,5 @@
 
-<table class="table table-sm mt-3 bg-white" id="articles-table">
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable" id="articles-table">
   <thead>
     <tr>
       <th> 
@@ -8,27 +8,40 @@
       <th> pos </th>
       <th> Article Number </th>
       <th> Article Description </th>
-      <th> Action </th>
+      <th>  </th>
     </tr>
   </thead>
   <tbody>
     {% for article in articles %}
     <tr>
-      <td><input type="checkbox" class="form-check-input" name="articles" value="{{ article.id }}"></td>
+      <td><input type="checkbox" class="form-check-input" name="article" value="{{ article.id }}"></td>
       <td>{{ forloop.counter }}</td>
       <td>
          <a  href="#" class="text-info"
             onclick="load_modal('Article detail','{%  url "update-article" article.id %}')">{{ article.article_nbr }}</a>
       </td>
-      <td>
-        <textarea disabled rows="5" class="form-control size-12"> {{ article.description_fr}} </textarea>
+      <td style="width:300px">
+          <details>
+              <summary>Article Description</summary>
+              <textarea disabled rows="5"
+                  class="form-control size-11">{{ article.description_fr }}</textarea>
+          </details>
       </td>
       <td>
-        <a class="text-danger" href="{% url 'remove-article-from-project' article.id %}"><i class="material-icons">clear</i>
-
-        </a>
+        <div class="dropdown-item">
+            <form method="POST" action="{% url 'remove-article-from-project' article.id  %}">
+                {% csrf_token %}
+                <a class="text-danger delete-btn" href="#" title="delete this offer">
+                    <i class="material-icons size-11">clear</i>
+                </a>
+            </form>
+        </div>
       </td>
     </tr>
+    {% empty %}
+      <tr>
+          <td colspan="7">No article available.</td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>

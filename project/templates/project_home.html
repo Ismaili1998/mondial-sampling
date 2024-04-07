@@ -26,9 +26,31 @@
               <a class="dropdown-item"
                 onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#"> <i
                   class="material-icons align-middle">add</i> New article </a>
+              <a class="dropdown-item" href="{%  url 'manage-commission' %}"> <i class="material-icons align-middle">manage_search</i> Manage
+                commissions </a>
+              <a class="dropdown-item" href="{%  url 'manage-payment' %}"> <i class="material-icons align-middle">attach_money</i> Manage
+                payment </a>
             </div>
           </div>
-            &nbsp;&nbsp;&nbsp;
+          {% comment %} &nbsp;&nbsp;&nbsp;
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Notifications <span class="badge bg-danger">1</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                <div class="dropdown-item">
+                  <div class="alert alert-warning" role="alert">
+                    Your payment for P1180048/N10-RDC02 is due in <strong>10</strong> days.
+                  </div>
+                  <div class="alert alert-danger" role="alert">
+                    Your payment for P1180048/N7-RDC02 is due in <strong>5</strong> days.
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul> {% endcomment %}
+          &nbsp;&nbsp;&nbsp;
           <div class="dropdown show">
             <a class="dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -50,7 +72,7 @@
   </div>
   <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
     <form method="POST" enctype="multipart/form-data"
-      action="{% if page == 'add-project' %} {% url 'create-project' %} {% else %} {% url 'update-project' project.id %} {% endif %}">
+      action="{% if not project %} {% url 'create-project' %} {% else %} {% url 'update-project' project.id %} {% endif %}">
       {% csrf_token %}
       {% include 'alert.html' %}
       <div class="row">
@@ -91,7 +113,7 @@
             <label for="client_ref" class="col-sm-3 col-form-label col-form-label-sm">Client Ref</label>
             <div class="col-sm-9">
               <input type="text" name="client_ref" class="form-control form-control-sm" id="client_ref"
-                value="{{project.client_ref}}"/>
+                value="{{project.client_ref}}" />
             </div>
           </div>
           <div class="form-group row mt-2">
@@ -104,29 +126,43 @@
         </div>
         <div class="col-md-4">
           <div class="form-group row mt-2">
-                <label for="client_contact" class="col-sm-4 col-form-label col-form-label-sm">Extern Contact</label>
-                <div class="col-sm-8">
-                    <select name="client_contact" class="form-select form-select-sm" id="client_contact">
+                <label for="buyer" class="col-sm-4 col-form-label col-form-label-sm">Buyer</label>
+                <div class="col-sm-5">
+                    <select name="buyer" class="form-select form-select-sm" id="buyer" required>
                         <option value=""> Chose a buyer </option>
-                        {% for client_contact in client_contacts %}
-                        <option value="{{client_contact.id }}" {% if project.client_contact.id == client_contact.id %} selected {% endif %}>
-                            {{ client_contact }}
+                        {% for buyer in buyers %}
+                        <option value="{{buyer.id }}" {% if project.buyer.id == buyer.id %} selected {% endif %}>
+                            {{ buyer }}
                         </option>
                         {% endfor %}
                     </select>
                 </div>
+                <div class="col-sm-3">
+                    <a href="#" 
+                      class="size-12"
+                      onclick="load_modal('New Buyer','{% url "create-buyer" %}')">
+                      + New Buyer 
+                    </a>
+                </div>
             </div>
             <div class="form-group row mt-2">
-                <label for="local_contact" class="col-sm-4 col-form-label col-form-label-sm">Intern Contact</label>
-                <div class="col-sm-8">
-                    <select name="local_contact" class="form-select form-select-sm" id="local_contact">
+                <label for="representative" class="col-sm-4 col-form-label col-form-label-sm">Representative</label>
+                <div class="col-sm-5">
+                    <select name="representative" class="form-select form-select-sm" id="representative" required>
                         <option value=""> Chose a representant </option>
-                        {% for local_contact in local_contacts %}
-                        <option value="{{local_contact.id }}" {% if project.local_contact.id == local_contact.id %} selected {% endif %}>
-                            {{ local_contact }}
+                        {% for representative in representatives %}
+                        <option value="{{representative.id }}" {% if project.representative.id == representative.id %} selected {% endif %}>
+                            {{ representative }}
                         </option>
                         {% endfor %}
                     </select>
+                </div>
+                <div class="col-sm-3">
+                    <a href="#" 
+                      class="size-12"
+                      onclick="load_modal('New Representative','{% url "create-representative" %}')">
+                      + New Rep
+                    </a>
                 </div>
             </div>
         </div>
@@ -173,7 +209,7 @@
       {% endif %}
       <div class="mt-3 d-flex justify-content-end">
         <button type="submit" class="btn btn-dark btn-sm">
-          {% if page == 'add-project' %}
+          {% if project %}
           Save project
           {% else %}
           Save changes
@@ -183,7 +219,7 @@
       </div>
     </form>
   </div>
-  {% if page == 'update-project' %}
+  {% if project %}
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
       <div class="row">
         <div class="col-md-4">
@@ -211,23 +247,38 @@
           <div class="btn-group" role="group" aria-label="Button group">
               <button class="btn btn-sm btn-secondary size-12"
                   onclick="load_modal('Create quote Request','{% url 'create-quoteRequest' project.id %}')">
-                  <i class="material-icons align-middle">add</i> New Quote request
+                  <i class="material-icons align-middle">request_quote</i> New Quote request
               </button>
               <button class="btn btn-sm btn-secondary size-12"
                   id ="new-commercialOffer">
-                  <i class="material-icons align-middle">add</i> New Commercial offer
+                  <i class="material-icons align-middle">price_check</i> New Commercial offer
               </button>
           </div>
         </div>
       </div>
       <div class="row">
-          <div class="col-md-6">
-            {% include 'project_articles.html' with project=project%}
+        <div class="col-md-6">
+          {% include 'project_articles.html' with project=project%}
+        </div>
+        <div class="col-md-6">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <a class="nav-item nav-link active" id="nav-supplier-tab" data-toggle="tab" href="#nav-supplier" role="tab" aria-controls="nav-supplier" aria-selected="true">Supplier section</a>
+              <a class="nav-item nav-link" id="nav-client-tab" data-toggle="tab" href="#nav-client" role="tab" aria-controls="nav-client" aria-selected="false">Client section</a>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-supplier" role="tabpanel" aria-labelledby="nav-supplier-tab">
+              {% include  'project_quoteRequests.html' %}
+              {% include  'project_supplierCommands.html' %}  
+            </div>
+            <div class="tab-pane fade" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab">
+              {% include  'project_commercialOffers.html' %}
+              {% include  'project_confirmedOrders.html' %}
+              {% include  'project_invoices.html' %}
+            </div>
           </div>
-          <div class="col-md-6">
-            {% include  'project_quoteRequests.html' %}
-            {% include  'project_commercialOffers.html' %}
-          </div>
+        </div>
       </div>
     </div>
   {% endif %}
@@ -269,15 +320,6 @@
     });
   });
 
-  $('#buyer-form').slideUp();
-  $('#buyer-infos').click(function() {
-      $('#buyer-form').slideToggle();
-  });
-  $('#external-contact-form').slideUp();
-  $('#external-contact-infos').click(function() {
-      $('#external-contact-form').slideToggle();
-  });
-
   // get chosen client id, so that we can use its id 
   // to get all detail about it
   let client_id = {{ project.client.id|default:0 }};
@@ -302,7 +344,7 @@
     }
   }
 
-  {% if page == 'update-project' %}
+  {% if project %}
     // search articles 
     $(document).ready(function () {
       $('.searchArticle').autocomplete({
@@ -320,6 +362,7 @@
             });
         }
       });
+  
 
     // adding files to project (drag and drop zone)
     var dropzone = $('#dropzone');

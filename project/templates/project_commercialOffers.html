@@ -1,43 +1,55 @@
-<table class="table table-sm mt-3 bg-white">
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable">
     <thead>
         <tr>
             <th>Offer Number</th>
-            <th>CO</th>
-            <th>TO</th>
-            <th></th>
+            <th>Print CO</th>
+            <th>Print TO</th>
+            <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {% for offer in project.commercialoffer_set.all %}
+            <tr>
+                <td> 
+                    <a href="#"
+                        onclick="load_modal('Update commercial offer','{%  url "update-commercialOffer" offer.id %}')">
+                        {{ offer.offer_nbr }}
+                    </a>
+                </td>
+                <td> 
+                    <a href="#"
+                        onclick="load_modal('Generate pdf','{%  url "print-commercialOffer" offer.id %}')">
+                        <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                    </a>
+                </td>
+                <td> 
+                    <a href="#" class="text-info"
+                        onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')">
+                        <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                    </a>
+                </td>
+                <td>
+                    {% if offer.confirmed_commercialoffer %}
+                        <span class="text-success"> Confirmed </span>
+                    {% else %}
+                        <span > Not confirmed </span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="dropdown-item">
+                        <form method="POST" action="{% url 'delete-commercialOffer' offer.id %}">
+                            {% csrf_token %}
+                            <a class="text-danger delete-btn" href="#" title="delete this offer">
+                                <i class="material-icons size-11">clear</i>
+                            </a>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
         <tr>
-            <td> 
-                <a href="#" class="text-info"
-                    onclick="load_modal('Article detail','{%  url "update-commercialOffer" offer.id %}')">
-                    {{ offer.offer_nbr }}
-                </a>
-            </td>
-            <td> 
-                <a href="#"
-                    onclick="load_modal('Generate pdf','{%  url "print-commercialOffer" offer.id %}')">
-                    <i class="material-icons text-dark align-middle">picture_as_pdf</i>
-                </a>
-            </td>
-            <td> 
-                <a href="#" class="text-info"
-                    onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')">
-                    <i class="material-icons text-dark align-middle">picture_as_pdf</i>
-                </a>
-            </td>
-            <td>
-                <div class="dropdown-item">
-                    <form method="POST" action="{% url 'delete-commercialOffer' offer.id %}">
-                        {% csrf_token %}
-                        <a class="text-danger delete-btn" href="#">
-                            <i class="material-icons size-11">clear</i>
-                        </a>
-                    </form>
-                </div>
-            </td>
+            <td colspan="7">No offer available.</td>
         </tr>
         {% endfor %}
     </tbody>

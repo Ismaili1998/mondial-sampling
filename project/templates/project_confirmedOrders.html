@@ -1,0 +1,54 @@
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable ">
+    <thead>
+        <tr>
+            <th>Confirmed Order Number</th>
+            <th>Print </th>
+            <th>Invoice </th>
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for offer in project.commercialoffer_set.all %}
+                <tr>
+                    {% if offer.confirmed %}
+                        <td> 
+                            <a href="#" 
+                                onclick="load_modal('Confirmed offer','{%  url "update-confirmed-commercialOffer"  offer.confirmed_commercialoffer.id %}')">
+                                {{ offer.confirmed_commercialoffer.confirmation_nbr }}
+                            </a>
+                        </td>
+                        <td> 
+                            <a href="#"
+                                onclick="load_modal('Generate pdf','{%  url "print-confirmedOrder" offer.confirmed_commercialoffer.id %}')">
+                                <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                            </a>
+                        </td>
+                        <td>
+                            {% if not offer.confirmed_commercialoffer.invoice %}
+                                <a href="#" 
+                                    onclick="load_modal('Create invoice','{%  url "create-invoice" offer.confirmed_commercialoffer.id %}')">
+                                    Create Invoice 
+                                </a>
+                                {% else %}
+                                Invoice created 
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="dropdown-item">
+                                <form method="POST" action="{% url 'cancel-confirmedOrder' offer.id %}">
+                                    {% csrf_token %}
+                                    <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
+                                        <i class="material-icons size-11">clear</i>
+                                    </a>
+                                </form>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">No confirmed offer available.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

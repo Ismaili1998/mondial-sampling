@@ -1,0 +1,119 @@
+<form method="POST" action="{% url 'create-quoteRequest' project.id %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-6">
+            <input type="text" id="searchSupplier" class="form-control form-control-sm" placeholder="Search...">
+            <table class="table table-sm bg-white mt-2" id="suppliers-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Supplier Name</th>
+                        <th>Supplier Number</th>
+                        <th>Country</th>
+                    </tr> 
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-4 mt-1">
+            <div class="form-group">
+                <label for="selected-suppliers">Suppliers:</label>
+                <select id="selected-suppliers" name="supplier" required multiple class="form-control">
+                </select>
+            </div>
+            <div class="mt-2">
+                <label>Concerned articles:</label>
+                <table id="checked-articles" class="table table-sm">
+                    <thead>
+                        <th></th>
+                        <th> Pos </th>
+                        <th> Article </th>
+                        <th> Quantity </th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-dark btn-sm">
+            Save 
+        </button>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+
+        // display list of checked articles 
+        $('#articles-table tbody td input[type=checkbox]:checked').each(function () {
+                // Create a new table row element
+                var newRow = $('<tr>');
+                // Create a new table data (cell) element and set its text content to the option text
+                var order =$(this).closest('tr').find('td:lt(3)').clone();
+                order.appendTo(newRow);
+                // Create an input element with the specified attributes
+                var quantityInput = $('<input>').attr({
+                    type: 'number',
+                    name: 'quantity',
+                    class: 'form-control form-control-sm',
+                    value: '1',
+                    required:true
+                });
+                $('<td>').append(quantityInput).appendTo(newRow);
+                // Append the new row to the articles table body
+                $('#checked-articles tbody').append(newRow);
+        });
+
+        // Add an event listener for input changes
+        $('#searchSupplier').on('input', function () {
+            // Get the search keyword
+            var keyword = $(this).val().trim();
+            // Send an AJAX request to the server
+            $.ajax({
+                url: '{% url "get-suppliersByKeyWord" %}',
+                method: 'GET',
+                data: {
+                    keyword: keyword
+                },
+                success: function (response) {
+                    // Handle the response from the server
+                    var suppliers = response.suppliers;
+                    var html = '';
+
+                    // Generate the HTML for the search results
+                    for (var i = 0; i < suppliers.length; i++) {
+                        html += '<tr>';
+                        html += '<td><input class="form-check-input" type="checkbox" value="'+ suppliers[i].id +'" /></td>'
+                        html += '<td>' + suppliers[i].supplier_name || '' + '</td>';
+                        html += '<td>' + suppliers[i].supplier_nbr + '</td>';
+                        html += '<td>' + suppliers[i].country || '' + '</td>';
+                        html += '</tr>';
+                    }
+                    // Update the <tbody> with the search results
+                    $('#suppliers-table tbody').html(html)
+                }
+            });
+
+        });
+        
+        $('#suppliers-table').on('change', 'input[type=checkbox]', function () {
+            var selectedSuppliers = $('#selected-suppliers');
+            var checkedRow = $(this).closest('tr');
+            var isChecked = $(this).is(':checked');
+
+            if (isChecked) {
+                // Create a new option for the selected row
+                var option = $('<option>').val($(this).val()).text(checkedRow.text()).prop('selected', true);
+                selectedSuppliers.append(option);
+            } else {
+                // Find and remove the corresponding option for the unchecked row
+                selectedSuppliers.find('option[value="' + $(this).val() + '"]').remove();
+            }
+        });
+
+        
+    });
+
+</script>

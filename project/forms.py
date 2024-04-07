@@ -1,5 +1,10 @@
 from django import forms
-from .models import Project, Supplier, Article, CommercialOffer, Supplier_contact, Client_contact, Order
+from .models import Project, Client, Supplier, Supplier_contact, Representative, Buyer
+
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        exclude = ['created_at', 'updated_at']
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -11,28 +16,17 @@ class SupplierForm(forms.ModelForm):
         model = Supplier
         exclude = ['created_at', 'updated_at']
 
-class ArticleForm(forms.ModelForm):
-    class Meta:
-        model = Article
-        exclude = ['created_at', 'updated_at', 'project']
-
-class CommercialOfferForm(forms.ModelForm):
-    class Meta:
-        model = CommercialOffer
-        exclude = ['offer_nbr']
-
 class Supplier_contactForm(forms.ModelForm):
     class Meta:
         model = Supplier_contact
         fields = '__all__'
             
-class Client_contactForm(forms.ModelForm):
+class RepresentativeForm(forms.ModelForm):
     class Meta:
-        model = Client_contact
+        model = Representative
         fields = '__all__'
 
-class OrderForm(forms.ModelForm):
+class BuyerForm(forms.ModelForm):
     class Meta:
-        model = Client_contact
+        model = Buyer
         fields = '__all__'
-

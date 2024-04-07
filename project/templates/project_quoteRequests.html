@@ -1,33 +1,44 @@
-<table class="table table-sm mt-3 bg-white">
+<table class="table table-sm mt-3 bg-white size-13 table-scrollable" style="max-height: 400px;">
     <thead>
         <tr>
             <th>Request Number</th>
             <th>Supplier</th>
+            <th>Print</th>
+            <th>Order </th>
             <th>Action</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
         {% for quoteRequest in project.quoterequest_set.all %}
             <tr>
                 <td>
-                    <a class="text-info" onclick="load_modal('Update quoteRequest','{%  url "update-quoteRequest"  quoteRequest.id %}')"
+                    <a onclick="load_modal('Update quoteRequest','{%  url "update-quoteRequest"  quoteRequest.id %}')"
                         href="#">
                         {{ quoteRequest.request_nbr }}
                     </a>
                 </td>
-                <td class="size-13">
-                    {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language }})
+                <td>
+                    {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language|default:"No language" }})
                     <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
                         href="#"><i
                         class="material-icons align-middle size-13 text-dark">visibility</i>
                     </a>
                 </td>
-                <td class="d-flex justify-content-end">
+                <td>
                     <a href="#" onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
                     >
-                        <i class="material-icons text-dark">picture_as_pdf</i>
+                        <i class="material-icons align-middle text-dark">picture_as_pdf</i>
                     </a>
+                </td>
+                <td>
+                    {% if not quoteRequest.suppliercommand %}
+                        <a href="#" onclick="load_modal('Supplier command','{%  url "supplier-command"  quoteRequest.id %}')"
+                        >
+                            <i class="material-icons align-middle text-dark">shopping_cart_checkout</i>
+                        </a>
+                    {% else %}
+                    <span> shopped </span>
+                    {% endif %}
                 </td>
                 <td>
                     <form method="POST" action="{% url 'delete-quoteRequest' quoteRequest.id %}">
@@ -37,6 +48,10 @@
                         </a>
                     </form>
                 </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">No quote Request available.</td>
             </tr>
         {% endfor %}
     </tbody>

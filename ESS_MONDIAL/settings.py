@@ -39,8 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'account',
-    'client',
+    'commercialOffer',
+    'commission',
+    'quoteRequest',
+    'order',
+    'invoice',
     'project',
+    'payment'
+    
 ]
 
 MIDDLEWARE = [
@@ -70,6 +76,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'ESS_MONDIAL.wsgi.application'
 
