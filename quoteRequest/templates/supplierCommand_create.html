@@ -1,0 +1,208 @@
+{% load format_numbers %}
+<div class="container-fluid">
+    <form
+        class="commercial-offer-form"
+        method="POST"
+        action="{% url 'supplier-command' quoteRequest.id %}" >
+        {% csrf_token %}
+        <div class="row mt-2">
+            <table class="table table-sm bg-white size-13" id="offer-articles-table">
+                <thead class="text-left size-11">
+                    <tr>
+                        <th>Article nbr</th>
+                        <th>Description</th>
+                        <th>Purchase price </th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th>Total Purchase price </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td class="article-id" data-article-id="{{ article.id }}">
+                                <a href="#">                                   
+                                     {{ order.article.article_nbr }}
+                                </a>
+                            </td>
+                            <td style="width:300px">
+                                <details>
+                                    <summary>Article Description</summary>
+                                    <textarea disabled rows="5" class="form-control size-11">{{ order.get_description_by_supplier_lang }}</textarea>
+                                </details>
+                            </td>
+                            <td> {{order.purchase_price|thousand_separator}} 
+                                {{ quoteRequest.suppliercommand.currency }} 
+                            </td>
+                            <td class="article-quantity">
+                                {{order.quantity}}
+                            </td>
+                            <td> {{order.article.article_unit}} </td>
+                            <td> {{order.get_total_purchase|thousand_separator}} 
+                                {{ quoteRequest.suppliercommand.currency }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <td colspan="6" align="right"> Total Purchase  = <strong class="sum-total-purchase">  
+                        {{ quoteRequest.get_total_purchase|thousand_separator }}
+                     </strong>
+                    </td>
+                </tfoot>
+            </table>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="form-group row mt-2">
+                    <label for="payment" class="col-sm-4 col-form-label col-form-label-sm">Payment mode</label>
+                    <div class="col-sm-8">
+                        <select name="payment" class="form-select form-select-sm" id="payment">
+                            <option value="">Choose a payment mode</option>
+                            {% for payment in payments %}
+                            <option value="{{ payment.id }}" data-nbr-days="{{ payment.nbr_days }}"{% if quoteRequest.suppliercommand.payment.id == payment.id %} selected {% endif %}>
+                                {{ payment }} 
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="nbr_days" class="col-sm-4 col-form-label col-form-label-sm"> Number of
+                        days</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="duration_in_days" class="form-control form-control-sm"
+                            id="nbr_days" value="" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="payment_date" class="col-sm-4 col-form-label col-form-label-sm"> Payment date
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="date" name="payment_date" class="form-control form-control-sm"
+                            id="payment_date" value="" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">Delivery duration</label>
+                    <div class="col-sm-8 row">
+                        <div class="col-sm-4">
+                            <input type="text" name="delivery_time_interval" class="form-control form-control-sm"
+                                value="" placeholder="duration"/>
+                        </div>
+                        <div class="col-sm-8">
+                            <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
+                                <option value="">Choose a time unit</option>
+                                {% for timeUnit in timeUnits %}
+                                <option value="{{ timeUnit.id }}" {% if quoteRequest.suppliercommand.delivery_time_unit.id == timeUnit.id %} selected {%endif %}>
+                                    {{ timeUnit }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group row mt-2">
+                    <label for="transport_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee: </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="transport_fee" class="form-control form-control-sm"
+                            id="transport_fee" value="0.00" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="packaging_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Packaging fee : </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="packaging_fee" class="form-control form-control-sm"
+                            id="packaging_fee" value="0.00" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="vat" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Vat : </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="vat" class="form-control form-control-sm"
+                            id="vat" value="" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="final-total" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Final Total: </label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control form-control-sm"
+                            id="total-price" value="{{ quoteRequest.get_total_purchase|thousand_separator }}"  disabled step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Currency : </label>
+                    <div class="col-sm-4">
+                        <select required name="currency" class="form-select form-select-sm">
+                            <option value="">Choose a currency</option>
+                            {% for currency in currencies %}
+                            <option value="{{ currency.id }}" {% if quoteRequest.suppliercommand.currency.id == currency.id %} selected {%endif %}>
+                                {{ currency }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
+                <button type="submit" class="btn btn-dark btn-sm mr-4">
+                    save changes
+                </button>
+            </div>
+    </form>
+</div>
+<script>   
+$(document).ready(function () {
+
+    $('#payment').change(function () {
+            const selectedOption = $('#payment option:selected');
+            const days = selectedOption.data('nbr-days') || '';
+            $('#nbr_days').val(days);
+            if (days) {
+            var currentDate = new Date();
+            var newDate = new Date(currentDate.getTime() + days * 24 * 60 * 60 * 1000);
+            var year = newDate.getFullYear();
+            var month = String(newDate.getMonth() + 1).padStart(2, '0');
+            var day = String(newDate.getDate()).padStart(2, '0');
+            var formattedDate = year + '-' + month + '-' + day;
+            $('#payment_date').val(formattedDate);
+            }
+        });
+    
+    
+    $('#nbr_days').on('input', function() {
+            days = $('#nbr_days').val()
+            if (days) {
+            var currentDate = new Date();
+            var newDate = new Date(currentDate.getTime() + days * 24 * 60 * 60 * 1000);
+            var year = newDate.getFullYear();
+            var month = String(newDate.getMonth() + 1).padStart(2, '0');
+            var day = String(newDate.getDate()).padStart(2, '0');
+            var formattedDate = year + '-' + month + '-' + day;
+            $('#payment_date').val(formattedDate);
+            }
+    });
+
+
+    function calculate_total_price() {
+        let transport_fee = parseFloat($('#transport_fee').val()) || 0;
+        let packaging_fee = parseFloat($('#packaging_fee').val()) || 0;
+        let vat = (parseFloat($('#vat').val()) / 100) || 0;
+        let sum_total_purchase = parseFloat($('tfoot .sum-total-purchase').text() 
+        .replace(/\./g, '').replace(',', '.')) || 0;
+        let total_fee = transport_fee + packaging_fee + vat * sum_total_purchase;
+        let total_price = sum_total_purchase + total_fee;
+        $('#total-price').val(total_price.toFixed(2));
+        
+    }
+
+    $('#vat, #transport_fee, #packaging_fee').on('input', function() {
+        calculate_total_price();
+    });
+
+
+    
+});
+</script>

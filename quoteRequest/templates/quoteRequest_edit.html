@@ -1,0 +1,208 @@
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-4">
+            <input type="text" id="searchSupplier" class="form-control form-control-sm" placeholder="Search...">
+            <table class="table table-sm bg-white mt-2" id="suppliers-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Supplier Name</th>
+                        <th>Country</th>
+                    </tr> 
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="form-group">
+                <label for="selected-suppliers">Chosen suppliers:</label>
+                <select id="selected-suppliers"  name="supplier" multiple class="form-control">
+                </select>
+            </div>
+            <p class="mt-3 size-13"> By clicking the button below, you'll be able to conveniently initiate a new quote request 
+                    to the suppliers you have chosen, while incorporating the articles from your current request.
+            </p>
+        </div>
+        <div class="col-sm-8">
+                <fieldset class="border p-2">
+                    <p class="w-auto"> Supplier : {{ quoteRequest.supplier }}  </p>
+                    <table class="table table-sm bg-white size-12" id="offer-articles-table">
+                        <thead class="text-left">
+                            <tr>
+                                <th>Article nbr</th>
+                                <th>Description</th>
+                                <th>Purchase price</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders  %}
+                            <input type="hidden" name="order" value="{{ order.id }}">
+                            <input type="hidden" name="article" value="{{ order.article.id }}">
+                            <tr>
+                                <td>
+                                    <a href="#" 
+                                        onclick="get_article('Article detail','{%  url "update-article" order.article.id %}')">
+                                        {{order.article.article_nbr }}
+                                    </a>
+                                </td>
+                                <td style="max-width:300px">
+                                    <details>
+                                        <summary>Article Description</summary>
+                                        <textarea disabled rows="5" class="form-control size-11">{{ order.get_description_by_supplier_lang }}</textarea>
+                                    </details>
+                                </td>
+                                <td class="form-group">
+                                    <input type="number" name="purchase-price" 
+                                    class="form-control form-control-sm" 
+                                    required
+                                    placeholder="purchase price"
+                                    value="{{order.purchase_price}}"/>
+                                </td>
+                                <td> 
+                                    <input class="form-control form-control-sm" required
+                                     value="{{ order.quantity|default:'1' }}" name="quantity"> 
+                                </td>
+                                <td> {{order.article.article_unit}} </td>
+                                <td> <a href="#" class="btn btn-sm btn-remove"
+                                        onclick="load_modal('Update ','{%  url "delete-order-from-quoteRequest" order.id %}')"
+                                    > 
+                                    <i class="material-icons size-11 text-danger">clear</i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <td colspan="1">
+                                <input type="text"  name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
+                            </td>
+                            <td colspan="5">
+                                <button class="btn btn-sm"> + add new article</button>
+                            </td>
+                        </tfoot>
+                    </table>
+                    <button class="btn btn-sm btn-dark mt-4" type="submit"> save changes </button>
+                </fieldset>
+        </div>
+        <div class="d-flex justify-content-start mt-n3">
+            <button type="submit" class="mt-n7 btn btn-warning btn-sm">
+                    Duplicate with Current Articles
+            </button>
+        </div>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+
+        // search articles 
+        $('.searchArticle').autocomplete({
+            source: function (request, response) {
+            $.getJSON("{% url 'get-articlesByKeyWord' %}",
+                { keyword: request.term }, function (data) {
+                // Map the article numbers to an array of objects with label and value properties
+                var mappedData = $.map(data, function (item) {
+                    return {
+                    label: item,
+                    value: item
+                    };
+                });
+                response(mappedData);
+                });
+            }
+        });
+
+        // Add an event listener for input changes
+        $('#searchSupplier').on('input', function () {
+            // Get the search keyword
+            var keyword = $(this).val().trim();
+            // Send an AJAX request to the server
+            $.ajax({
+                url: '{% url "get-suppliersByKeyWord" %}',
+                method: 'GET',
+                data: {
+                    keyword: keyword
+                },
+                success: function (response) {
+                    // Handle the response from the server
+                    var suppliers = response.suppliers;
+                    var html = '';
+
+                    // Generate the HTML for the search results
+                    for (var i = 0; i < suppliers.length; i++) {
+                        html += '<tr>';
+                        html += '<td><input class="form-check-input" type="checkbox" value="'+ suppliers[i].id +'" /></td>'
+                        html += '<td>' + suppliers[i].supplier_name || '' + '</td>';
+                        html += '<td>' + suppliers[i].country || '' + '</td>';
+                        html += '</tr>';
+                    }
+                    // Update the <tbody> with the search results
+                    $('#suppliers-table tbody').html(html)
+                }
+            });
+
+        });
+        
+        $('#suppliers-table').on('change', 'input[type=checkbox]', function () {
+            var selectedSuppliers = $('#selected-suppliers');
+            var checkedRow = $(this).closest('tr');
+            var isChecked = $(this).is(':checked');
+
+            if (isChecked) {
+                // Create a new option for the selected row
+                var option = $('<option>').val($(this).val()).text(checkedRow.text()).prop('selected', true);
+                selectedSuppliers.append(option);
+            } else {
+                // Find and remove the corresponding option for the unchecked row
+                selectedSuppliers.find('option[value="' + $(this).val() + '"]').remove();
+            }
+        });
+
+        $('tfoot .btn').click(function(event) {
+            event.preventDefault();
+            let article_nbr = $('tfoot .searchArticle').val();
+            url = "{% url 'add-article-to-quoteRequest' quoteRequest.id 'article_nbr' %}".replace('article_nbr',article_nbr);
+            load_modal('Update Commercial offer', url);
+        
+        });
+
+        
+        // Click event handler for the "Save Changes" button
+        $('.btn-dark').click(function() {
+            event.preventDefault();
+            var form = $(this).closest('form');
+            var actionUrl = '{% url "update-quoteRequest" quoteRequest.id %}';
+            form.attr('action', actionUrl);
+            form.submit();
+        });
+
+        // Click event handler for the "Duplicate" button
+        $('.btn-warning').click(function() {
+            event.preventDefault();
+            var actionUrl = '{% url "create-quoteRequest" quoteRequest.project.id %}';
+            var form = $(this).closest('form');
+            form.attr('action', actionUrl);
+            form.submit();
+        });
+
+    });
+
+article_is_opned = false ;
+function get_article(title, url)
+{
+    load_modal(title,url);
+    article_is_opned = !article_is_opned;
+}
+
+url = "{% url 'update-quoteRequest'  quoteRequest.id %}";
+$('#Modal').on('hidden.bs.modal', function() {
+    if (article_is_opned)
+    {
+        load_modal('Update quoteRequest', url);
+        $('#Modal').modal('show');
+        article_is_opned = !article_is_opned
+    }
+});
+
+</script>
