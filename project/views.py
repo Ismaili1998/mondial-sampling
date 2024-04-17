@@ -54,6 +54,7 @@ def project_edit(request, pk):
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
+            print("==========")
             project = form.save()
             messages.success(request, 'Project has been updated successfully')
     return redirect('project-detail', project.project_nbr)
@@ -74,19 +75,17 @@ def add_article_to_project(request):
             try:
                 project = Project.objects.get(project_nbr=project_nbr)
                 article = Article.objects.get(article_nbr=article_nbr)
-                article.project = project
-                article.save()
+                article.projects.add(project)
                 messages.success(request,'Article has been added to project succesfully')
             except:
                 messages.error(request,'An error occured ! please retry again')
         return redirect('project-detail', project_nbr)
 
-def remove_article_from_project(request, article_pk):
+def remove_article_from_project(request, project_pk, article_pk):
     article = Article.objects.get(id=article_pk)
-    project = article.project
+    project = Project.objects.get(id=project_pk)
     if request.method == "POST": 
-        article.project = None
-        article.save()
+        article.projects.remove(project)
         messages.success(request,'Article has been removed from project succesfully')
     return redirect('project-detail', project.project_nbr)
   

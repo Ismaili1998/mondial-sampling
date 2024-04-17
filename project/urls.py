@@ -8,7 +8,7 @@ urlpatterns = [
     path('update-project/<str:pk>',views.project_edit,name='update-project'),
     path('delete-project/<str:pk>',views.project_delete,name='delete-project'),
     path('add-article-to-project',views.add_article_to_project ,name='add-article-to-project'),
-    path('remove-article-from-project/<str:article_pk>',views.remove_article_from_project,name='remove-article-from-project'),
+    path('remove-article-from-project/<str:project_pk>/<str:article_pk>',views.remove_article_from_project,name='remove-article-from-project'),
     path('get-projectsByKeyWord',views.get_projectsByKeyWord,name='get-projectsByKeyWord'),
 
     path('upload-file-to-project/<str:project_pk>',views.upload_file_to_project,name='upload-file-to-project'),

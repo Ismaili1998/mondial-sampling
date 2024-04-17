@@ -14,14 +14,13 @@ class ArticleUnit(models.Model):
 
 class Article(models.Model):
     article_nbr = models.CharField(max_length=30,unique=True)
-    description_fr = models.TextField(null= True, max_length=1500)
-    description_de = models.TextField(null= True, max_length=1500, blank= True)
-    description_en = models.TextField(null= True, max_length=1500, blank= True)
+    description_fr = models.TextField(null=True, max_length=1500)
+    description_de = models.TextField(null=True, max_length=1500, blank= True)
+    description_en = models.TextField(null=True, max_length=1500, blank= True)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-
-    project = models.ForeignKey(Project,on_delete=models.SET_NULL,null=True,blank=True)
     article_unit = models.ForeignKey(ArticleUnit,on_delete=models.SET_NULL,null=True, blank= True)
     net_weight = models.DecimalField(max_digits=10, decimal_places=2, null= True, blank= True)
+    projects = models.ManyToManyField(Project)
     hs_code =  models.CharField(max_length=150, null= True, blank= True)
     customs_description = models.TextField(blank=True, max_length=500, null= True)
     comment = models.TextField(blank=True, max_length=500, null= True)
@@ -74,14 +73,14 @@ class Order(models.Model):
             language_code = self.commercialOffer.project.client.language.language_code
         except:
             language_code = "fr"
-        return self.article.get_description(language_code) or ''
+        return self.article.get_description(language_code)
     
     def get_description_by_supplier_lang(self):
         try:
             language_code = self.quoteRequest.supplier.language.language_code
         except:
             language_code = "fr"
-        return self.article.get_description(language_code) or ''
+        return self.article.get_description(language_code)
     
     def __str__(self):
         return f'{self.id}'

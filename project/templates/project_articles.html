@@ -29,7 +29,7 @@
       </td>
       <td>
         <div class="dropdown-item">
-            <form method="POST" action="{% url 'remove-article-from-project' article.id  %}">
+            <form method="POST" action="{% url 'remove-article-from-project' project.id article.id  %}">
                 {% csrf_token %}
                 <a class="text-danger delete-btn" href="#" title="delete this offer">
                     <i class="material-icons size-11">clear</i>

@@ -4,7 +4,7 @@ from project.models import Project, Payment, TimeUnit, Currency, Supplier
 
 class QuoteRequest(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    request_nbr = models.CharField(max_length=40,unique=True)
+    request_nbr = models.CharField(max_length=100,unique=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
 
     def get_total_purchase(self):
@@ -18,7 +18,7 @@ class QuoteRequest(models.Model):
         ordering = ['-id']
 
 class SupplierCommand(models.Model):
-    command_nbr = models.CharField(max_length=40, unique=True)
+    command_nbr = models.CharField(max_length=100, unique=True)
     payment_date = models.DateField(blank=True,null=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     delivery_time_interval = models.CharField(max_length=20, blank=True,null=True)

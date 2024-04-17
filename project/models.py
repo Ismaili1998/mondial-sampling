@@ -1,9 +1,9 @@
 from django.db import models
 
 class Country(models.Model):
-    country_name_fr = models.CharField(max_length=200, unique=True)
+    country_name_fr = models.CharField(max_length=200) #unique=True for country_name
     country_name_en = models.CharField(max_length=200, null=True)
-    abbreviation = models.CharField(max_length=4, unique=True)
+    abbreviation = models.CharField(max_length=4) #unique=True for abb
 
     def __str__(self):
         return f"{self.country_name_fr} {self.abbreviation}"
@@ -50,7 +50,7 @@ class Buyer(models.Model):
 
 class Client(models.Model):
     client_nbr = models.CharField(max_length=30,unique=True)
-    client_name = models.CharField(max_length=150, null=True, unique=True)
+    client_name = models.CharField(max_length=150, null=True) #client_name is unique 
     
     email1 = models.EmailField(null=True, blank=True)
     email2 = models.EmailField(null=True, blank=True)
@@ -107,8 +107,7 @@ class File(models.Model):
         db_table = 'file'
         
 class Supplier(models.Model):
-    supplier_name = models.CharField(max_length=150,null=True)
-    
+    supplier_name = models.CharField(max_length=150)
     supplier_nbr = models.CharField(max_length=30, null=True, blank=True)
     email = models.EmailField(null=True, blank= True)
     phone_number = models.CharField(max_length=40,null=True, blank=True)
