@@ -1,6 +1,6 @@
 from django.db import models
-from commercialOffer.models import CommercialOffer
-from quoteRequest.models import QuoteRequest
+from commercialOffer.models import CommercialOffer, Confirmed_commercialOffer
+from quoteRequest.models import QuoteRequest, SupplierCommand
 from project.models import Project
 
 class ArticleUnit(models.Model):
@@ -47,10 +47,12 @@ class Article(models.Model):
 class Order(models.Model):
     article = models.ForeignKey(Article,on_delete=models.PROTECT)
     commercialOffer = models.ForeignKey(CommercialOffer,on_delete=models.CASCADE,null=True)
+    confirmed_commercialOffer = models.ForeignKey(Confirmed_commercialOffer,on_delete=models.CASCADE,null=True)
     quoteRequest = models.ForeignKey(QuoteRequest,on_delete=models.CASCADE,null=True)
+    confirmed_quoteRequest = models.ForeignKey(SupplierCommand,on_delete=models.CASCADE,null=True)
     purchase_price = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
-    margin = models.DecimalField(max_digits=4, decimal_places=2,  default=0)
+    margin = models.DecimalField(max_digits=6, decimal_places=2,  default=0)
 
     class Meta:
         db_table = 'order'

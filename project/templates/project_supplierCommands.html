@@ -2,29 +2,37 @@
     <thead>
         <tr>
             <th>Supplier command Ref</th>
+            <th>Supplier</th>
             <th>Print</th>
             <th>Action </th>
         </tr>
     </thead>
     <tbody>
-        {% for quoteRequest in project.quoterequest_set.all %}
-            {% if quoteRequest.suppliercommand %}
+        {% for supplierCommand in project.suppliercommand_set.all %}
+            {% if supplierCommand %}
             <tr>
                 <td>
-                    <a onclick="load_modal('Update command','{%  url "update-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                    <a onclick="load_modal('Update command  N°: {{supplierCommand.command_nbr}}','{%  url "update-supplierCommand"  supplierCommand.id %}')"
                         href="#">
-                        {{ quoteRequest.suppliercommand.command_nbr }}
+                        {{ supplierCommand.command_nbr }}
                     </a>
                 </td>
                 <td>
-                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                    {{ supplierCommand.supplier }}/({{ supplierCommand.supplier.language|default:"No language" }})
+                    <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  supplierCommand.supplier.id %}')"
+                        href="#"><i
+                        class="material-icons align-middle size-13 text-dark">visibility</i>
+                    </a>
+                </td>
+                <td>
+                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  supplierCommand.id %}')"
                     >
                         <i class="material-icons align-middle text-dark">picture_as_pdf</i>
                     </a>
                 </td>
                 <td>
                     <div class="dropdown-item">
-                        <form method="POST" action="{% url 'delete-supplierCommand' quoteRequest.suppliercommand.id  %}">
+                        <form method="POST" action="{% url 'delete-supplierCommand' supplierCommand.id  %}">
                             {% csrf_token %}
                             <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
                                 <i class="material-icons size-11">clear</i>

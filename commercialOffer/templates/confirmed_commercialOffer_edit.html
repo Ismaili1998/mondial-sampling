@@ -1,258 +1,492 @@
 {% load format_numbers %}
 <div class="container-fluid">
-    <form class="commercial-offer-form" method="POST" action="{% url 'update-confirmed-commercialOffer' confirmedOffer.id  %}">
+    <form
+        class="commercial-offer-form"
+        action="{% url "update-confirmed-commercialOffer" confirmedOffer.id %}"
+        method="POST">
         {% csrf_token %}
         <div class="row">
-            <div class="form-group row col-md-6">
-                <label for="commission" class="col-md-6 col-form-label col-form-label-sm">
-                    <strong> {{ commercialOffer.project.representative }}'s commission </strong>
+            <div class="col-md-4">
+                <div class="form-group row">
+                    <label for="global-margin" class="col-sm-2 col-form-label col-form-label-sm"><strong>Global Margin</strong></label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" name="margin" id="global-margin" value=""
+                                class="form-control form-control-sm" placeholder="Margin in %" />
+                            <div class="input-group-append">
+                                <a href="javascript:void(0)" class="btn btn-sm btn-margin" type="submit">Apply margin</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row col-md-4">
+                <label for="commission" class="col-md-4 col-form-label col-form-label-sm">
+                    {{ confirmedOffer.project.representative }}'s commission 
                 </label>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <input type="number" required placeholder="commission in %" name="commission"
                         class="form-control form-control-sm" value="{{ confirmedOffer.commission }}" id="commission" />
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <input type="text" disabled placeholder="Amount" class="form-control form-control-sm"
-                        value="{{ confirmedOffer.get_commission|thousand_separator }} {{ commercialOffer.currency }}" id="commission_amount" />
+                        value="{{ confirmedOffer.get_commission|thousand_separator }} {{ confirmedOffer.currency|default:"" }}" id="commission_amount" />
                 </div>
             </div>
             <div class="col-md-4 form-group row">
-                <label for="client_nbr" class="col-sm-4 col-form-label col-form-label-sm">
-                    <strong> Client Ref </strong>
+                <label for="client_nbr" class="col-sm-4 col-form-label col-form-label-sm"> 
+                    <strong> Client Ref </strong> 
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" name="client_nbr" class="form-control form-control-sm" id="client_nbr"
-                        value="{{ confirmedOffer.client_nbr|default:"" }}" />
+                    <input type="text" name="client_nbr" class="form-control form-control-sm"
+                        id="client_nbr" placeholder="Client ref" value="{{ confirmedOffer.client_nbr|default:"" }}" />
                 </div>
             </div>
-            {% if  confirmedOffer %}
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-dark btn-sm">
-                        Save infos
-                    </button>
-                </div>
-            {% endif %}
         </div>
+        <div class="row mt-2">
+            <table class="table table-sm bg-white size-13" id="offer-articles-table">
+                <thead class="text-left size-11">
+                    <tr>
+                        <th>Article nbr</th>
+                        <th>Description</th>
+                        <th>Purchase price </th>
+                        <th>Qty</th>
+                        <th>Margin</th>
+                        <th>Unit</th>
+                        <th>Selling price </th>
+                        <th>Total Purchase</th>
+                        <th>Total Selling</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in confirmedOffer.order_set.all %}
+                    <tr>
+                        <td class="article-id" data-article-id="{{ article.id }}">
+                            <a  href="#" 
+                                onclick="get_article('Article detail','{%  url "update-article" order.article.id %}')">
+                                {{ order.article.article_nbr }}
+                            </a>
+                        </td>
+                       <td style="width:300px">
+                            <details>
+                                <summary>Article Description</summary>
+                                <textarea disabled rows="5" class="form-control size-11">{{ order.get_description_by_client_lang }}</textarea>
+                            </details>
+                        </td>
+                        <td class="form-group">
+                            <input type="number" name="purchase-price" 
+                            class="purchase-price form-control form-control-sm"
+                            placeholder="purchase price"
+                            required
+                            value="{{order.purchase_price}}"/>
+                        </td>
+                        <td class="form-group">
+                            <input type="number" name="quantity" 
+                            class="article-quantity form-control form-control-sm"
+                            required
+                            value="{{order.quantity}}"/>
+                        </td>
+                        <td class="form-group">
+                            <input type="number" name="article-margin" 
+                            class="article-margin form-control form-control-sm"
+                            placeholder="margin in %"
+                            required
+                            value="{{order.margin}}"/>
+                        </td>
+                        <td> {{order.article.article_unit}} </td>
+                        <td class="selling-price "> </td>
+                        <td class="total-purchase"></td>
+                        <td class="total-selling"></td>
+                        <td> <a href="#" class="btn btn-sm btn-remove"
+                                onclick="load_modal('Update ','{%  url "delete-order-from-confirmedOffer" order.id %}')"> 
+                            <i class="material-icons size-11 text-danger">delete_forever</i></a>
+                        </td>
+                    </tr>
+                    <input type="hidden" name="order" value="{{ order.id }}">
+                    <input type="hidden" name="article" value="{{ order.article.id }}">
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <td colspan="1">
+                        <input type="text"  name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
+                    </td>
+                    <td colspan="6">
+                        <button class="btn btn-sm"> + add new article</button>
+                    </td>
+                    <td colspan="1"> Total Purchase  = <strong class="sum-total-purchase"></strong></td>
+                    <td colspan="2"> Total Price EXW = <strong  class="sum-total-selling"></strong></td>
+                </tfoot>
+            </table>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="d-none">
+                    <input type="hidden" name="project" value="{{project.id}}{{confirmedOffer.project.id}}" />
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="exceptional-discount" class="col-sm-4 col-form-label col-form-label-sm"> Exceptional discount
+                    </label>
+                    <div class="col-sm-3">
+                        <input type="number" name="discount" class="form-control form-control-sm"
+                            placeholder = "discount in %" id="exceptional-discount"
+                            required
+                            value="{{ confirmedOffer.discount }}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="transport" class="col-sm-4 col-form-label col-form-label-sm"> Shipping 
+                    </label>
+                    <div class="col-sm-8">
+                        <select name="shipping" class="form-select form-select-sm" id="shipping">
+                            <option value=""> Chose a shipping term</option>
+                            {% for shipping in shippings %}
+                            <option value="{{shipping.id }}" {% if confirmedOffer.shipping.id == shipping.id %} selected {% endif %}>
+                                {{ shipping }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="transport" class="col-sm-4 col-form-label col-form-label-sm"> Transport mode
+                    </label>
+                    <div class="col-sm-8">
+                        <select name="transport" class="form-select form-select-sm" id="transport">
+                            <option value=""> Chose a transport mode</option>
+                            {% for transport in transports %}
+                            <option value="{{transport.id }}" {% if confirmedOffer.transport.id == transport.id %} selected {% endif %}>
+                                {{ transport}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="destination" class="col-sm-4 col-form-label col-form-label-sm">Destination</label>
+                    <div class="col-sm-8">
+                        <select name="destination" class="form-select form-select-sm" id="destination">
+                            <option value="">Choose a destination</option>
+                            {% for destination in destinations %}
+                            <option value="{{ destination.id }}" {% if confirmedOffer.destination.id == destination.id %} selected {% endif %}>
+                                {{ destination }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="payment" class="col-sm-4 col-form-label col-form-label-sm">Payment mode</label>
+                    <div class="col-sm-8">
+                        <select name="payment" class="form-select form-select-sm" id="payment">
+                            <option value="">Choose a payment mode</option>
+                            {% for payment in payments %}
+                            <option value="{{ payment.id }}" {% if confirmedOffer.payment.id == payment.id %} selected {% endif %}>
+                                {{ payment }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="payment_date" class="col-sm-4 col-form-label col-form-label-sm"> Payment date
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="date" name="payment_date" class="form-control form-control-sm"
+                            id="payment_date" value="{{confirmedOffer.payment_date|date:'Y-m-d'}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">delivery duration</label>
+                    <div class="col-sm-8 row">
+                        <div class="col-sm-8">
+                            <input type="text" name="delivery_time" class="form-control form-control-sm"
+                                value="{{confirmedOffer.delivery_time|default:""}}" placeholder="duration"/>
+                        </div>
+                        <div class="col-sm-4">
+                            <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
+                                <option value=""> time unit select </option>
+                                {% for timeUnit in timeUnits %}
+                                <option value="{{ timeUnit.id }}" {% if confirmedOffer.delivery_time_unit.id == timeUnit.id %} selected {%endif %}>
+                                    {{ timeUnit }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                 </div>
+                 <div class="form-group row mt-2">
+                    <label for="warranty_period" class="col-sm-4 col-form-label col-form-label-sm"> Warranty period 
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="text" name="warranty_period" class="form-control form-control-sm"
+                            id="warranty_period" value="{{ confirmedOffer.warranty_period|default:"" }}" />
+                    </div>
+                 </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group row mt-2">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price EXW deducted: </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="shipping_fee" class="form-control form-control-sm"
+                            disabled id="discounted_price" value="" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee : </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="shipping_fee" class="form-control form-control-sm"
+                            id="shipping_fee" value="{{confirmedOffer.shipping_fee|default:"0.00"}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee : </label>
+                    <div class="col-sm-4">
+                        <input type="number" name="transport_fee" class="form-control form-control-sm"
+                            id="transport_fee" value="{{confirmedOffer.transport_fee|default:"0.00"}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price : </label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control form-control-sm"
+                            id="total-price"  disabled step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Currency : </label>
+                    <div class="col-sm-4">
+                        <select required name="currency" class="form-select form-select-sm">
+                            <option value="">Choose a currency</option>
+                            {% for currency in currencies %}
+                            <option value="{{ currency.id }}" {% if confirmedOffer.currency.id == currency.id %} selected {%endif %}>
+                                {{ currency }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Show local contact: </label>
+                    <div class="col-sm-4">
+                        <input type="checkbox" {% if confirmedOffer.local_contact %} checked {%endif %} class="form-check-input" name="local_contact"
+                            value="1" step="any" />
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 d-flex justify-content-end">
+                <button class="btn btn-sm btn-dark" type="submit"> Save changes </button>
+            </div>
     </form>
-    <div class="row mt-2">
-        <table class="table table-sm bg-white size-13" id="offer-articles-table">
-            <thead class="text-left size-11">
-                <tr>
-                    <th>Article nbr</th>
-                    <th>Description</th>
-                    <th>Purchase price </th>
-                    <th>Qty</th>
-                    <th>Margin</th>
-                    <th>Unit</th>
-                    <th>Selling price </th>
-                    <th>Total Purchase</th>
-                    <th>Total Selling</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in commercialOffer.order_set.all %}
-                <tr>
-                    <td class="article-id" data-article-id="{{ article.id }}">
-                        <a href="#" onclick="get_article('Article detail','{%  url " update-article" order.article.id
-                            %}')">
-                            {{ order.article.article_nbr }}
-                        </a>
-                    </td>
-                    <td style="width:300px">
-                        <details>
-                            <summary>Article Description</summary>
-                            <textarea disabled rows="5"
-                                class="form-control size-11">{{ order.get_description_by_client_lang }}</textarea>
-                        </details>
-                    </td>
-                    <td class="form-group">
-                        {{ order.purchase_price|thousand_separator }} {{ commercialOffer.currency }}
-                    </td>
-                    <td class="form-group">
-                        {{ order.quantity }}
-                    </td>
-                    <td class="form-group">
-                        {{ order.margin }}
-                    </td>
-                    <td> {{order.article.article_unit}} </td>
-                    <td class="selling-price "> {{order.get_selling_price|thousand_separator}} {{ commercialOffer.currency }}</td>
-                    <td class="total-purchase"> {{order.get_total_purchase|thousand_separator}} {{ commercialOffer.currency }} </td>
-                    <td class="total-selling"> {{order.get_total_selling|thousand_separator}} {{ commercialOffer.currency }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <td colspan="7">
-                </td>
-                <td colspan="1"> Total Purchase = 
-                    <strong class="sum-total-purchase">
-                        {{ commercialOffer.get_total_purchase|thousand_separator }} 
-                        {{ commercialOffer.currency }}
-                    </strong>
-                </td>
-                <td colspan="2"> Total Price EXW = 
-                    <strong class="sum-total-selling">
-                        {{ commercialOffer.get_total_selling|thousand_separator }} 
-                        {{ commercialOffer.currency }}
-                    </strong>
-                </td>
-            </tfoot>
-        </table>
-    </div>
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="form-group row mt-2">
-                <label for="exceptional-discount" class="col-sm-4 col-form-label col-form-label-sm"> Exceptional
-                    discount
-                </label>
-                <div class="col-sm-3">
-                    <input type="number" name="discount" class="form-control form-control-sm" disabled
-                        placeholder="discount in %" id="exceptional-discount" value="{{ commercialOffer.discount }}" />
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="transport" class="col-sm-4 col-form-label col-form-label-sm"> Shipping
-                </label>
-                <div class="col-sm-8">
-                    <select disabled class="form-select form-select-sm" id="shipping">
-                        <option selected>
-                            {{ commercialOffer.shipping|default:"" }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="transport" class="col-sm-4 col-form-label col-form-label-sm"> Transport mode
-                </label>
-                <div class="col-sm-8">
-                    <select disabled class="form-select form-select-sm" id="shipping">
-                        <option selected>
-                            {{commercialOffer.transport|default:"" }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="destination" class="col-sm-4 col-form-label col-form-label-sm">Destination</label>
-                <div class="col-sm-8">
-                    <select disabled class="form-select form-select-sm" id="shipping">
-                        <option selected>
-                            {{commercialOffer.destination|default:"" }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="payment" class="col-sm-4 col-form-label col-form-label-sm">Payment mode</label>
-                <div class="col-sm-8">
-                    <select disabled class="form-select form-select-sm" id="payment">
-                        <option selected>
-                            {{ commercialOffer.payment|default:"" }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="payment_date" class="col-sm-4 col-form-label col-form-label-sm"> Payment date
-                </label>
-                <div class="col-sm-8">
-                    <input type="date" disabled name="payment_date" class="form-control form-control-sm"
-                        id="payment_date" value = "{{ commercialOffer.payment_date|date:'Y-m-d' }}" />
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">Delivery duration</label>
-                <div class="col-sm-4">
-                    <input type="text" disabled name="delivery_time_interval" class="form-control form-control-sm"
-                        value="{{commercialOffer.delivery_time_interval|default:""}}"  />
-                </div>
-                <div class="col-sm-4">
-                    <select disabled class="form-select form-select-sm" id="time-unit">
-                        <option selected>
-                            {{ commercialOffer.delivery_time_unit|default:"" }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="warranty_period" class="col-sm-4 col-form-label col-form-label-sm"> Warranty period
-                </label>
-                <div class="col-sm-8">
-                    <input type="text" disabled name="warranty_period" class="form-control form-control-sm"
-                        id="warranty_period" value="{{ commercialOffer.warranty_period|default:"" }}" />
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group row mt-2">
-                <label for="discounted_price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price EXW
-                    deducted: </label>
-                <div class="col-sm-4">
-                    {{ commercialOffer.get_discounted_price|thousand_separator }} {{ commercialOffer.currency }}
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="shipping_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee :
-                </label>
-                <div class="col-sm-4">
-                    {{ commercialOffer.shipping_fee|thousand_separator }} {{ commercialOffer.currency }}
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="transport_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee :
-                </label>
-                <div class="col-sm-4">
-                    {{ commercialOffer.transport_fee|thousand_separator }} {{ commercialOffer.currency }}
-                </div>
-            </div>
-            <div class="row mt-2">
-                <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price :
-                </label>
-                <div class="col-sm-4" id="total-price">
-                    {{ commercialOffer.get_total_selling_withFee|thousand_separator }} {{ commercialOffer.currency }}
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Currency : </label>
-                <div class="col-sm-4">
-                    <select disabled class="form-select form-select-sm">
-                        <option selected>
-                            {{ commercialOffer.currency }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Show local contact: </label>
-                <div class="col-sm-4">
-                    <input type="checkbox" disabled {% if commercialOffer.local_contact %} checked {%endif %}
-                        class="form-check-input" name="local_contact" value="1" step="any" />
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-<script>
-    $(document).ready(function () {
+<script>   
+$(document).ready(function () {
 
-        function formatNumber(number) {
-            number = number.toFixed(2)
-            var strNumber = number.toString();
-            var parts = strNumber.split(".");
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            var formattedNumber = parts.join(",");
-            return formattedNumber;
+     // search articles 
+      $('.searchArticle').autocomplete({
+        source: function (request, response) {
+          $.getJSON("{% url 'get-articlesByKeyWord' %}",
+            { keyword: request.term }, function (data) {
+              // Map the article numbers to an array of objects with label and value properties
+              var mappedData = $.map(data, function (item) {
+                return {
+                  label: item,
+                  value: item
+                };
+              });
+              response(mappedData);
+            });
         }
+      });
 
-        $('#commission').on('input', function () {
-            var totalPrice = $('#total-price').text().replace(/\./g, '').replace(',', '.') || 0;
-            var totalPrice = parseFloat(totalPrice);
-            var commissionPercentage = parseFloat($(this).val());
-            if (!isNaN(totalPrice) && !isNaN(commissionPercentage)) {
-                var commissionAmount = (totalPrice * commissionPercentage) / 100;
-                $('#commission_amount').val(formatNumber(commissionAmount) + " {{ commercialOffer.currency }}");
-            }
+    let isFirstExecution = true;
+
+    function set_margin() {
+        let margin = parseFloat($('#global-margin').val());
+        if (margin >= 0 && margin <= 100) {
+            $('#offer-articles-table tbody tr').each(function () {
+                row = $(this);
+                articleMarginInput = row.find('.article-margin');
+                articleMarginInput.val(margin);
+            });
+        }
+    }
+
+    function calculate_sellingPrice() {
+            let sellingPrice = 0;
+            let totalSelling = 0;
+            let articleQuantity = 0;
+            let row = NaN;
+            let sum_total_selling = 0;
+
+            $('#offer-articles-table tbody tr').each(function () {
+                row = $(this);
+                articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
+                purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
+                margin = (row.find('.article-margin').val() / 100) || 0;
+                sellingPrice = purchasePrice + (margin * purchasePrice);
+                totalSelling = sellingPrice * articleQuantity;
+                sum_total_selling += totalSelling;
+
+                row.find('.selling-price').text(formatNumber(sellingPrice));
+                row.find('.total-selling').text(formatNumber(totalSelling));
+            });
+
+            $('tfoot .sum-total-selling').text(formatNumber(sum_total_selling));      
+    }
+
+    function calculate_purchasePrice() {
+        let purchasePrice = 0;
+        let articleQuantity = 0;
+        let row = NaN;
+        let sum_total_purchase = 0;
+
+        $('#offer-articles-table tbody tr').each(function () {
+            row = $(this);
+            articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
+            purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
+            totalPurchase = purchasePrice * articleQuantity;
+            sum_total_purchase += totalPurchase;
+            row.find('.total-purchase').text(formatNumber(totalPurchase));
         });
+        // display the sum total purchase and sum total selling
+        $('tfoot .sum-total-purchase').text(formatNumber(sum_total_purchase));
+      
+    }
+    
+    function calculate_discount()
+    {
+        let discount = parseFloat($('#exceptional-discount').val());
+        let sum_total_selling = parseFloat($('tfoot .sum-total-selling').text()
+        .replace(/\./g, '').replace(',', '.'));
+        if (discount >= 0 && discount <= 100  && sum_total_selling > 0)
+        {
+            let discounted_price = (1 - discount/100) * sum_total_selling;
+            $('#discounted_price').val(discounted_price.toFixed(2));
+
+        }
+        
+        else
+        {
+            $('#discounted_price').val('');
+        }
+    }
+
+    function calculate_total_price() {
+        let transport_fee = parseFloat($('#transport_fee').val()) || 0;
+        let shipping_fee = parseFloat($('#shipping_fee').val()) || 0;
+        let sum_total_selling = parseFloat($('tfoot .sum-total-selling').text() 
+        .replace(/\./g, '').replace(',', '.')) || 0;
+        let discounted_price = parseFloat($('#discounted_price').val()) || 0;
+        let total_price = discounted_price || sum_total_selling;
+        if (total_price > 0)
+        {
+            let total_fee = transport_fee + shipping_fee;
+            total_price = total_price + total_fee;
+            $('#total-price').val(total_price.toFixed(2));
+
+        }
+    }
+
+    $('.btn-margin').on('click', function () {
+        set_margin();
+        calculate_purchasePrice();
+        calculate_sellingPrice();
+        calculate_discount();
+        calculate_total_price();
+        update_commission();
+
     });
+
+    $('.article-margin, .article-quantity, .purchase-price').on('input', function () {
+        calculate_purchasePrice();
+        calculate_sellingPrice();
+        calculate_discount();
+        calculate_total_price();
+        update_commission();
+
+
+    });
+
+    $('#transport_fee, #shipping_fee').on('input', function() {
+        calculate_total_price();
+        update_commission();
+
+    });
+
+    $('#exceptional-discount').on('input', function() {
+        calculate_discount();
+        calculate_total_price();
+    });
+
+    // Execute recalculate function once on initial page load
+    if (isFirstExecution) {
+        calculate_purchasePrice();
+        calculate_sellingPrice();
+        calculate_discount();
+        calculate_total_price();
+        isFirstExecution = false;
+    }
+
+    function formatNumber(number) {
+        // Convert the number to a string
+        number = number.toFixed(2)
+        var strNumber = number.toString();
+        
+        // Split the number into integer and decimal parts
+        var parts = strNumber.split(".");
+        
+        // Format the integer part with thousands separators
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        // Join the integer and decimal parts with a comma
+        var formattedNumber = parts.join(",");
+        
+        return formattedNumber + " {{confirmedOffer.currency|default:''}}";
+    }
+
+    $('tfoot .btn').click(function(event) {
+        event.preventDefault();
+        let article_nbr = $('tfoot .searchArticle').val();
+        url = "{% url 'add-article-to-confirmedOffer' confirmedOffer.id 'article_nbr' %}".replace('article_nbr',article_nbr );
+        load_modal('Update Commercial offer', url);
+       
+    });
+
+    function update_commission()
+    {
+        var totalPrice = $('#total-price').val() || 0;
+        var commission = $('#commission').val() || 0;
+        var commissionPercentage = parseFloat(commission);
+        if (!isNaN(totalPrice) && !isNaN(commissionPercentage)) {
+            var commissionAmount = (totalPrice * commissionPercentage) / 100;
+            $('#commission_amount').val(formatNumber(commissionAmount) + " {{ confirmedOffer.currency|default:"" }}");
+        }
+    }
+
+    $('#commission').on('input', function () {
+        update_commission();
+    });
+
+    
+}); 
+
+
+article_is_opned = false ;
+function get_article(title, url)
+{
+    load_modal(title,url);
+    article_is_opned = !article_is_opned;
+}
+
+url = "{% url 'update-confirmed-commercialOffer'  confirmedOffer.id %}";
+$('#Modal').on('hidden.bs.modal', function() {
+    if (article_is_opned)
+    {
+        load_modal('Create Commercial offer', url);
+        $('#Modal').modal('show');
+        article_is_opned = !article_is_opned
+    }
+});
 
 </script>

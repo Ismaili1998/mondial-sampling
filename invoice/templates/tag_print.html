@@ -16,15 +16,15 @@
                 <h6>
                     {{ translations.client_ref }}: <strong> {{ invoice.client_nbr }} </strong><br />
                     {{ translations.invoice }}: <strong> {{ invoice.invoice_nbr }} </strong> <br />
-                    {{ translations.project_nbr }}: <strong> {{ commercialOffer.project.project_nbr }} </strong>
+                    {{ translations.project_nbr }}: <strong> {{ confirmedOffer.project.project_nbr }} </strong>
                 </h6>
                 <div class="destination-info">
                     <strong> {{ translations.destination }} </strong>
-                    <p> {{ commercialOffer.project.client|default:"" }} <br />
-                        {{ commercialOffer.project.client.address|default:"" }} <br />
-                        {{ commercialOffer.project.client.country }} <br />
-                        {{ commercialOffer.project.client.phone_number1|default:"" }} <br />
-                        {{ commercialOffer.project.client.phone_number2|default:"" }} <br />
+                    <p> {{ confirmedOffer.project.client|default:"" }} <br />
+                        {{ confirmedOffer.project.client.address|default:"" }} <br />
+                        {{ confirmedOffer.project.client.country }} <br />
+                        {{ confirmedOffer.project.client.phone_number1|default:"" }} <br />
+                        {{ confirmedOffer.project.client.phone_number2|default:"" }} <br />
                     </p>
                 </div>
             </div>
@@ -60,16 +60,5 @@
         var formattedDate = day + '.' + month + '.' + year;
         $('#currentDate').text(formattedDate);
     });
-
-
-    $("#orders-list tbody").sortable({
-        helper: "clone", // Display a clone of the row while dragging
-        update: function (event, ui) {
-            // Update the Pos numbers based on the new order
-            $("#orders-list tbody tr").each(function (index) {
-                $(this).find("td:first-child").text(index + 1);
-            });
-        }
-    }).disableSelection();
 
 </script>

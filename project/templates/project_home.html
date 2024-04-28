@@ -129,9 +129,9 @@
                 <label for="buyer" class="col-sm-3 col-form-label col-form-label-sm">Buyer</label>
                 <div class="col-sm-6">
                     <select name="buyer" class="form-select form-select-sm" id="buyer" 
-                    onclick="load_modal('New Buyer','{% url "chose-buyer" %}')"
-                    required>
-                        <option selected> {{ project.buyer.name}} </option>
+                    onclick="load_modal('New Buyer','{% url "chose-buyer" %}')">
+                        <option value=""> Chose a buyer </option>
+                        <option selected value="{{project.buyer.id}}" > {{ project.buyer.name}} </option>
                     </select>
                 </div>
                 <div class="col-sm-3">
@@ -184,8 +184,12 @@
               </button>
               <div class="dropdown-menu" aria-labelledby="project-documents-dropdown">
                 {% for project_file in project.file_set.all %}
-                <a class="dropdown-item" href="{% url 'download-file' project_file.id %}" target="_blank">
-                  {{project_file.file.name }} </a>
+                  <div class="dropdown-item d-flex justify-content-between gap-4">
+                      <a class="text-dark" href="{% url 'download-file' project_file.id %}" target="_blank">
+                        {{project_file.file.name }} </a>
+                      <a class="text-danger" href="{% url 'remove-file' project_file.id %}" >
+                        <i class="material-icons align-middle size-13">clear</i> </a>
+                  </div>
                 {% endfor %}
               </div>
           </div>

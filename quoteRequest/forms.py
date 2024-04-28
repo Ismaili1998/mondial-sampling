@@ -4,4 +4,4 @@ from .models import SupplierCommand
 class SupplierCommandForm(forms.ModelForm):
     class Meta:
         model = SupplierCommand
-        exclude = ['command_nbr', 'quoteRequest']
+        exclude = ['command_nbr', 'supplier', 'project','rank']

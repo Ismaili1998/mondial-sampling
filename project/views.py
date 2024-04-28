@@ -9,6 +9,7 @@ from django.views.static import serve
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from order.models import Article 
+import os 
 
 @login_required(login_url='sign-in')
 def project_home(request):
@@ -54,9 +55,10 @@ def project_edit(request, pk):
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
-            print("==========")
             project = form.save()
             messages.success(request, 'Project has been updated successfully')
+        for err in form.errors:
+            print(err)
     return redirect('project-detail', project.project_nbr)
 
 
@@ -97,8 +99,12 @@ def get_projectsByKeyWord(request):
 
 def upload_file_to_project(request, project_pk):
     project = get_object_or_404(Project, id=project_pk)
+    if len(project.file_set.all()) > 10:
+        return JsonResponse({'message': 'No more than 10 files !'})
     if request.method == 'POST' and request.FILES:
         files = request.FILES.getlist('files')
+        if len(files) > 10:
+            return JsonResponse({'message': 'No more than 10 files !'})
         filenames = []
         for file in files:
             project_file = File(project=project,
@@ -117,6 +123,18 @@ def download_file(request, file_pk):
         raise Http404
     # Use Django's built-in `serve()` view to return the file
     return serve(request, project_file.file.name, document_root=settings.MEDIA_ROOT)
+
+def remove_file(request, file_pk):
+    try:
+        project_file = File.objects.get(id=file_pk)
+        if project_file:
+            project_file.delete()
+            path = f'media/{project_file.file}'
+            os.remove(path)
+    except:
+        messages.error(request,'Error occured !')
+    return redirect('project-detail',project_file.project.project_nbr)
+       
 
 def client_detail(request, pk):
     client = get_object_or_404(Client, pk=pk)
@@ -284,7 +302,6 @@ def get_buyersByKeyWord(request):
                 'email': buyer.email or '',
                 'phone_number':buyer.phone_number or '',
             })
-    print(buyer_data)
     # Return the buyers' data as JSON response
     return JsonResponse({'buyers': buyer_data})
 

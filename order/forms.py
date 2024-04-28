@@ -4,4 +4,4 @@ from .models import Article
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
-        exclude = ['created_at', 'updated_at', 'project']
+        exclude = ['created_at', 'updated_at', 'projects']

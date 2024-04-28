@@ -10,7 +10,7 @@
         <div class="text-left">
             <h6>  Provisionszahlungen / Rapport commission provisoires  </h6>
             <h6>  Vertreter / Represenatnt: {{ representative }} </h6>
-            <h6>  Pays: {{ invoices.0.commercialOffer.project.client.country }}
+            <h6>  Pays: {{ invoices.0.project.client.country }}
                         {{ invoices.0.confirmed_commercialOffer.project.client.country }}
             </h6>
         </div>
@@ -21,9 +21,9 @@
                 <th>Client</th>
                 <th>Buyer </th>
                 <th>Project</th>
-                <th>Invoice / Confirmation Ref</th>
-                <th>Payment date </th>
+                <th>Ref</th>
                 <th>Date </th>
+                <th>Payment date </th>
                 <th>Client Ref </th>
                 <th>Sales </th>
                 <th>Commission</th>
@@ -33,28 +33,28 @@
             {% for invoice in invoices %}
             <tr>
                 {% if invoice.confirmation_nbr %}
-                    <td>{{ invoice.commercialOffer.project.client }}</td>
-                    <td>{{ invoice.commercialOffer.project.buyer }}</td>
-                    <td>{{ invoice.commercialOffer.project }}</td>
+                    <td>{{ invoice.project.client }}</td>
+                    <td>{{ invoice.project.buyer }}</td>
+                    <td>{{ invoice.project }}</td>
                     <td>
                         {{ invoice.confirmation_nbr }}
                     </td>
-                    <td>{{ invoice.commercialOffer.payment_date|date:'d.m.Y' }}</td>
                     <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
+                    <td>{{ invoice.payment_date|date:'d.m.Y' }}</td>
                     <td>{{ invoice.client_nbr }}</td>
                     <td>{{ invoice.get_total_selling_withFee|thousand_separator }}
                         {{ invoice.get_currency }}
                     </td>
                     <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>
                 {% else %}
-                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project.client }}</td>
-                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project.buyer }}</td>
-                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.project }}</td>
+                    <td>{{ invoice.confirmed_commercialOffer.project.client }}</td>
+                    <td>{{ invoice.confirmed_commercialOffer.project.buyer }}</td>
+                    <td>{{ invoice.confirmed_commercialOffer.project }}</td>
                     <td> <a href="#" class="text-info"
                         onclick="load_modal('Invoice','{%  url "update-invoice" invoice.id %}')"> 
                         {{ invoice.invoice_nbr }} </a>
                     </td>  
-                    <td>{{ invoice.confirmed_commercialOffer.commercialOffer.payment_date|date:'d.m.Y' }}</td>
+                    <td>{{ invoice.confirmed_commercialOffer.payment_date|date:'d.m.Y' }}</td>
                     <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
                     <td>{{ invoice.client_nbr }}</td>
                     <td>
@@ -123,7 +123,7 @@
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    <td colspan="4"> <strong> {{ total_advances }}  {{ invoice.commercialOffer.currency }} </strong> </td>
+                    <td colspan="4"> <strong> {{ total_advances }}  {{ invoice.currency }} </strong> </td>
                 </tfoot>
             </table>
         </div>

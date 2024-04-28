@@ -13,11 +13,11 @@
         <!-- Contact section -->
         <div class="contact-section d-flex justify-content-between">
             <div class="size-13">
-                {{ commercialOffer.project.client }} <br />
-                {{ commercialOffer.project.client.address|default:"" }} <br />
-                Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
-                Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
-                Fax :{{ commercialOffer.project.client.fax|default:"" }}
+                {{ confirmedOffer.project.client }} <br />
+                {{ confirmedOffer.project.client.address|default:"" }} <br />
+                Phone :{{ confirmedOffer.project.client.phone_number1|default:"" }} <br />
+                Email :{{ confirmedOffer.project.client.email1|default:"" }} <br />
+                Fax :{{ confirmedOffer.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -32,19 +32,19 @@
                     Fax: {{ request.user.fax|default:"" }}
                 </p>
                 <p>
-                    {% if commercialOffer.local_contact %}
+                    {% if confirmedOffer.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ commercialOffer.project.local_contact.name|default:"" }} <br/>
-                       Tel: {{ commercialOffer.project.local_contact.email|default:"" }} <br/>
-                       Fax: {{ commercialOffer.project.local_contact.fax|default:"" }} <br/>
+                       Mr:  {{ confirmedOffer.project.local_contact.name|default:"" }} <br/>
+                       Tel: {{ confirmedOffer.project.local_contact.email|default:"" }} <br/>
+                       Fax: {{ confirmedOffer.project.local_contact.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
-                <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
-                    {{translations.our_ref}} : {{ commercialOffer.offer_nbr }}<br/>
+                <p> {{translations.project_nbr}}: {{ confirmedOffer.project.project_nbr }} <br/>
+                    {{translations.our_ref}} : {{ confirmedOffer.offer_nbr }}<br/>
                     {{translations.client_ref}} : {{ invoice.client_nbr }}
                 </p>
             </div>
@@ -67,7 +67,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in commercialOffer.get_orders %}
+                        {% for order in confirmedOffer.get_orders %}
                         <tr class="size-13">
                             <td> {{ forloop.counter }} </td>
                             <td> {{ order.article.article_nbr}} </td>
@@ -82,7 +82,7 @@
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ commercialOffer.delivery_time_interval }} {{ commercialOffer.delivery_time_unit }}
+                        {{ confirmedOffer.delivery_time_interval }} {{ confirmedOffer.delivery_time_unit }}
                     </p>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                         <tr class="size-13">
                             <td> {{ packing.get_weight }} </td>
                             <td> {{ packing.get_size }} </td>
-                            <td> {{ packing.quantity }} </td>
+                            <td> {{ packing.nbr_packages }} </td>
                         </tr>
                     </tbody>
                 </table>

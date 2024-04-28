@@ -13,11 +13,11 @@
         <!-- Contact section -->
         <div class="contact-section d-flex justify-content-between">
             <div class="size-13">
-                {{ commercialOffer.project.client }} <br />
-                {{ commercialOffer.project.client.address|default:"" }} <br />
-                Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br />
-                Email :{{ commercialOffer.project.client.email1|default:"" }} <br />
-                Fax :{{ commercialOffer.project.client.fax|default:"" }}
+                {{ confirmedOffer.project.client }} <br />
+                {{ confirmedOffer.project.client.address|default:"" }} <br />
+                Phone :{{ confirmedOffer.project.client.phone_number1|default:"" }} <br />
+                Email :{{ confirmedOffer.project.client.email1|default:"" }} <br />
+                Fax :{{ confirmedOffer.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -32,11 +32,11 @@
                     Fax: {{ request.user.fax|default:"" }}
                 </p>
                 <p>
-                    {% if commercialOffer.local_contact %}
+                    {% if confirmedOffer.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ commercialOffer.project.local_contact.name|default:"" }} <br/>
-                       Tel: {{ commercialOffer.project.local_contact.email|default:"" }} <br/>
-                       Fax: {{ commercialOffer.project.local_contact.fax|default:"" }} <br/>
+                       Mr:  {{ confirmedOffer.project.local_contact.name|default:"" }} <br/>
+                       Tel: {{ confirmedOffer.project.local_contact.email|default:"" }} <br/>
+                       Fax: {{ confirmedOffer.project.local_contact.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
@@ -51,7 +51,7 @@
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
-                <p> {{translations.project_nbr}}: {{ commercialOffer.project.project_nbr }} <br/>
+                <p> {{translations.project_nbr}}: {{ confirmedOffer.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ invoice.invoice_nbr }}<br/>
                     {{translations.client_ref}} : {{ invoice.client_nbr }}
                 </p>
@@ -76,7 +76,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in commercialOffer.get_orders %}
+                        {% for order in confirmedOffer.get_orders %}
                         <tr class="size-13">
                             <td> {{ forloop.counter }} </td>
                             <td> {{order.article.article_nbr}} </td>
@@ -86,10 +86,10 @@
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
                             <td> {{order.get_selling_price|thousand_separator}} 
-                                 {{commercialOffer.currency}}
+                                 {{confirmedOffer.currency}}
                             </td>
                             <td> {{order.get_total_selling|thousand_separator}} 
-                                 {{commercialOffer.currency}}
+                                 {{confirmedOffer.currency}}
                             </td>
                         </tr>
                         {% endfor %}
@@ -99,32 +99,32 @@
                     <tbody class="size-13">
                         <tr>
                             <td colspan="4">
-                                {{translations.payment_date}}: {{ commercialOffer.payment_date|date:'d.m.Y' }}
+                                {{translations.payment_date}}: {{ confirmedOffer.payment_date|date:'d.m.Y' }}
                             </td>
                             <td class="size-14">
                                 {{translations.total_EXW}}:
                             </td>
                             <td></td>
                             <td>
-                                {{ commercialOffer.get_total_selling|thousand_separator }} 
-                                {{commercialOffer.currency}}
+                                {{ confirmedOffer.get_total_selling|thousand_separator }} 
+                                {{confirmedOffer.currency}}
                             </td>
                         </tr>
-                        {% if  commercialOffer.discount %}
+                        {% if  confirmedOffer.discount %}
                         <tr>
                             <td colspan="4"></td>
                             <td>
                                 {{ translations.discount }} :
-                                {{ commercialOffer.discount|thousand_separator }} %
+                                {{ confirmedOffer.discount|thousand_separator }} %
                             </td>
                             <td></td>
                             <td>  
-                                {{ commercialOffer.get_discount_price|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{ confirmedOffer.get_discount_price|thousand_separator }}
+                                {{confirmedOffer.currency}}
                             </td>
                         </tr>
                         {% endif %}
-                        {% if  commercialOffer.get_discounted_price %}
+                        {% if  confirmedOffer.get_discounted_price %}
                         <tr>
                             <td colspan="4"></td>
                             <td class="size-14" >
@@ -132,35 +132,35 @@
                             </td>
                             <td></td>
                             <td>
-                                {{ commercialOffer.get_discounted_price|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{ confirmedOffer.get_discounted_price|thousand_separator }}
+                                {{confirmedOffer.currency}}
                             </td>
                         </tr>
                         {% endif %}
-                        {% if  commercialOffer.shipping_fee %}
+                        {% if  confirmedOffer.shipping_fee %}
                         <tr>
                             <td colspan="4">
                             </td>
                             <td class="size-14" >
                                 {{translations.incoterm}}:
                             </td>
-                            <td> {{commercialOffer.shipping }} </td>
+                            <td> {{confirmedOffer.shipping }} </td>
                             <td>
-                                {{ commercialOffer.shipping_fee|thousand_separator }}
-                                {{ commercialOffer.currency}}
+                                {{ confirmedOffer.shipping_fee|thousand_separator }}
+                                {{ confirmedOffer.currency}}
                             </td>
                         </tr>
                         {% endif %}
-                        {% if  commercialOffer.transport_fee %}
+                        {% if  confirmedOffer.transport_fee %}
                         <tr>
                             <td colspan="4"></td>
                             <td class="size-14" >
                                 {{translations.transportation}}:
                             </td>
-                            <td> {{commercialOffer.transport}} </td>
+                            <td> {{confirmedOffer.transport}} </td>
                             <td>
-                                {{ commercialOffer.transport_fee|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{ confirmedOffer.transport_fee|thousand_separator }}
+                                {{confirmedOffer.currency}}
                             </td>
                         </tr>
                         {% endif %}
@@ -170,20 +170,20 @@
                                 {{translations.total_price}}:
                             </td>
                             <td>
-                                {{ commercialOffer.destination }}
+                                {{ confirmedOffer.destination }}
                             </td>
                             <td>
-                                {{ commercialOffer.get_total_selling_withFee|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{ confirmedOffer.get_total_selling_withFee|thousand_separator }}
+                                {{confirmedOffer.currency}}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ commercialOffer.delivery_time_interval }} {{ commercialOffer.delivery_time_unit }}
+                        {{ confirmedOffer.delivery_time_interval }} {{ confirmedOffer.delivery_time_unit }}
                         <br/> 
-                        {{translations.payment_mode}}: {{ commercialOffer.payment }}
+                        {{translations.payment_mode}}: {{ confirmedOffer.payment }}
                     </p>
                 </div>
             </div>

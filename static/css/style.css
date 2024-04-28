@@ -47,7 +47,8 @@
 
 .text-description {
     font-size: 12px;
-    max-width: 500px;
+    max-width: 450px;
+    min-width: 350px;
 }
 
 .outset-border {

@@ -13,6 +13,8 @@ urlpatterns = [
 
     path('upload-file-to-project/<str:project_pk>',views.upload_file_to_project,name='upload-file-to-project'),
     path('download-file/<str:file_pk>',views.download_file,name='download-file'),
+    path('remove-file/<str:file_pk>',views.remove_file,name='remove-file'),
+
 
     path('create-client',views.client_create,name='create-client'),
     path('update-client/<str:pk>',views.client_edit,name='update-client'),

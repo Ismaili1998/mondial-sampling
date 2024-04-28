@@ -7,10 +7,10 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group row">
-                    <label for="global-margin" class="col-sm-2 col-form-label col-form-label-sm"><strong>Margin</strong></label>
+                    <label for="global-margin" class="col-sm-2 col-form-label col-form-label-sm"><strong>Global Margin</strong></label>
                     <div class="col-sm-8">
                         <div class="input-group">
-                            <input type="text" name="margin" id="global-margin" value="{{ commercialOffer.margin }}"
+                            <input type="text" name="margin" id="global-margin" value="" placeholder="margin in %"
                                 class="form-control form-control-sm" placeholder="Global Margin in %" />
                             <div class="input-group-append">
                                 <a href="javascript:void(0)" class="btn btn-sm btn-margin" type="submit">Apply margin</a>
@@ -185,13 +185,13 @@
                 <div class="form-group row mt-2">
                     <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">delivery duration</label>
                     <div class="col-sm-8 row">
-                        <div class="col-sm-4">
-                            <input type="text" name="delivery_time_interval" class="form-control form-control-sm"
-                                value="{{commercialOffer.delivery_time_interval|default:""}}" placeholder="duration"/>
-                        </div>
                         <div class="col-sm-8">
+                            <input type="text" name="delivery_time" class="form-control form-control-sm"
+                                value="{{commercialOffer.delivery_time|default:""}}" placeholder="duration"/>
+                        </div>
+                        <div class="col-sm-4">
                             <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
-                                <option value="">Choose a time unit</option>
+                                <option value=""> time unit select </option>
                                 {% for timeUnit in timeUnits %}
                                 <option value="{{ timeUnit.id }}" {% if commercialOffer.delivery_time_unit.id == timeUnit.id %} selected {%endif %}>
                                     {{ timeUnit }}
@@ -260,22 +260,37 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
-                <div class="btn-group" role="group" aria-label="Offer Actions">
-                    <button type="submit" class="btn btn-dark btn-sm mr-4">
-                        save changes
-                    </button>
-                    <button type="submit" class="btn btn-sm btn-warning">
-                        create new version
-                    </button>
-                    {% if not commercialOffer.confirmed %}
-                    <a class="btn btn-sm btn-success"
-                        href = "#"
-                        onclick="load_modal('Offer confirmation','{%  url "confirm-commercialOffer"  commercialOffer.id %}')" >
-                        confirm this offer
-                    </a>
-                    {% endif %}
+            <div class="row mt-2">
+                <div class="col-md-6 border p-2">
+                    <h6 class='text-primary'> Confirmation section  </h6>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label col-form-label-sm"> 
+                            <strong> Client Ref </strong>
+                        </label>
+                        <div class="col-sm-8">
+                            <input placeholder="Client reference" type="text" name="client_nbr" class="form-control form-control-sm"/>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-sm-4 col-form-label col-form-label-sm"> 
+                            <strong> {{ commercialOffer.project.representative }}'s commission </strong>
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="number" max="100" min="0" name="commission" placeholder="commission in %" class="form-control form-control-sm"/>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-success">
+                               Confirm this offer
+                        </button>
+                    </div>
                 </div>
+            </div>
+            <div class="mt-5 d-flex justify-content-between">
+                <button type="submit" class="btn btn-sm btn-outline-warning">
+                    Clone this offer
+                </button>
+                <button class="btn btn-sm btn-dark" type="submit"> Save changes </button>
             </div>
     </form>
 </div>
@@ -437,7 +452,7 @@ $(document).ready(function () {
         // Join the integer and decimal parts with a comma
         var formattedNumber = parts.join(",");
         
-        return formattedNumber;
+        return formattedNumber + " {{commercialOffer.currency|default:''}}";
     }
 
     $('tfoot .btn').click(function(event) {
@@ -453,12 +468,19 @@ $(document).ready(function () {
 
     const form = $('.commercial-offer-form');
     const saveChangesBtn = $('.commercial-offer-form .btn-dark');
-    const createNewBtn = $('.commercial-offer-form .btn-warning');
+    const createNewBtn = $('.commercial-offer-form .btn-outline-warning');
+    const confirmBtn = $('.commercial-offer-form .btn-outline-success');
+
     saveChangesBtn.click(function() {
         form.attr('action', '{% url "update-commercialOffer" commercialOffer.id %}');
     });
+    
     createNewBtn.click(function() {
         form.attr('action', '{% url "create-commercialOffer" commercialOffer.project.id %}');
+    });
+
+    confirmBtn.click(function() {
+        form.attr('action', '{%  url "confirm-commercialOffer"  commercialOffer.id %}');
     });
     
     

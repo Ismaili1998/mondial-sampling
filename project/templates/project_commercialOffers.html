@@ -4,7 +4,6 @@
             <th>Offer Ref</th>
             <th>Print CO</th>
             <th>Print TO</th>
-            <th>Status</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -13,7 +12,7 @@
             <tr>
                 <td> 
                     <a href="#"
-                        onclick="load_modal('Update commercial offer','{%  url "update-commercialOffer" offer.id %}')">
+                        onclick="load_modal('Update commercial offer N°: {{offer.offer_nbr }}','{%  url "update-commercialOffer" offer.id %}')">
                         {{ offer.offer_nbr }}
                     </a>
                 </td>
@@ -28,13 +27,6 @@
                         onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')">
                         <i class="material-icons text-dark align-middle">picture_as_pdf</i>
                     </a>
-                </td>
-                <td>
-                    {% if offer.confirmed_commercialoffer %}
-                        <span class="text-success"> Confirmed </span>
-                    {% else %}
-                        <span > Not confirmed </span>
-                    {% endif %}
                 </td>
                 <td>
                     <div class="dropdown-item">

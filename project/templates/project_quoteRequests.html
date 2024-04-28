@@ -12,7 +12,8 @@
         {% for quoteRequest in project.quoterequest_set.all %}
             <tr>
                 <td>
-                    <a onclick="load_modal('Update quoteRequest','{%  url "update-quoteRequest"  quoteRequest.id %}')"
+                    <a onclick="load_modal('Update quoteRequest N°: {{quoteRequest.request_nbr }}',
+                                '{%  url "update-quoteRequest"  quoteRequest.id %}')"
                         href="#">
                         {{ quoteRequest.request_nbr }}
                     </a>
@@ -25,20 +26,15 @@
                     </a>
                 </td>
                 <td>
-                    <a href="#" onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
+                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-quoteRequest" quoteRequest.id %}')"
                     >
                         <i class="material-icons align-middle text-dark">picture_as_pdf</i>
                     </a>
                 </td>
                 <td>
-                    {% if not quoteRequest.suppliercommand %}
-                        <a href="#" onclick="load_modal('Supplier command','{%  url "supplier-command"  quoteRequest.id %}')"
-                        >
+                    <a href="#" onclick="load_modal('Create supplier command ','{%  url "create-supplierCommand" quoteRequest.id %}')">
                             <i class="material-icons align-middle text-dark">shopping_cart_checkout</i>
-                        </a>
-                    {% else %}
-                    <span> shopped </span>
-                    {% endif %}
+                    </a>
                 </td>
                 <td>
                     <form method="POST" action="{% url 'delete-quoteRequest' quoteRequest.id %}">

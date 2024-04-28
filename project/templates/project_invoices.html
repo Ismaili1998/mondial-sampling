@@ -9,40 +9,40 @@
         </tr>
     </thead>
     <tbody>
-        {% for offer in project.commercialoffer_set.all %}
+        {% for confirmedOffer in project.confirmed_commercialoffer_set.all %}
                 <tr>
-                    {% if offer.confirmed_commercialoffer.invoice  %}
+                    {% if confirmedOffer.invoice  %}
                         <td> 
                             <a href="#" 
-                                onclick="load_modal('print Invoice','{%  url "update-invoice" offer.confirmed_commercialoffer.invoice.id %}')">
-                                {{ offer.confirmed_commercialoffer.invoice.invoice_nbr }}
+                                onclick="load_modal('print Invoice','{%  url "update-invoice" confirmedOffer.invoice.id %}')">
+                                {{ confirmedOffer.invoice.invoice_nbr }}
                             </a>
                         </td>
                         <td> 
                             <a href="#" class="text-dark"
-                                onclick="load_modal('Customs Report','{%  url "print-customsReport" offer.confirmed_commercialoffer.invoice.id %}')">
+                                onclick="load_modal('Customs Report','{%  url "print-customsReport" confirmedOffer.invoice.id %}')">
                                 Print report 
                             </a>
                         </td>
                         <td> 
                             <a href="#" 
-                                {% if offer.confirmed_commercialoffer.invoice.packing  %}
-                                    onclick="load_modal('Update packing','{%  url "update-packing" offer.confirmed_commercialoffer.invoice.packing.id %}')"
+                                {% if confirmedOffer.invoice.packing  %}
+                                    onclick="load_modal('Update packing','{%  url "update-packing" confirmedOffer.invoice.packing.id %}')"
                                 {% else %}
-                                    onclick="load_modal('Create packing','{%  url "create-packing" offer.confirmed_commercialoffer.invoice.id %}')"
+                                    onclick="load_modal('Create packing','{%  url "create-packing" confirmedOffer.invoice.id %}')"
                                 {% endif %}>
                                 Packing  
                             </a>
                         </td>
                          <td> 
                             <a href="#" class="text-dark"
-                                    onclick="load_modal('Print tag','{%  url "print-tag" offer.confirmed_commercialoffer.invoice.id %}')">
+                                    onclick="load_modal('Print tag','{%  url "print-tag" confirmedOffer.invoice.id %}')">
                                 Print tag  
                             </a>
                         </td>
                         <td>
                             <div class="dropdown-item">
-                                <form method="POST" action="{% url 'delete-invoice' offer.confirmed_commercialoffer.invoice.id %}">
+                                <form method="POST" action="{% url 'delete-invoice' confirmedOffer.invoice.id %}">
                                     {% csrf_token %}
                                     <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
                                         <i class="material-icons size-11">clear</i>

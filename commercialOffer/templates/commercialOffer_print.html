@@ -76,12 +76,12 @@
                                 <pre>{{ order.get_description_by_client_lang }}</pre>
                             </td>
                             <td> {{order.quantity|thousand_separator}} </td>
-                            <td> {{order.article.article_unit}} </td>
+                            <td> {{order.article.article_unit|default:""}} </td>
                             <td> {{order.get_selling_price|thousand_separator  }}
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                             <td> {{order.get_total_selling|thousand_separator}} 
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                         {% endfor %}
@@ -99,7 +99,7 @@
                             <td></td>
                             <td>
                                 {{ commercialOffer.get_total_selling|thousand_separator }} 
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                         {% if  commercialOffer.discount %}
@@ -112,7 +112,7 @@
                             <td></td>
                             <td>  
                                 {{ commercialOffer.get_discount_price|thousand_separator }}
-                                {{commercialOffer.currency}}
+                                {{commercialOffer.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -173,7 +173,7 @@
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ commercialOffer.delivery_time_interval|default:"" }} {{ commercialOffer.delivery_time_unit|default:"" }}
+                        {{ commercialOffer.delivery_time|default:"" }} {{ commercialOffer.delivery_time_unit|default:"" }}
                         <br/> 
                         {{translations.payment_mode}}: {{ commercialOffer.payment|default:"" }}
                         <br/>

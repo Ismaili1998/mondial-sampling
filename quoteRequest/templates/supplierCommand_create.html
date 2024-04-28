@@ -3,7 +3,7 @@
     <form
         class="commercial-offer-form"
         method="POST"
-        action="{% url 'supplier-command' quoteRequest.id %}" >
+        action="{% url 'create-supplierCommand' quoteRequest.id %}" >
         {% csrf_token %}
         <div class="row mt-2">
             <table class="table table-sm bg-white size-13" id="offer-articles-table">
@@ -37,7 +37,7 @@
                             <td class="article-quantity">
                                 {{order.quantity}}
                             </td>
-                            <td> {{order.article.article_unit}} </td>
+                            <td> {{order.article.article_unit|default:""}} </td>
                             <td> {{order.get_total_purchase|thousand_separator}} 
                                 {{ quoteRequest.suppliercommand.currency }}
                             </td>
@@ -86,11 +86,11 @@
                 <div class="form-group row mt-2">
                     <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">Delivery duration</label>
                     <div class="col-sm-8 row">
-                        <div class="col-sm-4">
-                            <input type="text" name="delivery_time_interval" class="form-control form-control-sm"
+                        <div class="col-sm-8">
+                            <input type="text" name="delivery_time" class="form-control form-control-sm"
                                 value="" placeholder="duration"/>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-4">
                             <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
                                 <option value="">Choose a time unit</option>
                                 {% for timeUnit in timeUnits %}
@@ -138,7 +138,7 @@
                         <select required name="currency" class="form-select form-select-sm">
                             <option value="">Choose a currency</option>
                             {% for currency in currencies %}
-                            <option value="{{ currency.id }}" {% if quoteRequest.suppliercommand.currency.id == currency.id %} selected {%endif %}>
+                            <option value="{{ currency.id }}">
                                 {{ currency }}
                             </option>
                             {% endfor %}
@@ -146,10 +146,8 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
-                <button type="submit" class="btn btn-dark btn-sm mr-4">
-                    save changes
-                </button>
+            <div class="mt-4 d-flex justify-content-end">
+                <button class="btn btn-sm btn-dark" type="submit"> Save changes </button>
             </div>
     </form>
 </div>
