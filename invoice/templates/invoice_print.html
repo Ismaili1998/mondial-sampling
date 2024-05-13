@@ -13,11 +13,11 @@
         <!-- Contact section -->
         <div class="contact-section d-flex justify-content-between">
             <div class="size-13">
-                {{ confirmedOffer.project.client }} <br />
-                {{ confirmedOffer.project.client.address|default:"" }} <br />
-                Phone :{{ confirmedOffer.project.client.phone_number1|default:"" }} <br />
-                Email :{{ confirmedOffer.project.client.email1|default:"" }} <br />
-                Fax :{{ confirmedOffer.project.client.fax|default:"" }}
+                {{ invoice.project.client }} <br />
+                {{ invoice.project.client.address|default:"" }} <br />
+                Phone :{{ invoice.project.client.phone_number1|default:"" }} <br />
+                Email :{{ invoice.project.client.email1|default:"" }} <br />
+                Fax :{{ invoice.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -32,11 +32,11 @@
                     Fax: {{ request.user.fax|default:"" }}
                 </p>
                 <p>
-                    {% if confirmedOffer.local_contact %}
+                    {% if invoice.local_contact %}
                         {{translations.local_contact }} <br/>
-                       Mr:  {{ confirmedOffer.project.local_contact.name|default:"" }} <br/>
-                       Tel: {{ confirmedOffer.project.local_contact.email|default:"" }} <br/>
-                       Fax: {{ confirmedOffer.project.local_contact.fax|default:"" }} <br/>
+                       Mr:  {{ invoice.project.local_contact.name|default:"" }} <br/>
+                       Tel: {{ invoice.project.local_contact.email|default:"" }} <br/>
+                       Fax: {{ invoice.project.local_contact.fax|default:"" }} <br/>
                     {% endif %}
                 </p>
             </div>
@@ -51,7 +51,7 @@
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
-                <p> {{translations.project_nbr}}: {{ confirmedOffer.project.project_nbr }} <br/>
+                <p> {{translations.project_nbr}}: {{ invoice.project.project_nbr }} <br/>
                     {{translations.our_ref}} : {{ invoice.invoice_nbr }}<br/>
                     {{translations.client_ref}} : {{ invoice.client_nbr }}
                 </p>
@@ -76,7 +76,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in confirmedOffer.get_orders %}
+                        {% for order in invoice.get_orders %}
                         <tr class="size-13">
                             <td> {{ forloop.counter }} </td>
                             <td> {{order.article.article_nbr}} </td>
@@ -86,10 +86,10 @@
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
                             <td> {{order.get_selling_price|thousand_separator}} 
-                                 {{confirmedOffer.currency}}
+                                 {{invoice.currency}}
                             </td>
                             <td> {{order.get_total_selling|thousand_separator}} 
-                                 {{confirmedOffer.currency}}
+                                 {{invoice.currency}}
                             </td>
                         </tr>
                         {% endfor %}
@@ -99,32 +99,32 @@
                     <tbody class="size-13">
                         <tr>
                             <td colspan="4">
-                                {{translations.payment_date}}: {{ confirmedOffer.payment_date|date:'d.m.Y' }}
+                                {{translations.payment_date}}: {{ invoice.payment_date|date:'d.m.Y' }}
                             </td>
                             <td class="size-14">
                                 {{translations.total_EXW}}:
                             </td>
                             <td></td>
                             <td>
-                                {{ confirmedOffer.get_total_selling|thousand_separator }} 
-                                {{confirmedOffer.currency}}
+                                {{ invoice.get_total_selling|thousand_separator }} 
+                                {{invoice.currency}}
                             </td>
                         </tr>
-                        {% if  confirmedOffer.discount %}
+                        {% if  invoice.discount %}
                         <tr>
                             <td colspan="4"></td>
                             <td>
                                 {{ translations.discount }} :
-                                {{ confirmedOffer.discount|thousand_separator }} %
+                                {{ invoice.discount|thousand_separator }} %
                             </td>
                             <td></td>
                             <td>  
-                                {{ confirmedOffer.get_discount_price|thousand_separator }}
-                                {{confirmedOffer.currency}}
+                                {{ invoice.get_discount_price|thousand_separator }}
+                                {{invoice.currency}}
                             </td>
                         </tr>
                         {% endif %}
-                        {% if  confirmedOffer.get_discounted_price %}
+                        {% if  invoice.get_discounted_price %}
                         <tr>
                             <td colspan="4"></td>
                             <td class="size-14" >
@@ -132,35 +132,35 @@
                             </td>
                             <td></td>
                             <td>
-                                {{ confirmedOffer.get_discounted_price|thousand_separator }}
-                                {{confirmedOffer.currency}}
+                                {{ invoice.get_discounted_price|thousand_separator }}
+                                {{invoice.currency}}
                             </td>
                         </tr>
                         {% endif %}
-                        {% if  confirmedOffer.shipping_fee %}
+                        {% if  invoice.shipping_fee %}
                         <tr>
                             <td colspan="4">
                             </td>
                             <td class="size-14" >
                                 {{translations.incoterm}}:
                             </td>
-                            <td> {{confirmedOffer.shipping }} </td>
+                            <td> {{invoice.shipping }} </td>
                             <td>
-                                {{ confirmedOffer.shipping_fee|thousand_separator }}
-                                {{ confirmedOffer.currency}}
+                                {{ invoice.shipping_fee|thousand_separator }}
+                                {{ invoice.currency}}
                             </td>
                         </tr>
                         {% endif %}
-                        {% if  confirmedOffer.transport_fee %}
+                        {% if  invoice.transport_fee %}
                         <tr>
                             <td colspan="4"></td>
                             <td class="size-14" >
                                 {{translations.transportation}}:
                             </td>
-                            <td> {{confirmedOffer.transport}} </td>
+                            <td> {{invoice.transport}} </td>
                             <td>
-                                {{ confirmedOffer.transport_fee|thousand_separator }}
-                                {{confirmedOffer.currency}}
+                                {{ invoice.transport_fee|thousand_separator }}
+                                {{invoice.currency}}
                             </td>
                         </tr>
                         {% endif %}
@@ -170,20 +170,20 @@
                                 {{translations.total_price}}:
                             </td>
                             <td>
-                                {{ confirmedOffer.destination }}
+                                {{ invoice.destination }}
                             </td>
                             <td>
-                                {{ confirmedOffer.get_total_selling_withFee|thousand_separator }}
-                                {{confirmedOffer.currency}}
+                                {{ invoice.get_total_selling_withFee|thousand_separator }}
+                                {{invoice.currency}}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ confirmedOffer.delivery_time_interval }} {{ confirmedOffer.delivery_time_unit }}
+                        {{ invoice.delivery_time_interval }} {{ invoice.delivery_time_unit }}
                         <br/> 
-                        {{translations.payment_mode}}: {{ confirmedOffer.payment }}
+                        {{translations.payment_mode}}: {{ invoice.payment }}
                     </p>
                 </div>
             </div>

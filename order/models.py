@@ -2,6 +2,7 @@ from django.db import models
 from commercialOffer.models import CommercialOffer, Confirmed_commercialOffer
 from quoteRequest.models import QuoteRequest, SupplierCommand
 from project.models import Project
+from invoice.models import Invoice 
 
 class ArticleUnit(models.Model):
     unit_name = models.CharField(max_length=50,unique=True)
@@ -46,6 +47,7 @@ class Article(models.Model):
 
 class Order(models.Model):
     article = models.ForeignKey(Article,on_delete=models.PROTECT)
+    invoice = models.ForeignKey(Invoice,on_delete=models.CASCADE,null=True)
     commercialOffer = models.ForeignKey(CommercialOffer,on_delete=models.CASCADE,null=True)
     confirmed_commercialOffer = models.ForeignKey(Confirmed_commercialOffer,on_delete=models.CASCADE,null=True)
     quoteRequest = models.ForeignKey(QuoteRequest,on_delete=models.CASCADE,null=True)

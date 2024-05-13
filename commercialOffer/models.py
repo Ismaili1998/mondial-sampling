@@ -4,7 +4,7 @@ from project.models import Project, TimeUnit, Destination, Currency, Shipping, T
 class AbstractCommercialOffer(models.Model):
     client_nbr = models.CharField(max_length=100, null=True, blank=True)
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
-    rank = models.IntegerField() 
+    rank = models.IntegerField(default=0) 
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL,null=True)
 
     discount = models.DecimalField(max_digits=4, decimal_places=2, blank=True, default=0)
@@ -79,7 +79,7 @@ class Confirmed_commercialOffer(AbstractCommercialOffer):
         ordering = ['-rank']
 
     def get_commission(self):
-        commission = self.get_total_selling_withFee() * (self.commission / 100)
+        commission = self.get_total_selling_withFee() * self.commission
         return round(commission, 2)
     
   

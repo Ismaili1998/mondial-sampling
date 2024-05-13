@@ -7,6 +7,13 @@ from project.models import Bank_info
 from commercialOffer.models import Confirmed_commercialOffer
 
 
+def get_rank(invoices) -> int:
+    rank = 1
+    if len(invoices):
+        last_invoice = invoices.order_by('-rank').first()
+        rank = last_invoice.rank + 1
+    return rank 
+
 def create_invoice(request, offer_pk):
     confirmedOffer = get_object_or_404(Confirmed_commercialOffer, pk=offer_pk)
     project = confirmedOffer.project
@@ -14,9 +21,9 @@ def create_invoice(request, offer_pk):
         invoice = InvoiceForm(request.POST)
         if  invoice.is_valid():
             invoice = invoice.save(commit=False)
-            rank = confirmedOffer.rank
+            invoices = project.invoice_set.all()
+            rank = get_rank(invoices)
             invoice.invoice_nbr = "{0}/TN{1}-{2}".format(project.project_nbr, rank, project.client.client_nbr) 
-            invoice.confirmed_commercialOffer = confirmedOffer
             invoice.save()
             messages.success(request, 'invoice has been created successfully !')
         else:
@@ -27,16 +34,14 @@ def create_invoice(request, offer_pk):
 
 def print_invoice(request, pk):
     invoice = get_object_or_404(Invoice, id=pk)
-    confirmedOffer = invoice.confirmed_commercialOffer
-    context = {'confirmedOffer':confirmedOffer,
-               'invoice':invoice,
+    context = {'invoice':invoice,
                'bank_info':Bank_info.objects.order_by('-id').first(), 
-               'translations':get_translation(confirmedOffer)}
+               'translations':get_translation(invoice)}
     return render(request, 'invoice_print.html', context)
 
 def delete_invoice(request, pk):
     invoice = get_object_or_404(Invoice, id=pk)
-    project_nbr = invoice.confirmed_commercialOffer.project.project_nbr
+    project_nbr = invoice.project.project_nbr
     if request.method == "POST":
         messages.success(request, 'invoice has been deleted successfully !')
         invoice.delete()
@@ -53,8 +58,8 @@ def calculate_totals_by_hsCode(orders_queryset):
         orders_by_hsCode[hs_code]["total_price"] += order.get_total_selling()
     return orders_by_hsCode
 
-def get_translation(confirmedOffer):
-    language = confirmedOffer.project.client.language
+def get_translation(invoice):
+    language = invoice.project.client.language
     language_code = language.language_code if language else "fr" 
     return {key:value[language_code] for key, value in translations.translations.items()}
 
@@ -63,8 +68,7 @@ def print_customsReport(request, pk):
     confirmedOffer = invoice.confirmed_commercialOffer
     orders = confirmedOffer.order_set.all()
     orders_by_hsCode = calculate_totals_by_hsCode(orders)
-    context = {"confirmedOffer":confirmedOffer,
-               "invoice":invoice, 
+    context = {"invoice":invoice, 
                "orders_by_hsCode":orders_by_hsCode.items(),
                "translations":get_translation(confirmedOffer)}
     return render(request,'customs_report.html', context)
@@ -84,7 +88,7 @@ def create_packing(request,invoice_pk):
                     # Print or log the error details
                     print(f"Field: {field}, Error: {error.message}")
             messages.error(request, 'an error occured, plase retry !')
-        return redirect('project-detail', invoice.confirmed_commercialOffer.project.project_nbr)
+        return redirect('project-detail', invoice.project.project_nbr)
     context = {"invoice":invoice, "form_name":"create"}
     return render(request,'create_packing.html', context)
 
@@ -97,7 +101,7 @@ def update_packing(request, pk):
             packing.save()
         else:
             messages.error(request, 'an error occured, plase retry !')
-        return redirect('project-detail', invoice.confirmed_commercialOffer.project.project_nbr)
+        return redirect('project-detail', invoice.project.project_nbr)
     context = {"invoice":invoice, 
                 "packing":packing, 
                 "form_name":"update"}
@@ -107,24 +111,19 @@ def update_packing(request, pk):
 def print_packing(request, pk):
     packing = get_object_or_404(Packing, id=pk)
     invoice = packing.invoice
-    confirmedOffer = invoice.confirmed_commercialOffer
-    context = {"confirmedOffer":confirmedOffer,
-                "packing":packing,
+    context = {"packing":packing,
                 "invoice":invoice, 
-                "translations":get_translation(confirmedOffer)}
+                "translations":get_translation(invoice)}
     return render(request,'packing_print.html', context)
 
 def print_tag(request, pk):
     invoice = get_object_or_404(Invoice, id=pk)
-    confirmedOffer = invoice.confirmed_commercialOffer
-    context = {"confirmedOffer":confirmedOffer,
-                "invoice":invoice, 
-                "translations":get_translation(confirmedOffer)}
+    context = {"invoice":invoice, 
+                "translations":get_translation(invoice)}
     return render(request,'tag_print.html', context)
 
 def update_invoice(request, pk):
     invoice = get_object_or_404(Invoice, id=pk)
-    confirmedOffer = invoice.confirmed_commercialOffer
     if request.method == 'POST':
         invoice = InvoiceForm(request.POST, instance=invoice)
         if  invoice.is_valid():
@@ -137,9 +136,7 @@ def update_invoice(request, pk):
                     # Print or log the error details
                     print(f"Field: {field}, Error: {error.message}")
             messages.error(request, 'An error occured, plase retry !')
-        return redirect('project-detail',confirmedOffer.project.project_nbr)
+        return redirect('project-detail',invoice.project.project_nbr)
     
-    context = {"confirmedOffer":confirmedOffer,
-               "invoice":invoice
-               }
+    context = {"invoice":invoice}
     return render(request, 'invoice_edit.html', context)

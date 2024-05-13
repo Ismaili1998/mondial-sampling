@@ -5,15 +5,15 @@
         <div class="row">
             <div class="form-group row col-md-6">
                 <label for="commission" class="col-md-6 col-form-label col-form-label-sm">
-                    <strong> {{ confirmedOffer.project.representative }}'s commission </strong>
+                    <strong> {{ invoice.project.representative }}'s commission </strong>
                 </label>
                 <div class="col-md-3">
                     <input type="number" disabled placeholder="commission in %" 
-                        class="form-control form-control-sm" value="{{ confirmedOffer.commission }}" />
+                        class="form-control form-control-sm" value="{{ invoice.commission }}" />
                 </div>
                 <div class="col-md-3">
                     <input type="text" disabled placeholder="Amount" class="form-control form-control-sm"
-                        value="{{ invoice.get_commission|thousand_separator }} {{ confirmedOffer.currency|default:'' }}" />
+                        value="{{ invoice.get_commission|thousand_separator }} {{ invoice.currency|default:'' }}" />
                 </div>
             </div>
             <div class="col-md-4 form-group row">
@@ -48,7 +48,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for order in confirmedOffer.order_set.all %}
+                {% for order in invoice.order_set.all %}
                 <tr>
                     <td class="article-id" data-article-id="{{ article.id }}">
                         <a href="#" onclick="get_article('Article detail','{%  url " update-article" order.article.id
@@ -64,7 +64,7 @@
                         </details>
                     </td>
                     <td class="form-group">
-                        {{ order.purchase_price|thousand_separator }} {{ confirmedOffer.currency|default:'' }}
+                        {{ order.purchase_price|thousand_separator }} {{ invoice.currency|default:'' }}
                     </td>
                     <td class="form-group">
                         {{ order.quantity }}
@@ -73,9 +73,9 @@
                         {{ order.margin }}
                     </td>
                     <td> {{order.article.article_unit}} </td>
-                    <td class="selling-price "> {{order.get_selling_price|thousand_separator}} {{ confirmedOffer.currency|default:'' }}</td>
-                    <td class="total-purchase"> {{order.get_total_purchase|thousand_separator}} {{ confirmedOffer.currency|default:'' }} </td>
-                    <td class="total-selling"> {{order.get_total_selling|thousand_separator}} {{ confirmedOffer.currency|default:'' }}</td>
+                    <td class="selling-price "> {{order.get_selling_price|thousand_separator}} {{ invoice.currency|default:'' }}</td>
+                    <td class="total-purchase"> {{order.get_total_purchase|thousand_separator}} {{ invoice.currency|default:'' }} </td>
+                    <td class="total-selling"> {{order.get_total_selling|thousand_separator}} {{ invoice.currency|default:'' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -84,14 +84,14 @@
                 </td>
                 <td colspan="1"> Total Purchase = 
                     <strong class="sum-total-purchase">
-                        {{ confirmedOffer.get_total_purchase|thousand_separator }} 
-                        {{ confirmedOffer.currency|default:'' }}
+                        {{ invoice.get_total_purchase|thousand_separator }} 
+                        {{ invoice.currency|default:'' }}
                     </strong>
                 </td>
                 <td colspan="2"> Total Price EXW = 
                     <strong class="sum-total-selling">
-                        {{ confirmedOffer.get_total_selling|thousand_separator }} 
-                        {{ confirmedOffer.currency|default:'' }}
+                        {{ invoice.get_total_selling|thousand_separator }} 
+                        {{ invoice.currency|default:'' }}
                     </strong>
                 </td>
             </tfoot>
@@ -105,7 +105,7 @@
                 </label>
                 <div class="col-sm-3">
                     <input type="number" name="discount" class="form-control form-control-sm" disabled
-                        placeholder="discount in %" id="exceptional-discount" value="{{ confirmedOffer.discount }}" />
+                        placeholder="discount in %" id="exceptional-discount" value="{{ invoice.discount }}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -114,7 +114,7 @@
                 <div class="col-sm-8">
                     <select disabled class="form-select form-select-sm" id="shipping">
                         <option selected>
-                            {{ confirmedOffer.shipping|default:"" }}
+                            {{ invoice.shipping|default:"" }}
                         </option>
                     </select>
                 </div>
@@ -125,7 +125,7 @@
                 <div class="col-sm-8">
                     <select disabled class="form-select form-select-sm" id="shipping">
                         <option selected>
-                            {{confirmedOffer.transport|default:"" }}
+                            {{invoice.transport|default:"" }}
                         </option>
                     </select>
                 </div>
@@ -135,7 +135,7 @@
                 <div class="col-sm-8">
                     <select disabled class="form-select form-select-sm" id="shipping">
                         <option selected>
-                            {{confirmedOffer.destination|default:"" }}
+                            {{invoice.destination|default:"" }}
                         </option>
                     </select>
                 </div>
@@ -145,7 +145,7 @@
                 <div class="col-sm-8">
                     <select disabled class="form-select form-select-sm" id="payment">
                         <option selected>
-                            {{ confirmedOffer.payment|default:"" }}
+                            {{ invoice.payment|default:"" }}
                         </option>
                     </select>
                 </div>
@@ -155,19 +155,19 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="date" disabled name="payment_date" class="form-control form-control-sm"
-                        id="payment_date" value = "{{ confirmedOffer.payment_date|date:'Y-m-d' }}" />
+                        id="payment_date" value = "{{ invoice.payment_date|date:'Y-m-d' }}" />
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">Delivery duration</label>
                 <div class="col-sm-4">
                     <input type="text" disabled name="delivery_time_interval" class="form-control form-control-sm"
-                        value="{{confirmedOffer.delivery_time_interval|default:""}}" />
+                        value="{{invoice.delivery_time_interval|default:""}}" />
                 </div>
                 <div class="col-sm-4">
                     <select disabled class="form-select form-select-sm" id="time-unit">
                         <option selected>
-                            {{ confirmedOffer.delivery_time_unit|default:"" }}
+                            {{ invoice.delivery_time_unit|default:"" }}
                         </option>
                     </select>
                 </div>
@@ -177,7 +177,7 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="text" disabled name="warranty_period" class="form-control form-control-sm"
-                        id="warranty_period" value="{{ confirmedOffer.warranty_period|default:"" }}" />
+                        id="warranty_period" value="{{ invoice.warranty_period|default:"" }}" />
                 </div>
             </div>
         </div>
@@ -186,28 +186,28 @@
                 <label for="discounted_price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price EXW
                     deducted: </label>
                 <div class="col-sm-4">
-                    {{ confirmedOffer.get_discounted_price|thousand_separator }} {{ confirmedOffer.currency|default:'' }}
+                    {{ invoice.get_discounted_price|thousand_separator }} {{ invoice.currency|default:'' }}
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="shipping_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee :
                 </label>
                 <div class="col-sm-4">
-                    {{ confirmedOffer.shipping_fee|thousand_separator }} {{ confirmedOffer.currency|default:'' }}
+                    {{ invoice.shipping_fee|thousand_separator }} {{ invoice.currency|default:'' }}
                 </div>
             </div>
             <div class="form-group row mt-2">
                 <label for="transport_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee :
                 </label>
                 <div class="col-sm-4">
-                    {{ confirmedOffer.transport_fee|thousand_separator }} {{ confirmedOffer.currency|default:'' }}
+                    {{ invoice.transport_fee|thousand_separator }} {{ invoice.currency|default:'' }}
                 </div>
             </div>
             <div class="row mt-2">
                 <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Total Price :
                 </label>
                 <div class="col-sm-4" id="total-price">
-                    {{ confirmedOffer.get_total_selling_withFee|thousand_separator }} {{ confirmedOffer.currency|default:'' }}
+                    {{ invoice.get_total_selling_withFee|thousand_separator }} {{ invoice.currency|default:'' }}
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -215,7 +215,7 @@
                 <div class="col-sm-4">
                     <select disabled class="form-select form-select-sm">
                         <option selected>
-                            {{ confirmedOffer.currency|default:'' }}
+                            {{ invoice.currency|default:'' }}
                         </option>
                     </select>
                 </div>
@@ -223,7 +223,7 @@
             <div class="form-group row mt-2">
                 <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Show local contact: </label>
                 <div class="col-sm-4">
-                    <input type="checkbox" disabled {% if confirmedOffer.local_contact %} checked {%endif %}
+                    <input type="checkbox" disabled {% if invoice.local_contact %} checked {%endif %}
                         class="form-check-input" name="local_contact" value="1" step="any" />
                 </div>
             </div>

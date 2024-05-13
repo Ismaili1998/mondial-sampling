@@ -21,8 +21,7 @@ def commercialOffer_detail(commercialOffer):
                'payments':payments,
                'transports':transports,
                'destinations':destinations,
-               'shippings': shippings,
-               'orders':commercialOffer.order_set.all()}
+               'shippings': shippings}
 
 
 def confirmedOffer_detail(confirmedOffer):
