@@ -97,6 +97,12 @@ def get_projectsByKeyWord(request):
     projects = Project.objects.filter(project_nbr__icontains=keyword).values_list('project_nbr', flat=True)[:20]
     return JsonResponse(list(projects), safe=False)
 
+@csrf_exempt
+def get_clientsByKeyWord(request):
+    keyword = request.GET.get('keyword', '')
+    projects = Client.objects.filter(client_nbr__icontains=keyword).values_list('client_nbr', flat=True)[:20]
+    return JsonResponse(list(projects), safe=False)
+
 def upload_file_to_project(request, project_pk):
     project = get_object_or_404(Project, id=project_pk)
     if len(project.file_set.all()) > 10:
@@ -272,7 +278,7 @@ def update_supplier(request, pk):
 def get_suppliersByKeyWord(request):
     keyword = request.GET.get('keyword', '')
     # Perform the search query using the keyword
-    suppliers = Supplier.objects.filter(supplier_name__icontains=keyword)[:5]
+    suppliers = Supplier.objects.filter(supplier_name__icontains=keyword)[:10]
     # Prepare the suppliers' data for JSON serialization
     supplier_data = []
     if len(suppliers):
