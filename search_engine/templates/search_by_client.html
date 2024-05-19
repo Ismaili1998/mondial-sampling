@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+{% block content %}
+{% load format_numbers %}
+<main class="container-fluid">
+    <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
+        <div class="lh-1">
+            <strong> <a href="{% url 'project-home' %}" class="text-white"> Home</a> / Search </strong>
+        </div>
+    </div>
+    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+        {% include 'alert.html' %}
+        <form method="GET" action="{% url 'manage-search' %}">
+            {% include "search.html" %}
+        </form>
+        <div class="mt-5 container-fluid size-13">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                    <th> Client </th>
+                    <th> Country </th>
+                    <th> Client Ref </th>
+                    <th> Detail </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for clt in client %}
+                    <tr>
+                        <td> {{ clt.client_name }} </td>
+                        <td> {{ clt.country }} </td>
+                        <td> {{ clt.client_nbr }} </td>
+                        <td>  </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+
+
+{% comment %} {% block javascript %}
+<script>
+        // load page by url, and display it in modal  
+        function load_modal(title, page_url) {
+            $('.modal-title').text(title);
+            $('.modal-body').load(page_url);
+            $('#Modal').modal('show');
+        }
+</script>
+{% endblock %} {% endcomment %}

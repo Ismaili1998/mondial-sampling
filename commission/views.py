@@ -42,11 +42,11 @@ def get_representativeInvoices(request):
         end_date = timezone.make_aware(end_date)
         if filter_type == 'command':
             invoices = Confirmed_commercialOffer.objects.filter(created_at__range=[start_date, end_date], 
-                                                                project__representative=representative)
+                                                                project__representative=representative)[:100]
         else:
             invoices = Invoice.objects.filter(created_at__range=[start_date, end_date], 
-                                                                confirmed_commercialOffer__project__representative=representative)
-    return  representative, invoices 
+                                                                project__representative=representative)[:100]
+    return  representative, invoices
 
 def get_context(request):
     representative, invoices =  get_representativeInvoices(request)

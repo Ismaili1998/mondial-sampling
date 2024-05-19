@@ -86,10 +86,10 @@
                             <td> {{order.quantity|thousand_separator}} </td>
                             <td> {{order.article.article_unit}} </td>
                             <td> {{order.get_selling_price|thousand_separator}} 
-                                 {{invoice.currency}}
+                                 {{invoice.currency|default:''}}
                             </td>
                             <td> {{order.get_total_selling|thousand_separator}} 
-                                 {{invoice.currency}}
+                                 {{invoice.currency|default:''}}
                             </td>
                         </tr>
                         {% endfor %}
@@ -107,7 +107,7 @@
                             <td></td>
                             <td>
                                 {{ invoice.get_total_selling|thousand_separator }} 
-                                {{invoice.currency}}
+                                {{invoice.currency|default:''}}
                             </td>
                         </tr>
                         {% if  invoice.discount %}
@@ -120,7 +120,7 @@
                             <td></td>
                             <td>  
                                 {{ invoice.get_discount_price|thousand_separator }}
-                                {{invoice.currency}}
+                                {{invoice.currency|default:''}}
                             </td>
                         </tr>
                         {% endif %}
@@ -133,7 +133,7 @@
                             <td></td>
                             <td>
                                 {{ invoice.get_discounted_price|thousand_separator }}
-                                {{invoice.currency}}
+                                {{invoice.currency|default:''}}
                             </td>
                         </tr>
                         {% endif %}
@@ -147,7 +147,7 @@
                             <td> {{invoice.shipping }} </td>
                             <td>
                                 {{ invoice.shipping_fee|thousand_separator }}
-                                {{ invoice.currency}}
+                                {{ invoice.currency|default:''}}
                             </td>
                         </tr>
                         {% endif %}
@@ -160,7 +160,7 @@
                             <td> {{invoice.transport}} </td>
                             <td>
                                 {{ invoice.transport_fee|thousand_separator }}
-                                {{invoice.currency}}
+                                {{invoice.currency|default:''}}
                             </td>
                         </tr>
                         {% endif %}
@@ -174,7 +174,7 @@
                             </td>
                             <td>
                                 {{ invoice.get_total_selling_withFee|thousand_separator }}
-                                {{invoice.currency}}
+                                {{invoice.currency|default:''}}
                             </td>
                         </tr>
                     </tbody>

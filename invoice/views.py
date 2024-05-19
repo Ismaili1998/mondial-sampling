@@ -65,12 +65,11 @@ def get_translation(invoice):
 
 def print_customsReport(request, pk):
     invoice = get_object_or_404(Invoice, id=pk)
-    confirmedOffer = invoice.confirmed_commercialOffer
-    orders = confirmedOffer.order_set.all()
+    orders = invoice.order_set.all()
     orders_by_hsCode = calculate_totals_by_hsCode(orders)
     context = {"invoice":invoice, 
                "orders_by_hsCode":orders_by_hsCode.items(),
-               "translations":get_translation(confirmedOffer)}
+               "translations":get_translation(invoice)}
     return render(request,'customs_report.html', context)
 
 def create_packing(request,invoice_pk):

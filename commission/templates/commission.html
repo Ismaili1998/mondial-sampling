@@ -74,39 +74,29 @@
                 <tbody>
                     {% for invoice in invoices %}
                     <tr>
+                        <td class="size-12 text-left">{{ invoice.project.client.client_name }}</td>
+                        <td>{{ invoice.project.buyer }}</td>
+                        <td>{{ invoice.project }}</td>
                         {% if invoice.confirmation_nbr %}
-                            <td class="size-12 text-left">{{ invoice.project.client.client_name }}</td>
-                            <td>{{ invoice.project.buyer }}</td>
-                            <td>{{ invoice.project }}</td>
                             <td>
                                 <a href="#" class="text-info"
                                     onclick="load_modal('Confirmed order','{%  url "update-confirmed-commercialOffer" invoice.id %}')"> 
                                     {{ invoice.confirmation_nbr }} </a>
                             </td>
-                            <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
-                            <td>{{ invoice.payment_date|date:'d.m.Y' }}</td>
-                            <td>{{ invoice.client_nbr }}</td>
-                            <td>{{ invoice.get_total_selling_withFee|thousand_separator }}
-                                {{ invoice.get_currency }}
-                            </td>
-                            <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>
                         {% else %}
-                            <td>{{ invoice.confirmed_commercialOffer.project.client }}</td>
-                            <td>{{ invoice.confirmed_commercialOffer.project.buyer }}</td>
-                            <td>{{ invoice.confirmed_commercialOffer.project }}</td>
                             <td> <a href="#" class="text-info"
                                 onclick="load_modal('Invoice','{%  url "update-invoice" invoice.id %}')"> 
                                 {{ invoice.invoice_nbr }} </a>
-                            </td>  
-                            <td>{{ invoice.confirmed_commercialOffer.payment_date|date:'d.m.Y' }}</td>
-                            <td>{{ invoice.created_at|date:'d.m.Y' }}</td>
-                            <td>{{ invoice.client_nbr }}</td>
-                            <td>
-                                {{ invoice.get_total_selling_withFee|thousand_separator }}
-                                {{ invoice.get_currency }}
-                            </td>
-                            <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>                          
-                        {% endif %} 
+                            </td>                         
+                        {% endif %}
+                        <td> {{ invoice.created_at|date:'d.m.Y' }}</td>
+                        <td> {{ invoice.payment_date|date:'d.m.Y' }}</td>
+                        <td> {{ invoice.client_nbr }}</td>
+                        <td> 
+                            {{ invoice.get_total_selling_withFee|thousand_separator }}
+                            {{ invoice.get_currency }}
+                        </td>
+                        <td> {{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>
                     </tr>
                     {% empty %}
                     <tr>

@@ -10,5 +10,5 @@ urlpatterns = [
     path('', include('commercialOffer.urls')),
     path('', include('invoice.urls')),
     path('', include('commission.urls')),
-    path('', include('payment.urls')),
+    path('', include('search_engine.urls')),
 ]

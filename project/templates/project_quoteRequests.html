@@ -3,6 +3,7 @@
         <tr>
             <th>Quote request Ref</th>
             <th>Supplier</th>
+            <th>Date</th>
             <th>Print</th>
             <th>Order </th>
             <th>Action</th>
@@ -24,6 +25,9 @@
                         href="#"><i
                         class="material-icons align-middle size-13 text-dark">visibility</i>
                     </a>
+                </td>
+                 <td>
+                    {{ quoteRequest.created_at|date:'d-m-Y' }}
                 </td>
                 <td>
                     <a href="#" onclick="load_modal('Generate pdf','{%  url "print-quoteRequest" quoteRequest.id %}')"

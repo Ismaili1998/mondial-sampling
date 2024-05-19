@@ -1,0 +1,90 @@
+<div class="row">
+        <div class="col-md-6">
+            <div class="form-group row mt-2">
+                <label for="id_article_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Article number</label>
+                <div class="col-sm-8">
+                    <input type="text" name="article_nbr" class="form-control form-control-sm" id="id_article_nbr"
+                        value="{{article_nbr}}{{article.article_nbr}}" required />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_article_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
+                <div class="col-sm-8">
+                      <input required type="text" class="form-control form-control-sm"
+                        id="id_article_unit" value="{{article.article_unit|default:'0.00'}}" step="any" />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_purchase_price" class="col-sm-4 col-form-label col-form-label-sm">Purchase Price</label>
+                <div class="col-sm-8">
+                    <input required type="number" name="purchase_price" class="form-control form-control-sm"
+                        id="id_purchase_price" value="{{article.purchase_price|default:'0.00'}}" step="any" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <fieldset class="border p-1 mt-2 rounded">
+                <h6>Exportation</h6>
+                <div class="form-group row">
+                    <label for="id_net_weight" class="col-sm-4 col-form-label col-form-label-sm">Net Weight</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="net_weight" class="form-control form-control-sm" id="id_net_weight"
+                            value="{{article.net_weight|default:''}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_hs_code" class="col-sm-4 col-form-label col-form-label-sm">HS-code</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="hs_code" class="form-control form-control-sm" id="id_hs_code"
+                            value="{{article.hs_code|default:''}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_customs_description" class="col-sm-4 col-form-label col-form-label-sm"> Customs description </label>
+                    <div class="col-sm-8">
+                        <textarea name="customs_description" class="form-control form-control-sm"
+                            id="id_customs_description">{{article.customs_description|default:''}}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group row mt-2">
+            <label for="id_description_fr" class="col-sm-2 col-form-label col-form-label-sm">Description
+                (French) 
+                <a href="#" id="translate" class="size-12"> Translate </a>
+            </label>
+            <div class="col-sm-10">
+                <textarea required name="description_fr" rows="12" class="form-control form-control-sm"
+                    id="id_description_fr">{{article.description_fr|default:''}}</textarea>
+            </div>
+        </div>
+        <div class="form-group row mt-2">
+            <label for="id_description_de" class="col-sm-2 col-form-label col-form-label-sm">Description
+                (German)</label>
+            <div class="col-sm-10">
+                <textarea name="description_de" class="form-control form-control-sm"
+                    rows="12" id="id_description_de">{{article.description_de|default:''}}</textarea>
+            </div>
+        </div>
+        <div class="form-group row mt-2">
+            <label for="id_description_en" class="col-sm-2 col-form-label col-form-label-sm">Description
+                (English)</label>
+            <div class="col-sm-10">
+                <textarea name="description_en" class="form-control form-control-sm"
+                    rows="12" id="id_description_en">{{article.description_en|default:''}}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group row mt-2">
+            <label for="id_comment" class="col-md-2 col-form-label col-form-label-sm">Comment
+                </label>
+            <div class="col-md-10">
+                <textarea name="comment" class="form-control form-control-sm"
+                    rows="2" id="id_comment">{{article.comment|default:''}}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
