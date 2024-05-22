@@ -278,20 +278,10 @@ def update_supplier(request, pk):
 def get_suppliersByKeyWord(request):
     keyword = request.GET.get('keyword', '')
     # Perform the search query using the keyword
-    suppliers = Supplier.objects.filter(supplier_name__icontains=keyword)[:10]
-    # Prepare the suppliers' data for JSON serialization
-    supplier_data = []
-    if len(suppliers):
-        for supplier in suppliers:
-            supplier_data.append({
-                'id': supplier.id,
-                'supplier_name': supplier.supplier_name or '',
-                'supplier_nbr':supplier.supplier_nbr,
-                'country': ''
-            })
-
+    supplier_data = Supplier.objects.filter(supplier_name__icontains=keyword) \
+    .values_list('supplier_name', flat=True)[:20]    [:10]
     # Return the suppliers' data as JSON response
-    return JsonResponse({'suppliers': supplier_data})
+    return JsonResponse({'suppliers': list(supplier_data)})
 
 
 

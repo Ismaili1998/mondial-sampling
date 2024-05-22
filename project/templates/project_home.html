@@ -255,12 +255,21 @@
           {% include 'project_articles.html' with project=project%}
         </div>
         <div class="col-md-6">
-              {% include  'project_quoteRequests.html' %}
+            <div class="table-scrollable mt-3">
+                {% include  'project_quoteRequests.html' %}
+            </div>
+            <div class="table-scrollable mt-2">
               {% include  'project_supplierCommands.html' %}
-            </hr>
+            </div>
+            <div class="table-scrollable mt-2">
               {% include  'project_commercialOffers.html' %}
+            </div>
+            <div class="table-scrollable mt-2">
               {% include  'project_confirmedOrders.html' %}
+            </div>
+            <div class="table-scrollable">
               {% include  'project_invoices.html' %}
+            </div>
         </div>
       </div>
     </div>
@@ -332,7 +341,7 @@
     $(document).ready(function () {
       $('.searchArticle').autocomplete({
         source: function (request, response) {
-          $.getJSON("{% url 'get-articlesByKeyWord' %}",
+          $.getJSON("{% url 'get-articleByKeyWord' %}",
             { keyword: request.term }, function (data) {
               // Map the article numbers to an array of objects with label and value properties
               var mappedData = $.map(data, function (item) {

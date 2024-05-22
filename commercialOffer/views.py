@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
-from project.models import Project, TimeUnit, Destination, Currency, Shipping, Transport, Payment
+from project.models import Project, TimeUnit, Destination, \
+Currency, Shipping, Transport, Payment
 from project import translations
 from .models import CommercialOffer, Confirmed_commercialOffer
 from .forms import CommercialOfferForm, Confirmed_commercialOfferForm
 from order.models  import Article, Order 
-import re
 
 def commercialOffer_detail(commercialOffer):
     timeUnits = TimeUnit.objects.all()
@@ -50,7 +50,7 @@ def create_commercialOffer_orders(request, commercialOffer):
                         margin=margin, commercialOffer=commercialOffer)
         order.save()
 
-def get_rank(offers) -> int:
+def get_rank(offers):
     rank = 1
     if len(offers):
         last_offer = offers.order_by('-rank').first()

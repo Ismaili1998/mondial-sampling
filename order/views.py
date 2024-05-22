@@ -15,7 +15,12 @@ def article_create(request):
                 print(err)
             return JsonResponse({'message':'An error occured ! please retry again'})
     article_units = ArticleUnit.objects.all()
-    article_nbr = "A{0}".format(Article.objects.latest('id').id + 1)
+    try:
+        last_article = Article.objects.latest('id')
+        article_nbr = last_article.id + 1 
+    except Article.DoesNotExist:
+        article_nbr = 1
+    article_nbr = "A{0}".format(article_nbr)
     page_name = 'add-article'
     context = {'article_units':article_units,
                'article_nbr':article_nbr,

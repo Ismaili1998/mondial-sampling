@@ -15,22 +15,35 @@ def manage_search(request):
 
     keyword = request.GET.get('keyword')
     filter_type = request.GET.get('filter_type') or 'client'
-    context = {"keyword":keyword, "filter_type":filter_type}
+    context = {"keyword":keyword or '', "filter_type":filter_type}
 
     if keyword:
 
         if filter_type == 'client':
-            context[filter_type] = get_object_or_404(Client, client_nbr=keyword)
-            context['commercialOffers'] = CommercialOffer.objects.filter(project__client__client_nbr=keyword)[:50]  
-            context['confirmedOffers'] = Confirmed_commercialOffer.objects.filter(project__client__client_nbr=keyword)[:50]  
-            context['invoices'] = Invoice.objects.filter(project__client__client_nbr=keyword)[:50]                                         
-        
+            try:    
+                client = Client.objects.get(client_nbr=keyword)
+                context[filter_type] = client
+                context['commercialOffers'] = CommercialOffer.objects.filter(project__client=client)[:50]  
+                context['confirmedOffers'] = Confirmed_commercialOffer.objects.filter(project__client=client)[:50]  
+                context['invoices'] = Invoice.objects.filter(project__client=client)[:50]                                         
+            except Client.DoesNotExist:
+                pass
+            
         elif filter_type == 'supplier':
-            context[filter_type]  = get_object_or_404(Supplier, supplier_nbr=keyword)
-            context['supplierCommands'] = SupplierCommand.objects.filter(supplier__supplier_nbr = keyword)[:50]  
-            context['quoteRequests'] = QuoteRequest.objects.filter(supplier__supplier_nbr = keyword)[:50] 
+            try:
+                supplier = Supplier.objects.get(supplier_name=keyword)
+                context[filter_type]  = supplier  
+                context['supplierCommands'] = SupplierCommand.objects.filter(supplier=supplier)[:50]  
+                context['quoteRequests'] = QuoteRequest.objects.filter(supplier=supplier)[:50]
+            except Supplier.DoesNotExist:
+                pass
 
         elif filter_type == 'article':
-            context[filter_type] = get_object_or_404(Supplier, supplier_nbr=keyword)
-
-    return render(request, f'search_by_{filter_type}.html', context)
+            article = get_object_or_404(Article, article_nbr=keyword)
+            context[filter_type] = article
+            context['commercialOffers'] = CommercialOffer.objects.filter(order__article=article)[:50]  
+            context['confirmedOffers'] = Confirmed_commercialOffer.objects.filter(order__article=article)[:50] 
+            context['invoices'] = Invoice.objects.filter(order__article=article)[:50]
+            context['supplierCommands'] = SupplierCommand.objects.filter(order__article=article)[:50]  
+            context['quoteRequests'] = QuoteRequest.objects.filter(order__article=article)[:50]      
+    return render(request, 'search.html', context)

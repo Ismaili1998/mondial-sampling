@@ -175,7 +175,7 @@
         // search articles 
         $('.searchArticle').autocomplete({
             source: function (request, response) {
-            $.getJSON("{% url 'get-articlesByKeyWord' %}",
+            $.getJSON("{% url 'get-articleByKeyWord' %}",
                 { keyword: request.term }, function (data) {
                 // Map the article numbers to an array of objects with label and value properties
                 var mappedData = $.map(data, function (item) {

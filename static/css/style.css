@@ -112,6 +112,6 @@ a {
 }
 
 .table-scrollable {
-    max-height: 200px;
+    max-height: 375px;
     overflow-y: auto;
 }
