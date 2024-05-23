@@ -7,7 +7,7 @@ from quoteRequest.models import QuoteRequest, SupplierCommand
 from commercialOffer.models import CommercialOffer
 from commercialOffer.models import Confirmed_commercialOffer
 from invoice.models import Invoice
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 
 
@@ -31,6 +31,6 @@ def manage_search(request):
             context['quoteRequests'] = QuoteRequest.objects.filter(supplier__supplier_nbr = keyword)[:50] 
 
         elif filter_type == 'article':
-            context[filter_type] = get_object_or_404(Supplier, supplier_nbr=keyword)
+            context[filter_type] = get_object_or_404(Article, supplier_nbr=keyword)
 
     return render(request, f'search_by_{filter_type}.html', context)
