@@ -60,39 +60,46 @@
 
     $(document).ready(function () {
 
-    var url_name = "{% url 'get-clientByKeyWord' %}" ;
-
-    $('select[name="filter_type"]').change(function() {
-        selectedFilter = $(this).val();
-        switch(selectedFilter)
+        function get_url_name(selectedFilter)
         {
-            case "article": url_name = "{% url 'get-articleByKeyWord' %}";
-            break;
-            case "supplier": url_name = "{% url 'get-supplierByKeyWord' %}";
-            break;
-            case "client": url_name = "{% url 'get-clientByKeyWord' %}";
-            break;
-        }
-    });
+            switch(selectedFilter)
+            {
+                case "article": url_name = "{% url 'get-articleByKeyWord' %}";
+                break;
+                case "supplier": url_name = "{% url 'get-supplierByKeyWord' %}";
+                break;
+                case "client": url_name = "{% url 'get-clientByKeyWord' %}";
+                break;
+            }
 
-    $('#search_engine').autocomplete({
-      source: function (request, response) {
-        $.getJSON(url_name,
-          { keyword: request.term }, function (data) {
-            // Map the project numbers to an array of objects with label and value properties
-            var mappedData = $.map(data, function (item) {
-              return {
-                label: item,
-                value: item
-              };
+            return url_name;
+        }
+
+        var url_name =  get_url_name('{{ filter_type }}');
+
+        $('select[name="filter_type"]').change(function() {
+            selectedFilter = $(this).val();
+            url_name = get_url_name(selectedFilter);
+        });
+
+        $('#search_engine').autocomplete({
+        source: function (request, response) {
+            $.getJSON(url_name,
+            { keyword: request.term }, function (data) {
+                // Map the project numbers to an array of objects with label and value properties
+                var mappedData = $.map(data, function (item) {
+                return {
+                    label: item,
+                    value: item
+                };
+                });
+                response(mappedData);
             });
-            response(mappedData);
-          });
-      },
-      select: function (event, ui) {
-       
-      }
-    });
+        },
+        select: function (event, ui) {
+        
+        }
+        });
   });
 
 </script>

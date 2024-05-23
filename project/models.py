@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Country(models.Model):
     country_name_fr = models.CharField(max_length=200) #unique=True for country_name
     country_name_en = models.CharField(max_length=200, null=True)

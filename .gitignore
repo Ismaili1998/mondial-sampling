@@ -10,7 +10,7 @@ ESS_DB
 *.bak 
 
 # Django settings file
-settings.py
+# settings.py
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml

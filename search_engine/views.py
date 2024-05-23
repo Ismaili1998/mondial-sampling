@@ -12,13 +12,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 
 def manage_search(request):
-
-    keyword = request.GET.get('keyword')
-    filter_type = request.GET.get('filter_type') or 'client'
-    context = {"keyword":keyword or '', "filter_type":filter_type}
-
-    if keyword:
-
+    context = {'filter_type':'client', 'keyword':''}
+    if request.GET:
+        keyword = request.GET.get('keyword')
+        filter_type = request.GET.get('filter_type') or 'client'
+        context["keyword"] = keyword
+        context["filter_type"] = filter_type
         if filter_type == 'client':
             try:    
                 client = Client.objects.get(client_nbr=keyword)
@@ -39,11 +38,14 @@ def manage_search(request):
                 pass
 
         elif filter_type == 'article':
-            article = get_object_or_404(Article, article_nbr=keyword)
-            context[filter_type] = article
-            context['commercialOffers'] = CommercialOffer.objects.filter(order__article=article)[:50]  
-            context['confirmedOffers'] = Confirmed_commercialOffer.objects.filter(order__article=article)[:50] 
-            context['invoices'] = Invoice.objects.filter(order__article=article)[:50]
-            context['supplierCommands'] = SupplierCommand.objects.filter(order__article=article)[:50]  
-            context['quoteRequests'] = QuoteRequest.objects.filter(order__article=article)[:50]      
+            try:
+                article = Article.objects.get(article_nbr=keyword)
+                context[filter_type] = article
+                context['commercialOffers'] = CommercialOffer.objects.filter(order__article=article)[:50]  
+                context['confirmedOffers'] = Confirmed_commercialOffer.objects.filter(order__article=article)[:50] 
+                context['invoices'] = Invoice.objects.filter(order__article=article)[:50]
+                context['supplierCommands'] = SupplierCommand.objects.filter(order__article=article)[:50]  
+                context['quoteRequests'] = QuoteRequest.objects.filter(order__article=article)[:50]
+            except Article.DoesNotExist:
+                    pass     
     return render(request, 'search.html', context)

@@ -6,8 +6,8 @@
         <thead>
             <tr>
                 <th>Command</th>
-                <th>Date</th>
                 <th>Project</th>
+                <th>Date</th>
             </tr>
         </thead>
         <tbody>
@@ -44,16 +44,18 @@
             </tr>
         </thead>
         <tbody>
-            {% for quoteRequest in quoteRequest %}
+            {% for quoteRequest in quoteRequests %}
             <tr>
                 <td>
                     <a href="#"
-                        onclick="load_modal('Update quoteRequest N°: {{ quoteRequest.invoice_nbr }}','{%  url "update-quoteRequest" quoteRequest.id %}')">
-                        {{ quoteRequest.invoice_nbr }}
+                        onclick="load_modal('Update quoteRequest N°: {{ quoteRequest.request_nbr }}','{%  url "update-quoteRequest" quoteRequest.id %}')">
+                        {{ quoteRequest.request_nbr }}
                     </a>
                 </td>
-                        <textarea disabled rows="2"
-                    class="form-control size-11">{{ quoteRequest.project.project_name }}</textarea>
+                <td>
+                    <textarea disabled rows="2"
+                        class="form-control size-11">{{ quoteRequest.project.project_name }}
+                    </textarea>
                 </td>
                 <td>{{ quoteRequest.created_at|date:'d-m-Y' }}</td>
 

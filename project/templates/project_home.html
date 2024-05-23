@@ -9,63 +9,54 @@
             placeholder="search projet" value="{{ project.project_nbr }}" />
         </div>
         <div class="d-flex align-items-center">
-          <div class="dropdown show">
-            <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Action
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="{% url 'create-project' %}"> <i class="material-icons align-middle">add</i>
-                New project</a>
-              <a class="dropdown-item" data-bs-toggle="modal" href="#" data-bs-target="#Modal"
-                onclick="load_modal('Create client','{%  url "create-client" %}')"> <i
-                  class="material-icons align-middle">add</i> New client</a>
-              <a class="dropdown-item"
-                onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
-                  class="material-icons align-middle">add</i> New supplier</a>
-              <a class="dropdown-item"
-                onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#"> <i
-                  class="material-icons align-middle">add</i> New article </a>
-              <a class="dropdown-item" href="{%  url 'manage-commission' %}"> <i class="material-icons align-middle">manage_search</i> Manage
-                commissions </a>
-              <a class="dropdown-item" href="{%  url 'manage-search' %}"> <i class="material-icons align-middle">manage_search</i> Manage
-                search  </a>
+            <div class="form-group mx-4">
+                <select required name="language" class="form-select form-select-sm" id="language">
+                    <option value="d"> Germany </option>
+                    {% for language in languages %}
+                    <option value="{{language.id }}" {% if client.language.id == language.id %} selected {% endif %}>
+                        {{ language }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-          </div>
-          {% comment %} &nbsp;&nbsp;&nbsp;
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Notifications <span class="badge bg-danger">1</span>
+            <div class="dropdown show">
+              <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Action
               </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <div class="dropdown-item">
-                  <div class="alert alert-warning" role="alert">
-                    Your payment for P1180048/N10-RDC02 is due in <strong>10</strong> days.
-                  </div>
-                  <div class="alert alert-danger" role="alert">
-                    Your payment for P1180048/N7-RDC02 is due in <strong>5</strong> days.
-                  </div>
-                </div>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'create-project' %}"> <i class="material-icons align-middle">add</i>
+                  New project</a>
+                <a class="dropdown-item" data-bs-toggle="modal" href="#" data-bs-target="#Modal"
+                  onclick="load_modal('Create client','{%  url "create-client" %}')"> <i
+                    class="material-icons align-middle">add</i> New client</a>
+                <a class="dropdown-item"
+                  onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
+                    class="material-icons align-middle">add</i> New supplier</a>
+                <a class="dropdown-item"
+                  onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#"> <i
+                    class="material-icons align-middle">add</i> New article </a>
+                <a class="dropdown-item" href="{%  url 'manage-commission' %}"> <i class="material-icons align-middle">manage_search</i> Manage
+                  commissions </a>
+                <a class="dropdown-item" href="{%  url 'manage-search' %}"> <i class="material-icons align-middle">manage_search</i> Manage
+                  search  </a>
               </div>
-            </li>
-          </ul> {% endcomment %}
-          &nbsp;&nbsp;&nbsp;
-          <div class="dropdown show">
-            <a class="dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               <i class="material-icons align-middle">account_circle</i> {{ request.user }}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item mt-2" href="#"
-                  onclick="load_modal('Update profile','{%  url "update-profile" %}')"> 
-                    Profile 
-                </a>
-                <a class="dropdown-item" href="{% url 'logout' %}"> 
-                  Logout 
-                </a>
             </div>
-          </div>
+            <div class="dropdown show mx-4">
+              <a class="dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons align-middle">account_circle</i> {{ request.user }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item mt-2" href="#"
+                    onclick="load_modal('Update profile','{%  url "update-profile" %}')"> 
+                    Profile 
+                  </a>
+                  <a class="dropdown-item" href="{% url 'logout' %}"> 
+                    Logout 
+                  </a>
+              </div>
+            </div>
         </div>
       </div>
     </div>

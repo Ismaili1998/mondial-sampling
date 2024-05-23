@@ -115,3 +115,8 @@ a {
     max-height: 375px;
     overflow-y: auto;
 }
+
+.selected-flag {
+    border: 3px solid #3c97f9;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
