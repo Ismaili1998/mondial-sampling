@@ -1,10 +1,11 @@
-<table class="table table-sm mt-3 bg-white size-13 table-scrollable">
+{% load i18n %}
+<table class="table table-sm bg-white size-13">
     <thead>
         <tr>
-            <th>Supplier command Ref</th>
-            <th>Supplier</th>
-            <th>Print</th>
-            <th>Action </th>
+            <th>{% trans "Supplier command Ref" %}</th>
+            <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Print" %}</th>
+            <th>{% trans "Action " %}</th>
         </tr>
     </thead>
     <tbody>
@@ -44,7 +45,7 @@
             {% endif %}
         {% empty %}
             <tr>
-                <td colspan="7">No command available.</td>
+                <td colspan="7">{% trans "No command available." %}</td>
             </tr>
         {% endfor %}
     </tbody>

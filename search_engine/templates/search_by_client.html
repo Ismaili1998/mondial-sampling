@@ -1,150 +1,102 @@
-{% extends 'main.html' %}
-{% block content %}
-{% load format_numbers %}
-<main class="container-fluid">
-    <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
-        <div class="lh-1">
-            <strong> <a href="{% url 'project-home' %}" class="text-white"> Home</a> / Search </strong>
-        </div>
+<div class="row mt-5">
+    <div class="col-md-4 table-scrollable">
+        <strong> Related Invoices</strong>
+        <table class="table table-sm size-13 mt-2 bg-white">
+            <thead>
+                <tr>
+                    <th>Invoice</th>
+                    <th>Project</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td>
+                        <a href="#"
+                            onclick="load_modal('Update invoice N°: {{ invoice.invoice_nbr }}','{%  url "update-invoice" invoice.id %}')">
+                            {{ invoice.invoice_nbr }}
+                        </a>
+                    </td>
+                    <td class="size-12">
+                         <textarea disabled rows="2"
+                        class="form-control size-11">{{ invoice.project.project_name }}</textarea>
+                    </td>
+                    <td>{{ invoice.created_at|date:'d-m-Y' }}</td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No Invoice available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
-        {% include 'alert.html' %}
-        <form method="GET" action="{% url 'manage-search' %}">
-            {% include "search.html" %}
-        </form>
-        <div class="mt-5 container-fluid size-13">
-            {% include 'client_detail.html' %}
-        </div>
-        <hr/>
-        <div class="row mt-5">
-            <div class="col-md-4 table-scrollable">
-                <strong> Related Invoices</strong>
-                <table class="table table-sm size-13 mt-2">
-                    <thead>
-                        <tr>
-                            <th>Invoice</th>
-                            <th>Project</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for invoice in invoices %}
-                        <tr>
-                            <td>
-                                <a href="#"
-                                    onclick="load_modal('Update invoice N°: {{ invoice.invoice_nbr }}','{%  url "update-invoice" invoice.id %}')">
-                                    {{ invoice.invoice_nbr }}
-                                </a>
-                            </td>
-                            <td class="size-12">
-                                 <textarea disabled rows="2"
-                                class="form-control size-11">{{ invoice.project.project_name }}</textarea>
-                            </td>
-                            <td>{{ invoice.created_at|date:'d-m-Y' }}</td>
-
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5">No Invoice available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-4 table-scrollable">
-                <strong> Related Confirmed offers </strong>
-                <table class="table table-sm size-13 mt-2">
-                    <thead>
-                        <tr>
-                            <th>Confirmed offer</th>
-                            <th>Date</th>
-                            <th>Project</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for confirmedOffer in confirmedOffers %}
-                        <tr>
-                            <td>
-                                <a href="#"
-                                    onclick="load_modal('Update confirmed Offer N°: {{ confirmedOffer.confirmation_nbr }}','{%  url "update-confirmed-commercialOffer" confirmedOffer.id %}')">
-                                    {{ confirmedOffer.confirmation_nbr }}
-                                </a>
-                            </td>
-                            <td> {{ confirmedOffer.created_at|date:'d-m-Y' }} </td>
-                            <th> {{ confirmedOffer.project.project_nbr }} </th>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5">No confirmed offer available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-4 table-scrollable">
-                <strong> Related offers  </strong>
-                <table class="table table-sm size-13 mt-2">
-                    <thead>
-                        <tr>
-                            <th>offer</th>
-                            <th>Date</th>
-                            <th>Project</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for offer in commercialOffers %}
-                        <tr>
-                            <td>
-                                <a href="#"
-                                    onclick="load_modal('Update offer N°: {{ offer.offer_nbr }}','{%  url "update-commercialOffer" offer.id %}')">
-                                    {{ offer.offer_nbr }}
-                                </a>
-                            </td>
-                            <td>{{ offer.created_at|date:'d-m-Y' }}</td>
-                            <th> {{ offer.project.project_nbr }}</th>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5">No offer available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="col-md-4 table-scrollable">
+        <strong> Related Confirmed offers </strong>
+        <table class="table table-sm size-13 mt-2 bg-white">
+            <thead>
+                <tr>
+                    <th>Confirmed offer</th>
+                    <th>Project</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for confirmedOffer in confirmedOffers %}
+                <tr>
+                    <td>
+                        <a href="#"
+                            onclick="load_modal('Update confirmed offer N°: {{ confirmedOffer.confirmation_nbr }}','{%  url "update-confirmed-commercialOffer" confirmedOffer.id %}')">
+                            {{ confirmedOffer.confirmation_nbr }}
+                        </a>
+                    </td>
+                    <td class="size-12">
+                        <textarea disabled rows="2"
+                       class="form-control size-11">{{ confirmedOffer.project.project_name }}</textarea>
+                   </td>
+                   <td> {{ confirmedOffer.created_at|date:'d-m-Y' }} </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No confirmed offer available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</main>
-{% endblock %}
-
-{% block javascript %}
-<script>
-  // load page by url, and display it in modal  
-    function load_modal(title, page_url) {
-        $('.modal-title').text(title);
-        $('.modal-body').load(page_url);
-        $('#Modal').modal('show');
-    }
-  // search project by project_nbr 
-  $(document).ready(function () {
-    $('#search_engine').autocomplete({
-      source: function (request, response) {
-        $.getJSON("{% url 'get-clientsByKeyWord' %}",
-          { keyword: request.term }, function (data) {
-            // Map the project numbers to an array of objects with label and value properties
-            var mappedData = $.map(data, function (item) {
-              return {
-                label: item,
-                value: item
-              };
-            });
-            response(mappedData);
-          });
-      },
-      select: function (event, ui) {
-       
-      }
-    });
-  });
-
-</script>
-{% endblock %}
+    <div class="col-md-4 table-scrollable">
+        <strong> Related offers  </strong>
+        <table class="table table-sm size-13 mt-2 bg-white">
+            <thead>
+                <tr>
+                    <th>offer</th>
+                    <th>Project</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in commercialOffers %}
+                <tr>
+                    <td>
+                        <a href="#"
+                            onclick="load_modal('Update offer N°: {{ offer.offer_nbr }}','{%  url "update-commercialOffer" offer.id %}')">
+                            {{ offer.offer_nbr }}
+                        </a>
+                    </td>
+                    <td class="size-12">
+                        <textarea disabled rows="2"
+                       class="form-control size-11">{{ offer.project.project_name }}</textarea>
+                    </td>
+                    <td>{{ offer.created_at|date:'d-m-Y' }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No offer available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

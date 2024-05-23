@@ -1,10 +1,11 @@
-<table class="table table-sm mt-3 bg-white size-13 table-scrollable ">
+{% load i18n %}
+<table class="table table-sm bg-white size-13">
     <thead>
         <tr>
-            <th>Confirmed Offer Ref</th>
-            <th>Print </th>
-            <th>Invoice </th>
-            <th> </th>
+            <th>{% trans "Confirmed Offer Ref" %}</th>
+            <th>{% trans "Print " %}</th>
+            <th>{% trans "Invoice " %}</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -45,7 +46,7 @@
                 </tr>
         {% empty %}
             <tr>
-                <td colspan="7">No confirmed offer available.</td>
+                <td colspan="7">{% trans "No confirmed offer available." %}</td>
             </tr>
         {% endfor %}
     </tbody>

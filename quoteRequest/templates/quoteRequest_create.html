@@ -72,7 +72,7 @@
             var keyword = $(this).val().trim();
             // Send an AJAX request to the server
             $.ajax({
-                url: '{% url "get-suppliersByKeyWord" %}',
+                url: '{% url "get-supplierByKeyWord" %}',
                 method: 'GET',
                 data: {
                     keyword: keyword
