@@ -121,7 +121,7 @@
             var keyword = $(this).val().trim();
             // Send an AJAX request to the server
             $.ajax({
-                url: '{% url "get-supplierByKeyWord" %}',
+                url: '{% url "get-supplierDetailByKeyWord" %}',
                 method: 'GET',
                 data: {
                     keyword: keyword
@@ -135,7 +135,7 @@
                     for (var i = 0; i < suppliers.length; i++) {
                         html += '<tr>';
                         html += '<td><input class="form-check-input" type="checkbox" value="'+ suppliers[i].id +'" /></td>'
-                        html += '<td>' + suppliers[i].supplier_name || '' + '</td>';
+                        html += '<td>' + suppliers[i].name || '' + '</td>';
                         html += '<td>' + suppliers[i].country || '' + '</td>';
                         html += '</tr>';
                     }

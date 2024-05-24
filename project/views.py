@@ -284,6 +284,18 @@ def get_suppliersByKeyWord(request):
     return JsonResponse({'suppliers': list(supplier_data)})
 
 
+def get_supplierDetailByKeyWord(request):
+    keyword = request.GET.get('keyword', '')
+    # Perform the search query using the keyword
+    suppliers_data = Supplier.objects.filter(supplier_name__icontains=keyword)[:10]
+    suppliers_list = []
+    for supplier in suppliers_data:
+        suppliers_list.append({
+            'id':supplier.id,
+            'name':supplier.supplier_name,
+            'country':supplier.country.country_name_fr
+        })
+    return JsonResponse({'suppliers': suppliers_list})
 
 @csrf_exempt
 def get_buyersByKeyWord(request):
