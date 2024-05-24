@@ -22,13 +22,13 @@ msgid "search project"
 msgstr "chercher projet"
 
 msgid "Project number"
-msgstr "Numéro de projet"
+msgstr "Num de projet"
 
 msgid "Project name"
 msgstr "Nom du projet"
 
 msgid "Client number"
-msgstr "Numéro de client"
+msgstr "Num de client"
 
 msgid "visibility"
 msgstr "visibilité"
@@ -70,7 +70,7 @@ msgid "pos"
 msgstr "pos"
 
 msgid "Article Number"
-msgstr "Numéro de l'article"
+msgstr "Num de l'article"
 
 msgid "Article Description"
 msgstr "Description de l'article"
@@ -138,3 +138,5 @@ msgstr "Imprimer l'étiquette"
 msgid "Drag and drop files here to upload"
 msgstr "Glissez et déposez les fichiers ici pour les télécharger"
 
+msgid "See project documents"
+msgstr "Documents du projet"

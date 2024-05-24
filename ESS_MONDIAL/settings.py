@@ -89,22 +89,22 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # xxx update
-DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ESS_MONDIAL',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST':'localhost',
-        'PORT':'3306',
-    }
-}
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#    'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ESS_MONDIAL',
+#         'USER': 'root',
+#         'PASSWORD': 'root',
+#         'HOST':'localhost',
+#         'PORT':'3306',
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -128,27 +128,20 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
-
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
 LANGUAGE_CODE = 'en-us'
-
 LANGUAGES = [
     ('en', 'English'),
     ('fr', 'French'),
+    ('de', 'German'),
     # Add more languages as needed
 ]
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
-
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = 'static/'

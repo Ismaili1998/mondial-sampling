@@ -23,8 +23,15 @@ def create_invoice(request, offer_pk):
             invoice = invoice.save(commit=False)
             invoices = project.invoice_set.all()
             rank = get_rank(invoices)
-            invoice.invoice_nbr = "{0}/TN{1}-{2}".format(project.project_nbr, rank, project.client.client_nbr) 
+            invoice.invoice_nbr = "{0}/TN{1}-{2}".format(project.project_nbr, rank, project.client.client_nbr)
+            invoice.rank = rank
+            invoice.project = project
             invoice.save()
+            orders = confirmedOffer.order_set.all()
+            for order in orders:
+                order.confirmed_commercialOffer = order.id = None 
+                order.invoice = invoice
+                order.save()
             messages.success(request, 'invoice has been created successfully !')
         else:
             messages.error(request, 'an error occured, plase retry !')

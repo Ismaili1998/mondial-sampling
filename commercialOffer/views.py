@@ -184,10 +184,10 @@ def print_commercialOffer(request, offer_pk):
 
 def confirm_commercialOffer(request,pk):
     commercialOffer = get_object_or_404(CommercialOffer, id=pk)
-    project = commercialOffer.project
-    project_nbr = project.project_nbr
     if request.method == 'POST':
         form = Confirmed_commercialOfferForm(request.POST)
+        project = commercialOffer.project
+        project_nbr = project.project_nbr
         if  form.is_valid():
             confirmedOffer = form.save(commit=False)
             confirmed_offers = project.confirmed_commercialoffer_set.all()
@@ -210,7 +210,7 @@ def confirm_commercialOffer(request,pk):
         return redirect('project-detail', project_nbr)
     
     context = {"commercialOffer":commercialOffer}
-    return render(request, 'confirme_commercialOffer.html', context)
+    return render(request, 'confirm_commercialOffer.html', context)
 
 def cancel_confirmedOffer(request,pk):
     confirmedOffer = get_object_or_404(Confirmed_commercialOffer, pk=pk)
