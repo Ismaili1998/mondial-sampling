@@ -18,6 +18,7 @@ urlpatterns = [
 
     path('create-client',views.client_create,name='create-client'),
     path('update-client/<str:pk>',views.client_edit,name='update-client'),
+    path('get-clientByRef/<str:ref>',views.get_clientByRef,name='get-clientByRef'),
     path('get-clientByKeyWord',views.get_clientsByKeyWord,name='get-clientByKeyWord'),
 
     

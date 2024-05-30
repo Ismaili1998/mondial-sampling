@@ -10,7 +10,7 @@
             placeholder="{% trans 'search project' %}" value="{{ project.project_nbr }}" />
         </div>
         <div class="d-flex align-items-center">
-            <form action="{% url 'set_language' %}" method="post" id="language-form">
+            {% comment %} <form action="{% url 'set_language' %}" method="post" id="language-form">
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ redirect_to }}" />
               <div class="form-group mx-4">
@@ -20,7 +20,7 @@
                     <option value="fr">Français</option>
                 </select>
               </div>
-            </form>
+            </form> {% endcomment %}
             <div class="dropdown show">
               <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -87,18 +87,14 @@
           <div class="form-group row mt-2">
             <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm">{% trans "Client number" %}</label>
             <div class="col-sm-9 d-flex">
-              <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="client" required
-                id="client_nbr" aria-label=".form-select-sm example">
-                <option value="">{% trans " Client number " %}</option>
-                {% for client in clients %}
-                  <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif%}>
-                    {{ client.client_nbr }}
-                  </option>
-                {% endfor %}
-              </select>
-              &nbsp;
-              <a class="text-info"
-                onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
+              <div class="col-sm-9">
+                  <input type="text" class="form-control form-control-sm searchClient" name="client" required 
+                  value="{{project.client.client_nbr}}"
+                  />
+              </div>
+                &nbsp;
+                <a class="text-info"
+                  onclick="get_clientDetail('Client detail','{%  url "get-clientByRef" 0 %}')" href="#"><i
                   class="material-icons align-middle text-dark">visibility</i></a>
             </div>
           </div>
@@ -280,6 +276,7 @@
     $('.modal-body').load(page_url);
     $('#Modal').modal('show');
   }
+
   // search project by project_nbr 
   $(document).ready(function () {
 
@@ -308,29 +305,42 @@
         return false;
       }
     });
-  });
+    
 
-  // get chosen client id, so that we can use its id 
-  // to get all detail about it
-  let client_id = {{ project.client.id|default:0 }};
-  $('#client_nbr').change(function () {
-    client_id = $(this).val();
-  });
+    $('.searchClient').autocomplete({
+      source: function (request, response) {
+        $.getJSON("{% url 'get-clientByKeyWord' %}",
+          { keyword: request.term }, function (data) {
+            // Map the article numbers to an array of objects with label and value properties
+            var mappedData = $.map(data, function (item) {
+              return {
+                label: item,
+                value: item
+              };
+            });
+            response(mappedData);
+          });
+      }
+    });
 
-  $('#project_nbr, #client_nbr').on('input', function() {
+
+  });
+ 
+  $('#project_nbr, .searchClient').on('input', function() {
             var projectNbr = $('#project_nbr').val();
-            var clientNbr = $('#client_nbr option:selected').text();
+            var clientNbr = $('.searchClient').text();
             var ourRef = projectNbr +'-'+ clientNbr;
             $('#our_ref').val(ourRef.replace(/\s/g, ''));
   });
 
   function get_clientDetail(title, url) {
-    if (!client_id)
+    let client_nbr = $('.searchClient').val();
+    if (!client_nbr)
     {
       $('.modal-title').text("please chose a client from the list");
     }
     else{
-      load_modal(title, url.replace('0', client_id))
+      load_modal(title, url.replace('0', client_nbr))
     }
   }
 

@@ -10,13 +10,23 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from order.models import Article 
 import os 
+from datetime import datetime
+
+def get_project_nbr():
+    P_PREFIX = 'P'
+    latest_project = Project.objects.order_by('-id').first()
+    current_year = datetime.now().strftime("%y")
+    if latest_project and latest_project.project_nbr.startswith(f'{P_PREFIX}{current_year}'):
+        last_rank = latest_project.rank + 1
+        project_nbr = f'{P_PREFIX}{current_year}{last_rank:04d}'
+    else:
+        project_nbr = f'{P_PREFIX}{current_year}0000'
+    return project_nbr
 
 @login_required(login_url='sign-in')
 def project_home(request):
     clients = Client.objects.all()
-    latest_project = Project.objects.order_by('-id').first()
-    last_id = latest_project.id if latest_project else 0 
-    project_nbr  = "P{0}".format(last_id + 1)
+    project_nbr  = get_project_nbr()
     representatives = Representative.objects.all()
     buyers = Buyer.objects.all()
     context = {'clients':clients,
@@ -184,6 +194,22 @@ def client_edit(request, pk):
             print(err)
         return JsonResponse({'message':'An error occured ! please retry again'})
     
+    countries = Country.objects.all()
+    page_name = 'update-client'
+    representatives = Representative.objects.all()
+    languages = Language.objects.all()
+    context = {'client':client,
+               'countries':countries,
+               'representatives':representatives,
+               'languages':languages,
+               'page':page_name}
+    return render(request, 'client.html', context)
+
+def get_clientByRef(request, ref):
+    try:
+        client = Client.objects.get(client_nbr=ref)
+    except Client.DoesNotExist:
+        return JsonResponse({'message':'Client not found !'})
     countries = Country.objects.all()
     page_name = 'update-client'
     representatives = Representative.objects.all()
