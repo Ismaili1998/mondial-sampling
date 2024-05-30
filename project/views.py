@@ -13,6 +13,15 @@ import os
 
 @login_required(login_url='sign-in')
 def project_home(request):
+    # def get_project_nbr(self):
+    #     latest_project = Project.objects.order_by('-id').first()
+    #     current_year = datetime.now().strftime("%y")
+    #     if latest_project and latest_project.project_nbr.startswith(f'{P_PREFIX}{current_year}'):
+    #         last_rank = latest_project.rank + 1
+    #         project_nbr = f'{P_PREFIX}{current_year}{last_rank:04d}'
+    #     else:
+    #         project_nbr = f'{P_PREFIX}{current_year}0000'
+    #     return project_nbr
     clients = Client.objects.all()
     latest_project = Project.objects.order_by('-id').first()
     last_id = latest_project.id if latest_project else 0 
