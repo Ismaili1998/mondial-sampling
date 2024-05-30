@@ -87,18 +87,14 @@
           <div class="form-group row mt-2">
             <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm">{% trans "Client number" %}</label>
             <div class="col-sm-9 d-flex">
-              <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="client" required
-                id="client_nbr" aria-label=".form-select-sm example">
-                <option value="">{% trans " Client number " %}</option>
-                {% for client in clients %}
-                  <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif%}>
-                    {{ client.client_nbr }}
-                  </option>
-                {% endfor %}
-              </select>
-              &nbsp;
-              <a class="text-info"
-                onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
+              <div class="col-sm-9">
+                  <input type="text" class="form-control form-control-sm searchClient" name="client" required 
+                  value="{{project.client.client_nbr}}"
+                  />
+              </div>
+                &nbsp;
+                <a class="text-info"
+                  onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
                   class="material-icons align-middle text-dark">visibility</i></a>
             </div>
           </div>
@@ -308,15 +304,31 @@
         return false;
       }
     });
-  });
+    
+    // get chosen client id, so that we can use its id 
+    // to get all detail about it
+    let client_id = {{ project.client.id|default:0 }};
 
-  // get chosen client id, so that we can use its id 
-  // to get all detail about it
-  let client_id = {{ project.client.id|default:0 }};
-  $('#client_nbr').change(function () {
-    client_id = $(this).val();
-  });
+    $('.searchClient').autocomplete({
+      source: function (request, response) {
+        $.getJSON("{% url 'get-clientByKeyWord' %}",
+          { keyword: request.term }, function (data) {
+            // Map the article numbers to an array of objects with label and value properties
+            var mappedData = $.map(data, function (item) {
+              client_id = $(this).val();
+              return {
+                label: item,
+                value: item
+              };
+            });
+            response(mappedData);
+          });
+      }
+    });
 
+
+  });
+ 
   $('#project_nbr, #client_nbr').on('input', function() {
             var projectNbr = $('#project_nbr').val();
             var clientNbr = $('#client_nbr option:selected').text();
