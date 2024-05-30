@@ -16,7 +16,7 @@ def project_home(request):
     clients = Client.objects.all()
     latest_project = Project.objects.order_by('-id').first()
     last_id = latest_project.id if latest_project else 0 
-    project_nbr  = "A{0}".format(last_id + 1)
+    project_nbr  = "P{0}".format(last_id + 1)
     representatives = Representative.objects.all()
     buyers = Buyer.objects.all()
     context = {'clients':clients,
@@ -279,7 +279,7 @@ def get_suppliersByKeyWord(request):
     keyword = request.GET.get('keyword', '')
     # Perform the search query using the keyword
     supplier_data = Supplier.objects.filter(supplier_name__icontains=keyword) \
-    .values_list('supplier_name', flat=True)[:20]    [:10]
+    .values_list('supplier_name', flat=True)[:20]
     # Return the suppliers' data as JSON response
     return JsonResponse({'suppliers': list(supplier_data)})
 
@@ -293,7 +293,7 @@ def get_supplierDetailByKeyWord(request):
         suppliers_list.append({
             'id':supplier.id,
             'name':supplier.supplier_name,
-            'country':supplier.country.country_name_fr
+            'country': supplier.country.country_name_fr if supplier.country else ''
         })
     return JsonResponse({'suppliers': suppliers_list})
 

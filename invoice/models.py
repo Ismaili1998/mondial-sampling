@@ -8,7 +8,7 @@ class Invoice(AbstractCommercialOffer):
 
     class Meta:
         db_table = 'invoice'
-        ordering = ['-rank']
+        ordering = ['-created_at','-rank']
     
     def get_commission(self):
         commission = self.get_total_selling_withFee() * self.commission

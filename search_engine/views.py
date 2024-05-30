@@ -33,7 +33,6 @@ def manage_search(request):
                 supplier = Supplier.objects.get(supplier_name=keyword)
                 context[filter_type]  = supplier  
                 context['supplierCommands'] = SupplierCommand.objects.filter(supplier=supplier)[:50]
-                print("===================", context['supplierCommands'][0])  
                 context['quoteRequests'] = QuoteRequest.objects.filter(supplier=supplier)[:50]
             except Supplier.DoesNotExist:
                 pass

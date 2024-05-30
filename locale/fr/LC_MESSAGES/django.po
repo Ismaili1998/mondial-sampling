@@ -22,7 +22,7 @@ msgid "search project"
 msgstr "chercher projet"
 
 msgid "Project number"
-msgstr "Num de projet"
+msgstr "No Projet"
 
 msgid "Project name"
 msgstr "Nom du projet"
@@ -79,7 +79,7 @@ msgid "No article available."
 msgstr "Aucun article disponible."
 
 msgid "Quote request Ref"
-msgstr "Réf de demande de devis"
+msgstr "Réf demande devis"
 
 msgid "Supplier"
 msgstr "Fournisseur"
@@ -103,7 +103,7 @@ msgid "Supplier command Ref"
 msgstr "Référence de commande fournisseur"
 
 msgid "Offer Ref"
-msgstr "Référence de l'offre"
+msgstr "Réf offre"
 
 msgid "Print CO"
 msgstr "Imprimer OC"
@@ -115,7 +115,7 @@ msgid "No offer available."
 msgstr "Aucune offre disponible."
 
 msgid "Confirmed Offer Ref"
-msgstr "Référence de l'offre confirmée"
+msgstr "Réf offre confirmée"
 
 msgid "Invoice"
 msgstr "Facture"
