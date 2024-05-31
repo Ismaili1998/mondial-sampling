@@ -328,7 +328,7 @@
  
   $('#project_nbr, .searchClient').on('input', function() {
             var projectNbr = $('#project_nbr').val();
-            var clientNbr = $('.searchClient').text();
+            var clientNbr = $('.searchClient').val();
             var ourRef = projectNbr +'-'+ clientNbr;
             $('#our_ref').val(ourRef.replace(/\s/g, ''));
   });

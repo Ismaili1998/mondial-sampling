@@ -72,7 +72,7 @@ def create_commercialOffer(request,project_pk):
             commercialOffer.save()
             create_commercialOffer_orders(request, commercialOffer)
             messages.success(request, 'Commercial offer has been created successfully')
-            return redirect('project-detail', project_nbr)
+            return redirect(request.META.get('HTTP_REFERER', '/'))
         else:
             errors = form.errors.as_data()
             for field, error_list in errors.items():
@@ -80,14 +80,14 @@ def create_commercialOffer(request,project_pk):
                     # Print or log the error details
                     print(f"Field: {field}, Error: {error.message}")
             messages.error(request, 'An error occured, please retry')
-            return redirect('project-detail', project.project_nbr)
+            return redirect(request.META.get('HTTP_REFERER', '/'))
         
     article_ids = request.GET.getlist('articles[]')
     try:
         articles = Article.objects.filter(id__in=article_ids)
     except Article.DoesNotExist:
             messages.error(request, 'An error occured, please retry') 
-            return redirect('project-detail', project.project_nbr) 
+            return redirect(request.META.get('HTTP_REFERER', '/')) 
 
     timeUnits = TimeUnit.objects.all()
     payments = Payment.objects.all()
@@ -131,7 +131,7 @@ def update_commercialOffer(request,pk):
             for err in form.errors:
                 print(err)
             messages.error(request, 'An error occured, please retry')
-        return redirect('project-detail', project.project_nbr)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     
     context = commercialOffer_detail(commercialOffer)
     return render(request, 'commercialOffer_edit.html',context) 
@@ -207,7 +207,7 @@ def confirm_commercialOffer(request,pk):
             for err in form.errors:
                 print(err)
             messages.error(request, 'An error occured, please retry')
-        return redirect('project-detail', project_nbr)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     
     context = {"commercialOffer":commercialOffer}
     return render(request, 'confirm_commercialOffer.html', context)
@@ -263,6 +263,6 @@ def update_confirmed_commercialOffer(request, pk):
             form.save()
             update_orders(request)
             messages.success(request, 'Confirmed offer has been created successfully')
-            return redirect('project-detail', confirmedOffer.project.project_nbr)
+            return redirect(request.META.get('HTTP_REFERER', '/'))
     context = confirmedOffer_detail(confirmedOffer)
     return render(request, 'confirmed_commercialOffer_edit.html', context)

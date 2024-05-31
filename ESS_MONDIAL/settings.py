@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'order',
     'invoice',
     'project',
-    'search_engine'
+    'search_engine',
     
 ]
 
@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
 ]
 
 
@@ -89,22 +89,22 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # xxx update
-DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ESS_MONDIAL',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST':'localhost',
-        'PORT':'3306',
-    }
-}
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#    'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ESS_MONDIAL',
+#         'USER': 'root',
+#         'PASSWORD': 'root',
+#         'HOST':'localhost',
+#         'PORT':'3306',
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation

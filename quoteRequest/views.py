@@ -46,7 +46,7 @@ def create_quoteRequest(request,project_pk):
         quantities = request.POST.getlist('quantity')
         if not len(articles) or not len(suppliers):
             messages.error(request, 'An error occured, please retry !')
-            return redirect('project-detail',project_nbr)
+            return redirect(request.META.get('HTTP_REFERER', '/'))
         try:
             for supplier_id in suppliers:
                 supplier = Supplier.objects.get(id=supplier_id)
@@ -66,7 +66,7 @@ def create_quoteRequest(request,project_pk):
             messages.success(request, 'Quote request has been created successfully')
         except:
                 messages.error(request, 'An error occured please retry !')
-        return redirect('project-detail',project_nbr)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     
     suppliers = Supplier.objects.all()
     context = {'project':project,'suppliers':suppliers}
@@ -83,7 +83,6 @@ def update_orders(order_ids, quantities, purchase_prices):
 def update_quoteRequest(request,pk):
     quoteRequest = get_object_or_404(QuoteRequest, id=pk)
     if request.method == 'POST':
-        project = quoteRequest.project
         order_ids = request.POST.getlist('order')
         quantities = request.POST.getlist('quantity')
         purchase_prices = request.POST.getlist('purchase-price')
@@ -92,7 +91,7 @@ def update_quoteRequest(request,pk):
             messages.success(request, 'Quote request has been updated successfully')
         except:
                 messages.error(request, 'An error occured please retry !')
-        return redirect('project-detail',project.project_nbr)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     return render(request, 'quoteRequest_edit.html',context = quoteRequest_detail(quoteRequest))
  
 def print_quoteRequest(request, request_pk):
@@ -155,7 +154,7 @@ def create_supplierCommand(request, request_pk):
             for err in form.errors:
                 print(err)
             messages.error(request, 'An error occured, please retry')
-        return redirect('project-detail', project_nbr)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     return render(request, 'supplierCommand_create.html', context=quoteRequest_detail(quoteRequest))
 
 def update_supplierCommand(request, pk):
@@ -175,7 +174,7 @@ def update_supplierCommand(request, pk):
             messages.success(request, 'Supplier command has been updated successfully')
         except:
             messages.error(request, 'Failed to save orders update !')        
-        return redirect('project-detail', supplierCommand.project.project_nbr)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     return render(request, 'supplierCommand_edit.html', context = supplierCommand_detail(supplierCommand))
 
 def print_supplierCommand(request, pk):
