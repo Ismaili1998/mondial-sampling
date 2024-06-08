@@ -126,7 +126,7 @@ def delete_quoteRequest(request, pk):
     if request.method == 'POST':
         quoteRequest.delete()
         messages.success(request, 'quoteRequest has been deleted successfully')
-    return redirect('project-detail',project.project_nbr)
+    return redirect('project-detail',project.id)
 
 
 def create_supplierCommand(request, request_pk):
@@ -204,8 +204,7 @@ def delete_order_from_supplierCommand(request, pk):
 
 def delete_supplierCommand(request, pk):
     supplierCommand = get_object_or_404(SupplierCommand, id=pk)
-    project_nbr = supplierCommand.project.project_nbr
     if request.method == "POST":
         supplierCommand.delete()
         messages.success(request, 'Supplier command has been deleted successfully !')
-    return redirect('project-detail', project_nbr)
+    return redirect('project-detail', supplierCommand.project.id)

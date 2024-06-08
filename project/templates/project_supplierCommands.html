@@ -18,12 +18,9 @@
                         {{ supplierCommand.command_nbr }}
                     </a>
                 </td>
-                <td>
+                <td role="button"
+                    onclick="load_modal('Update supplier','{%  url "update-supplier"  supplierCommand.supplier.id %}')">
                     {{ supplierCommand.supplier }}/({{ supplierCommand.supplier.language|default:"No language" }})
-                    <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  supplierCommand.supplier.id %}')"
-                        href="#"><i
-                        class="material-icons align-middle size-13 text-dark">visibility</i>
-                    </a>
                 </td>
                 <td>
                     <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  supplierCommand.id %}')"

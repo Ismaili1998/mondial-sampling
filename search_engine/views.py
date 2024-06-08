@@ -48,4 +48,4 @@ def manage_search(request):
                 context['quoteRequests'] = QuoteRequest.objects.filter(order__article=article)[:50]
             except Article.DoesNotExist:
                     pass     
-    return render(request, 'search.html', context)
+    return render(request, 'commercialOffer_print.html', context)

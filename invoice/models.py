@@ -11,9 +11,16 @@ class Invoice(AbstractCommercialOffer):
         ordering = ['-created_at','-rank']
     
     def get_commission(self):
-        commission = self.get_total_selling_withFee() * self.commission
+        grand_total = self.get_total_selling_withFee()
+        commission = grand_total * (1 + (self.commission * grand_total / 100))
         return round(commission, 2)
-    
+
+    def clone_orders_from_confirmedOffer(self, confirmedOffer):
+        orders = confirmedOffer.order_set.all()
+        for order in orders:
+            order.confirmed_commercialOffer = order.id = None 
+            order.invoice = self
+            order.save()
     
 class Packing(models.Model):
     invoice = models.OneToOneField(

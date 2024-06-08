@@ -21,14 +21,14 @@
                 </div>
             </div>
             <div class="form-group row col-md-4">
-                <label for="commission" class="col-md-4 col-form-label col-form-label-sm">
+                <label for="commission" class="col-md-3 col-form-label col-form-label-sm">
                     {{ confirmedOffer.project.representative }}'s commission 
                 </label>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <input type="number" required placeholder="commission in %" name="commission"
                         class="form-control form-control-sm" value="{{ confirmedOffer.commission }}" id="commission" />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <input type="text" disabled placeholder="Amount" class="form-control form-control-sm"
                         value="{{ confirmedOffer.get_commission|thousand_separator }} {{ confirmedOffer.currency|default:"" }}" id="commission_amount" />
                 </div>
@@ -50,16 +50,15 @@
                         <th>Article nbr</th>
                         <th>Description</th>
                         <th>Purchase price </th>
-                        <th>Qty</th>
                         <th>Margin</th>
-                        <th>Unit</th>
                         <th>Selling price </th>
-                        <th>Total Purchase</th>
-                        <th>Total Selling</th>
-                        <th> </th>
+                        <th>Qty</th>
+                        <th>Unit</th>
+                        <th>Total Purchase </th>
+                        <th>Total Selling </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-nowrap">
                     {% for order in confirmedOffer.order_set.all %}
                     <tr>
                         <td class="article-id" data-article-id="{{ article.id }}">
@@ -82,20 +81,21 @@
                             value="{{order.purchase_price}}"/>
                         </td>
                         <td class="form-group">
-                            <input type="number" name="quantity" 
-                            class="article-quantity form-control form-control-sm"
-                            required
-                            value="{{order.quantity}}"/>
-                        </td>
-                        <td class="form-group">
-                            <input type="number" name="article-margin" 
+                            <input type="number" name="article-margin"
+                            step="0.01" 
                             class="article-margin form-control form-control-sm"
                             placeholder="margin in %"
                             required
                             value="{{order.margin}}"/>
                         </td>
-                        <td> {{order.article.article_unit}} </td>
                         <td class="selling-price "> </td>
+                        <td class="form-group">
+                            <input type="number" name="quantity" 
+                            class="article-quantity form-control form-control-sm"
+                            required
+                            value="{{order.quantity}}"/>
+                        </td>
+                        <td> {{order.article.article_unit}} </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
                         <td> <a href="#" class="btn btn-sm btn-remove"
@@ -309,7 +309,7 @@ $(document).ready(function () {
 
     function set_margin() {
         let margin = parseFloat($('#global-margin').val());
-        if (margin >= 0 && margin <= 100) {
+        if (margin >= 0 && margin <= 2) {
             $('#offer-articles-table tbody tr').each(function () {
                 row = $(this);
                 articleMarginInput = row.find('.article-margin');
@@ -329,8 +329,18 @@ $(document).ready(function () {
                 row = $(this);
                 articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
                 purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
-                margin = (row.find('.article-margin').val() / 100) || 0;
-                sellingPrice = purchasePrice + (margin * purchasePrice);
+                margin = parseFloat(row.find('.article-margin').val()) || 0;
+                if (margin > 2 )
+                {
+                    margin = 2;
+                    row.find('.article-margin').val(2);
+                }
+                else if (margin < 0)
+                {
+                    margin = 0 ;
+                    row.find('.article-margin').val(0);
+                }
+                sellingPrice = (margin * purchasePrice);
                 totalSelling = sellingPrice * articleQuantity;
                 sum_total_selling += totalSelling;
 
@@ -466,7 +476,7 @@ $(document).ready(function () {
         var commissionPercentage = parseFloat(commission);
         if (!isNaN(totalPrice) && !isNaN(commissionPercentage)) {
             var commissionAmount = (totalPrice * commissionPercentage) / 100;
-            $('#commission_amount').val(formatNumber(commissionAmount) + " {{ confirmedOffer.currency|default:"" }}");
+            $('#commission_amount').val(formatNumber(commissionAmount) + "{{ confirmedOffer.currency|default:"" }}");
         }
     }
 

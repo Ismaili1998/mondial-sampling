@@ -9,4 +9,4 @@ class CommercialOfferForm(forms.ModelForm):
 class Confirmed_commercialOfferForm(forms.ModelForm):
     class Meta:
         model = Confirmed_commercialOffer
-        fields = ['client_nbr', 'commission']
+        exclude = ['confirmation_nbr', 'rank']

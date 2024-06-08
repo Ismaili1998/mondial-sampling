@@ -1,8 +1,15 @@
 <form class="submit-form" 
-    action="{% if page == 'add-article' %} {% url 'create-article' %} {% else %} {% url 'update-article' article.id %} {% endif %}" method="POST">
+    action="{% url 'create-article' project.id %}"  method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row">
         <div class="col-md-6">
+            <div class="form-group row mt-2">
+                <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Add to Project </label>
+                <div class="col-sm-4">
+                    <input type="checkbox"  checked class="form-check-input" name="project"
+                        value="{{ project.id }}" step="any" />
+                </div>
+            </div>
             <div class="form-group row mt-2">
                 <label for="id_article_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Article number</label>
                 <div class="col-sm-8">
@@ -28,6 +35,12 @@
                 <div class="col-sm-8">
                     <input required type="number" name="purchase_price" class="form-control form-control-sm"
                         id="id_purchase_price" value="{{article.purchase_price|default:'0.00'}}" step="any" />
+                </div>
+            </div>
+            <div class="form-group row my-3">
+                <label for="image" class="col-sm-4 col-form-label col-form-label-sm">Upload Image</label>
+                <div class="col-sm-8">
+                    <input type="file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif, .bmp">
                 </div>
             </div>
         </div>
@@ -97,10 +110,8 @@
         </div>
     </div>
     <div class="mt-4 d-flex justify-content-end">
-        <button type="submit" class="btn btn-dark btn-sm"> 
-            {% if page == 'add-article' %} Save article
-            {% else %} Save changes 
-            {% endif %}
+        <button type="submit" class="btn btn-outline-primary"> 
+            Save changes 
         </button>
     </div>
 </form>
@@ -128,25 +139,6 @@
                 $('#id_description_de').val(germanTranslation);
             });
 
-        });
-
-        $('.submit-form').submit(function(event) {
-            event.preventDefault(); 
-            let formData = $(this).serialize(); 
-            let url = $(this).attr('action');
-            $.ajax({
-            type: 'POST',
-            url: url, 
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                $('#Modal').modal('hide');
-                alert(response.message);
-            },
-            error: function() {
-                alert('An error occurred');
-            }
-            });
         });
 
     });

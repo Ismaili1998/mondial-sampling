@@ -9,7 +9,7 @@ class ClientForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        exclude = ['created_at', 'updated_at']
+        exclude = ['created_at', 'updated_at', 'rank']
 
 class SupplierForm(forms.ModelForm):
     class Meta:

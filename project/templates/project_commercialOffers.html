@@ -5,6 +5,7 @@
             <th>{% trans "Offer Ref" %}</th>
             <th>{% trans "Print CO" %}</th>
             <th>{% trans "Print TO" %}</th>
+            <th>{% trans "Confirmation" %} </th>
             <th>{% trans "Action" %}</th>
         </tr>
     </thead>
@@ -27,6 +28,12 @@
                     <a href="#" class="text-info"
                         onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" offer.id %}')">
                         <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                    </a>
+                </td>
+                <td>
+                    <a href="#" class='text-primary'
+                        onclick="load_modal('Confirm this offer','{%  url "confirm-commercialOffer" offer.id %}')">
+                        Confirm offer
                     </a>
                 </td>
                 <td>

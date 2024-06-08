@@ -25,6 +25,7 @@ class Article(models.Model):
     hs_code =  models.CharField(max_length=150, null= True, blank= True)
     customs_description = models.TextField(blank=True, max_length=500, null= True)
     comment = models.TextField(blank=True, max_length=500, null= True)
+    image = models.ImageField(upload_to='article_images/', default=None, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, null= True)
     updated_at = models.DateTimeField(auto_now=True, null= True)
@@ -56,21 +57,25 @@ class Order(models.Model):
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
     margin = models.DecimalField(max_digits=6, decimal_places=2,  default=0)
 
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+
     class Meta:
         db_table = 'order'
-        ordering = ['-id']
+        ordering = ['created_at']
 
     def __str__(self):
         return "{0} of {1}".format(self.quantity, self.article.article_name)
 
     def get_total_selling(self):
-        return self.get_total_purchase() * (1 + self.margin / 100)
+        return self.get_total_purchase() * self.margin
     
     def get_total_purchase(self):
         return (self.purchase_price * self.quantity)
     
     def get_selling_price(self):
-        return (self.purchase_price *  (1 + self.margin / 100))
+        return self.purchase_price *  self.margin
     
     def get_description_by_client_lang(self):
         try:

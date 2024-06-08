@@ -20,12 +20,11 @@
                         {{ quoteRequest.request_nbr }}
                     </a>
                 </td>
-                <td>
+                <td class="pointer"
+                    role="button"
+                    onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
+                >
                     {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language|default:"No language" }})
-                    <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
-                        href="#"><i
-                        class="material-icons align-middle size-13 text-dark">visibility</i>
-                    </a>
                 </td>
                  <td>
                     {{ quoteRequest.created_at|date:'d-m-Y' }}

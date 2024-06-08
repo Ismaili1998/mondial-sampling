@@ -19,6 +19,23 @@
                     <input type="number" max="100" min="0" name="commission" placeholder="commission in %" class="form-control form-control-sm" required/>
                 </div>
             </div>
+            <div>
+                <!-- hidden inputs -->
+                <input type="hidden" name="project" value="{{ confirmedOffer.project.id }}" />
+                <input type="hidden" name="discount" value="{{ confirmedOffer.discount }}" />
+                <input type="hidden" name="shipping" value="{{ confirmedOffer.shipping.id }}" />
+                <input type="hidden" name="transport" value="{{ confirmedOffer.transport.id }}" />
+                <input type="hidden" name="destination" value="{{ confirmedOffer.destination.id }}" />
+                <input type="hidden" name="payment" value="{{ confirmedOffer.payment.id }}" />
+                <input type="hidden" name="payment_date" value="{{ confirmedOffer.payment_date|date:'Y-m-d' }}" />
+                <input type="hidden" name="delivery_time" value="{{ confirmedOffer.delivery_time|default:"" }}" />
+                <input type="hidden" name="delivery_time_unit" value="{{ confirmedOffer.delivery_time_unit.id }}" />
+                <input type="hidden" name="warranty_period" value="{{ confirmedOffer.warranty_period|default:"" }}" />
+                <input type="hidden" name="shipping_fee" value="{{ confirmedOffer.shipping_fee|default:"0.00" }}" />
+                <input type="hidden" name="transport_fee" value="{{ confirmedOffer.transport_fee|default:"0.00" }}" />
+                <input type="hidden" name="currency" value="{{ confirmedOffer.currency.id }}" />
+                <input type="hidden" name="local_contact" value="{{ confirmedOffer.local_contact }}" />
+            </div>
             <div class="mt-2">
                 <button class="btn btn-sm btn-outline-success">
                        Confirm this offer

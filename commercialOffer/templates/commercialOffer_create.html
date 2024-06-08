@@ -8,7 +8,7 @@
             <div class="form-group row col-md-4 col-lg-3">
                 <label for="global-margin" class="col-sm-4 col-form-label col-form-label-sm"> <strong> Global Margin </strong></label>
                 <div class="col-sm-8">
-                    <input type="number"  placeholder="margin in %" name="margin" class="form-control form-control-sm"
+                    <input type="number" step="0.01" placeholder="margin in %" name="margin" class="form-control form-control-sm"
                         id="global-margin" />
                 </div>
             </div>
@@ -29,15 +29,15 @@
                         <th>Article nbr</th>
                         <th>Description</th>
                         <th>Purchase price </th>
-                        <th>Qty</th>
                         <th>Margin</th>
-                        <th>Unit</th>
                         <th>Selling price </th>
+                        <th>Qty</th>
+                        <th>Unit</th>
                         <th>Total Purchase </th>
                         <th>Total Selling </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-nowrap">
                     {% for article in articles %}
                     <tr>
                         <input type="hidden" name="article" value="{{ article.id }}">
@@ -57,26 +57,28 @@
                         <td class="form-group">
                             <input type="number" name="purchase-price" 
                             class="purchase-price form-control form-control-sm"
+                            step="0.01"
                             placeholder="purchase price"
                             value = "{{ article.purchase_price }}"
                             required
                             />
                         </td>
                         <td class="form-group">
-                            <input type="number" name="quantity" 
-                            value = "1"
-                            required
-                            class="article-quantity form-control form-control-sm"/>
-                        </td>
-                        <td class="form-group">
-                            <input type="number" name="article-margin" 
+                            <input type="number" name="article-margin"
+                            step="0.01"
                             class="article-margin form-control form-control-sm"
                             required
                             placeholder="margin in %"
                             value="0"/>
                         </td>
-                        <td> {{article.article_unit|default:""}} </td>
                         <td class="selling-price "> </td>
+                        <td class="form-group">
+                            <input type="number" name="quantity" 
+                            value = "1"
+                            required
+                            class="article-quantity form-control form-control-sm"/>
+                        </td>
+                        <td> {{article.article_unit|default:""}} </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
                     </tr>
@@ -258,12 +260,13 @@
     </form>
 </div>
 <script>   
+    
 $(document).ready(function () {
 
     let isFirstExecution = true;
     function set_margin() {
         let margin = parseFloat($('#global-margin').val());
-        if (margin >= 0 && margin <= 100) {
+        if (margin >= 0 && margin <= 2) {
             $('#offer-articles-table tbody tr').each(function () {
                 row = $(this);
                 articleMarginInput = row.find('.article-margin');
@@ -283,8 +286,18 @@ $(document).ready(function () {
                 row = $(this);
                 articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
                 purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
-                margin = (row.find('.article-margin').val() / 100) || 0;
-                sellingPrice = purchasePrice + (margin * purchasePrice);
+                margin = parseFloat(row.find('.article-margin').val()) || 0;
+                if (margin > 2 )
+                {
+                    margin = 2;
+                    row.find('.article-margin').val(2);
+                }
+                else if (margin < 0)
+                {
+                    margin = 0 ;
+                    row.find('.article-margin').val(0);
+                }
+                sellingPrice = margin * purchasePrice;
                 totalSelling = sellingPrice * articleQuantity;
                 sum_total_selling += totalSelling;
 

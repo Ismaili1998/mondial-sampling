@@ -164,8 +164,11 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-4 d-flex justify-content-end">
+            <div class="mt-4 d-flex justify-content-end gap-2">
                 <button class="btn btn-sm btn-dark" type="submit"> Save changes </button>
+                <a href="#" onclick="load_modal('Generate pdf','{% url 'print-supplierCommand' supplierCommand.id %}')" class="d-flex align-items-center">
+                    <i class="material-icons text-dark">picture_as_pdf</i>
+                </a>
             </div>
     </div>
 </form>

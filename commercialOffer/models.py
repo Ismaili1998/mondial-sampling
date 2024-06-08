@@ -70,6 +70,7 @@ class CommercialOffer(AbstractCommercialOffer):
     def __str__(self):
         return self.offer_nbr
     
+    
 class Confirmed_commercialOffer(AbstractCommercialOffer):
     confirmation_nbr = models.CharField(max_length=100, unique=True)
     commission = models.DecimalField(max_digits=4, decimal_places=2)
@@ -79,7 +80,13 @@ class Confirmed_commercialOffer(AbstractCommercialOffer):
         ordering = ['-rank']
 
     def get_commission(self):
-        commission = self.get_total_selling_withFee() * self.commission
+        grand_total = self.get_total_selling_withFee()
+        commission = grand_total * (1 + (self.commission * grand_total / 100))
         return round(commission, 2)
     
-  
+    def clone_orders_from_commercialOffer(self, commercialOffer):
+        orders = commercialOffer.order_set.all()
+        for order in orders:
+            order.commercialOffer = order.id = None 
+            order.confirmed_commercialOffer = self
+            order.save()

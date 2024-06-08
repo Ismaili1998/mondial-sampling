@@ -7,10 +7,10 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group row">
-                    <label for="global-margin" class="col-sm-2 col-form-label col-form-label-sm"><strong>Global Margin</strong></label>
+                    <label for="global-margin" class="col-sm-3 col-form-label col-form-label-sm"> Global Margin </label>
                     <div class="col-sm-8">
                         <div class="input-group">
-                            <input type="text" name="margin" id="global-margin" value="" placeholder="margin in %"
+                            <input type="number" name="margin" step="0.01" id="global-margin" value="" placeholder="margin in %"
                                 class="form-control form-control-sm" placeholder="Global Margin in %" />
                             <div class="input-group-append">
                                 <a href="javascript:void(0)" class="btn btn-sm btn-margin" type="submit">Apply margin</a>
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-6 form-group row">
-                <label for="client_nbr" class="col-sm-2 col-form-label col-form-label-sm"> 
+                <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm"> 
                     <strong> Client Ref </strong> 
                 </label>
                 <div class="col-sm-8">
@@ -29,23 +29,23 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-2">
+        <div class="row mt-3">
             <table class="table table-sm bg-white size-13" id="offer-articles-table">
                 <thead class="text-left size-11">
                     <tr>
                         <th>Article nbr</th>
                         <th>Description</th>
                         <th>Purchase price </th>
-                        <th>Qty</th>
                         <th>Margin</th>
-                        <th>Unit</th>
                         <th>Selling price </th>
+                        <th>Qty</th>
+                        <th>Unit</th>
                         <th>Total Purchase</th>
                         <th>Total Selling</th>
                         <th> </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-nowrap">
                     {% for order in commercialOffer.order_set.all %}
                     <tr>
                         <td class="article-id" data-article-id="{{ article.id }}">
@@ -65,23 +65,24 @@
                             class="purchase-price form-control form-control-sm"
                             placeholder="purchase price"
                             required
+                            step="0.01"
                             value="{{order.purchase_price}}"/>
                         </td>
+                        <td class="form-group">
+                            <input type="number" name="article-margin" 
+                            class="article-margin form-control form-control-sm"
+                            required
+                            step="0.01"
+                            placeholder="margin in %"
+                            value="{{order.margin}}"/>
+                        </td>
+                        <td class="selling-price "> </td>
                         <td class="form-group">
                             <input type="number" name="quantity" 
                             class="article-quantity form-control form-control-sm"
                             required
                             value="{{order.quantity}}"/>
-                        </td>
-                        <td class="form-group">
-                            <input type="number" name="article-margin" 
-                            class="article-margin form-control form-control-sm"
-                            placeholder="margin in %"
-                            required
-                            value="{{order.margin}}"/>
-                        </td>
                         <td> {{order.article.article_unit}} </td>
-                        <td class="selling-price "> </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
                         <td> <a href="#" class="btn btn-sm btn-remove"
@@ -303,7 +304,7 @@ $(document).ready(function () {
 
     function set_margin() {
         let margin = parseFloat($('#global-margin').val());
-        if (margin >= 0 && margin <= 100) {
+        if (margin >= 0 && margin <= 2) {
             $('#offer-articles-table tbody tr').each(function () {
                 row = $(this);
                 articleMarginInput = row.find('.article-margin');
@@ -323,8 +324,18 @@ $(document).ready(function () {
                 row = $(this);
                 articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
                 purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
-                margin = (row.find('.article-margin').val() / 100) || 0;
-                sellingPrice = purchasePrice + (margin * purchasePrice);
+                margin = parseFloat(row.find('.article-margin').val()) || 0;
+                if (margin > 2 )
+                {
+                    margin = 2;
+                    row.find('.article-margin').val(2);
+                }
+                else if (margin < 0)
+                {
+                    margin = 0 ;
+                    row.find('.article-margin').val(0);
+                }
+                sellingPrice = (margin * purchasePrice);
                 totalSelling = sellingPrice * articleQuantity;
                 sum_total_selling += totalSelling;
 
@@ -437,7 +448,7 @@ $(document).ready(function () {
         // Join the integer and decimal parts with a comma
         var formattedNumber = parts.join(",");
         
-        return formattedNumber + " {{commercialOffer.currency|default:''}}";
+        return formattedNumber +" {{commercialOffer.currency|default:''}}";
     }
 
     $('tfoot .btn').click(function(event) {

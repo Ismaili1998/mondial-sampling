@@ -1,5 +1,17 @@
-<div class="row">
+<form class="submit-form" 
+    action="{% url 'update-article' article.id %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
         <div class="col-md-6">
+            {% if not article %}
+            <div class="form-group row mt-2">
+                <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Add to Project </label>
+                <div class="col-sm-4">
+                    <input type="checkbox"  checked class="form-check-input" name="project"
+                        value="{{ project.id }}" step="any" />
+                </div>
+            </div>
+            {% endif %}
             <div class="form-group row mt-2">
                 <label for="id_article_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Article number</label>
                 <div class="col-sm-8">
@@ -10,8 +22,14 @@
             <div class="form-group row mt-2">
                 <label for="id_article_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
                 <div class="col-sm-8">
-                      <input required type="text" class="form-control form-control-sm"
-                        id="id_article_unit" value="{{article.article_unit|default:'0.00'}}" step="any" />
+                   <select required class="form-select form-select-sm" id="id_article_unit" name="article_unit" aria-label=".form-select-sm example">
+                        <option value=""> Chose an unit </option>
+                        {% for article_unit in article_units %}
+                        <option value="{{ article_unit.id }}" {% if article.article_unit.id == article_unit.id %} selected {% endif%}>
+                            {{ article_unit|default:'' }}
+                        </option>
+                        {% endfor %}     
+                    </select>
                 </div>
             </div>
             <div class="form-group row mt-2">
@@ -21,6 +39,19 @@
                         id="id_purchase_price" value="{{article.purchase_price|default:'0.00'}}" step="any" />
                 </div>
             </div>
+            <div class="form-group row my-3">
+                <label for="image" class="col-sm-4 col-form-label col-form-label-sm">Upload Image</label>
+                <div class="col-sm-8">
+                    <input type="file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif, .bmp">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-4 offset-4">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="Uploaded Image" class="img-thumbnail" style="width:85px;">
+                    {% endif %}
+                </div>
+            </div>                   
         </div>
         <div class="col-md-6">
             <fieldset class="border p-1 mt-2 rounded">
@@ -87,4 +118,66 @@
             </div>
         </div>
     </div>
-</div>
+    <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-outline-primary"> 
+            Save changes 
+        </button>
+    </div>
+</form>
+<script>
+
+    $(document).ready(function () {
+        $('#translate').click(function() {
+            let frenchText = $('#id_description_fr').val();
+            
+            if (frenchText.length == 0)
+            {
+                $('#id_description_en').val('');
+                $('#id_description_de').val('');
+                return     
+            }
+
+            // Make an API call to translate the French word to English
+            $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|en', function (response) {
+                var englishTranslation = response.responseData.translatedText;
+                $('#id_description_en').val(englishTranslation);
+            });
+            // Make an API call to translate the French word to German
+            $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|de', function (response) {
+                var germanTranslation = response.responseData.translatedText;
+                $('#id_description_de').val(germanTranslation);
+            });
+
+        });
+
+        $('.submit-form').submit(function(event) {
+            event.preventDefault();
+            let form = $(this)[0]; // Get the form element
+            let formData = new FormData(form); // Create a FormData object
+        
+            let url = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                processData: false, // Prevent jQuery from processing the data
+                contentType: false, // Prevent jQuery from setting content type
+                dataType: 'json',
+                success: function(response) {
+                    $('#Modal').modal('hide');
+                    if(response.success) {
+                        alert(response.success);
+                    } else {
+                        alert(response.error);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred');
+                }
+            });
+        });
+        
+
+
+    });
+</script>

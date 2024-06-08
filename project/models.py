@@ -25,9 +25,9 @@ class Language(models.Model):
 
 class Representative(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(null= True, blank=True)
-    fax = models.CharField(max_length=50, blank=True, null= True)
-    phone_number = models.CharField(max_length=40, blank=True, null= True)
+    email = models.EmailField(null= True, blank=True, default=None)
+    fax = models.CharField(max_length=50, blank=True, null= True, default=None)
+    phone_number = models.CharField(max_length=40, blank=True, null= True, default=None)
 
     class Meta:
         db_table = 'representative'
@@ -38,8 +38,8 @@ class Representative(models.Model):
     
 class Buyer(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(null= True, blank=True)
-    phone_number = models.CharField(max_length=40, blank=True, null= True)
+    email = models.EmailField(null= True, blank=True, default=None)
+    phone_number = models.CharField(max_length=40, blank=True, null= True, default=None)
     
     class Meta:
         db_table = 'buyer'
@@ -82,6 +82,7 @@ class Project(models.Model):
     project_nbr = models.CharField(max_length=30, unique=True)
     project_name = models.CharField(max_length=150, null= True)
     our_ref = models.CharField(max_length=50,null=True)
+    rank = models.IntegerField(null=True, default=None)
     #optional fields 
     client_ref = models.CharField(max_length=50,null=True, blank=True)
     project_description = models.TextField(blank=True,max_length=500, null= True)

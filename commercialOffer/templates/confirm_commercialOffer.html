@@ -19,6 +19,23 @@
                     <input type="number" max="100" min="0" name="commission" placeholder="commission in %" class="form-control form-control-sm" required/>
                 </div>
             </div>
+            <!-- hidden inputs -->
+            <div>
+                <input type="hidden" name="project" value="{{ commercialOffer.project.id }}" />
+                <input type="hidden" name="discount" value="{{ commercialOffer.discount }}" />
+                <input type="hidden" name="shipping" value="{{ commercialOffer.shipping.id }}" />
+                <input type="hidden" name="transport" value="{{ commercialOffer.transport.id }}" />
+                <input type="hidden" name="destination" value="{{ commercialOffer.destination.id }}" />
+                <input type="hidden" name="payment" value="{{ commercialOffer.payment.id }}" />
+                <input type="hidden" name="payment_date" value="{{ commercialOffer.payment_date|date:'Y-m-d' }}" />
+                <input type="hidden" name="delivery_time" value="{{ commercialOffer.delivery_time|default:"" }}" />
+                <input type="hidden" name="delivery_time_unit" value="{{ commercialOffer.delivery_time_unit.id }}" />
+                <input type="hidden" name="warranty_period" value="{{ commercialOffer.warranty_period|default:"" }}" />
+                <input type="hidden" name="shipping_fee" value="{{ commercialOffer.shipping_fee|default:"0.00" }}" />
+                <input type="hidden" name="transport_fee" value="{{ commercialOffer.transport_fee|default:"0.00" }}" />
+                <input type="hidden" name="currency" value="{{ commercialOffer.currency.id }}" />
+                <input type="hidden" name="local_contact" value="{{ commercialOffer.local_contact }}" />
+            </div>
             <div class="mt-2">
                 <button class="btn btn-sm btn-outline-success">
                        Confirm this offer
