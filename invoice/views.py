@@ -23,9 +23,9 @@ def create_invoice(request, offer_pk):
     confirmedOffer = get_object_or_404(Confirmed_commercialOffer, pk=offer_pk)
     project = confirmedOffer.project
     if request.method == 'POST':
-        invoice = InvoiceForm(request.POST)
-        if  invoice.is_valid():
-            invoice = invoice.save(commit=False)
+        form = InvoiceForm(request.POST)
+        if  form.is_valid():
+            invoice = form.save(commit=False)
             invoices = project.invoice_set.all()
             rank = get_rank(invoices)
             invoice.invoice_nbr = "{0}/TN{1}-{2}".format(project.project_nbr, rank, project.client.client_nbr)
@@ -34,7 +34,7 @@ def create_invoice(request, offer_pk):
             invoice.clone_orders_from_confirmedOffer(confirmedOffer)
             messages.success(request, 'Invoice has been created successfully !')
         else:
-            messages.error(request, 'An error occured, plase retry !')
+            messages.error(request, get_message_error(form))
         return redirect('project-detail', project.id)
     context = {"confirmedOffer":confirmedOffer}
     return render(request, 'create_invoice.html', context)
@@ -134,7 +134,7 @@ def update_invoice(request, pk):
             messages.success(request, 'Invoice has been created successfully')
         else:
             messages.error(request, get_message_error(form))
-        return redirect('project-detail',invoice.project.id)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     return render(request, 'invoice_edit.html',  context=invoice_detail(invoice))
 
 def invoice_detail(invoice):

@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.views.static import serve
 from django.http import Http404
-from django.contrib.auth.decorators import login_required
 from order.models import Article 
 import os 
 from datetime import datetime
@@ -25,7 +24,6 @@ def get_project_nbr():
         project_nbr = f'{P_PREFIX}{current_year}{last_rank:04d}'
     return last_rank, project_nbr
 
-@login_required(login_url='sign-in')
 def project_home(request):
     _, project_nbr  = get_project_nbr()
     representatives = Representative.objects.all()
@@ -158,14 +156,6 @@ def remove_file(request, file_pk):
         except:
             messages.error(request,'Error occured !')
         return redirect('project-detail',project_file.project.id)
-       
-
-def client_detail(request, pk):
-    client = get_object_or_404(Client, pk=pk)
-    countries = Country.objects.all()
-    page_name = 'update-client'
-    context = {'client':client,'countries':countries,'page':page_name}
-    return render(request, 'client.html', context)
 
 def create_client(request):
     if request.method == 'POST':
@@ -303,23 +293,10 @@ def get_suppliersByKeyWord(request):
     keyword = request.GET.get('keyword', '')
     # Perform the search query using the keyword
     supplier_data = Supplier.objects.filter(supplier_name__icontains=keyword) \
-    .values_list('supplier_name', flat=True)[:20]
+    .values('id','supplier_name','country')[:10]
     # Return the suppliers' data as JSON response
     return JsonResponse({'suppliers': list(supplier_data)})
 
-
-def get_supplierDetailByKeyWord(request):
-    keyword = request.GET.get('keyword', '')
-    # Perform the search query using the keyword
-    suppliers_data = Supplier.objects.filter(supplier_name__icontains=keyword)[:10]
-    suppliers_list = []
-    for supplier in suppliers_data:
-        suppliers_list.append({
-            'id':supplier.id,
-            'name':supplier.supplier_name,
-            'country': supplier.country.country_name_fr if supplier.country else ''
-        })
-    return JsonResponse({'suppliers': suppliers_list})
 
 @csrf_exempt
 def get_buyersByKeyWord(request):
@@ -332,7 +309,6 @@ def create_buyer(request):
         form = BuyerForm(request.POST)
         if form.is_valid():
             buyer = form.save()
-            print(buyer)
             buyer = {
                 'id': buyer.id,
                 'name': buyer.name,

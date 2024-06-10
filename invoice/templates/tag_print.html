@@ -10,23 +10,22 @@
                 </div>
             </div>
         </div>
-        <!-- Contact section -->
+       <!-- Contact section -->
         <div class="mt-4 d-flex justify-content-between">
-            <div>
-                <h6>
-                    {{ translations.client_ref }}: <strong> {{ invoice.client_nbr }} </strong><br />
-                    {{ translations.invoice }}: <strong> {{ invoice.invoice_nbr }} </strong> <br />
-                    {{ translations.project_nbr }}: <strong> {{ invoice.project.project_nbr }} </strong>
-                </h6>
-                <div class="destination-info">
-                    <strong> {{ translations.destination }} </strong>
-                    <p> {{ invoice.project.client|default:"" }} <br />
-                        {{ invoice.project.client.address|default:"" }} <br />
-                        {{ invoice.project.client.country }} <br />
-                        {{ invoice.project.client.phone_number1|default:"" }} <br />
-                        {{ invoice.project.client.phone_number2|default:"" }} <br />
-                    </p>
-                </div>
+            <h6>
+                {{ translations.client_ref }}: <strong> {{ invoice.client_nbr }} </strong><br />
+                {{ translations.invoice }}: <strong> {{ invoice.invoice_nbr }} </strong><br />
+                {{ translations.project_nbr }}: <strong> {{ invoice.project.project_nbr }} </strong>
+            </h6>
+            <div class="destination-info">
+                <strong> {{ translations.destination }} </strong>
+                <p>
+                    {{ invoice.project.client|default:"" }}<br />
+                    {{ invoice.project.client.address|default:"" }}<br />
+                    {{ invoice.project.client.country }}<br />
+                    {{ invoice.project.client.phone_number1|default:"" }}<br />
+                    {{ invoice.project.client.phone_number2|default:"" }}
+                </p>
             </div>
         </div>
     </div>

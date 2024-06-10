@@ -1,5 +1,6 @@
 {% load static %}
 {% load format_numbers %}
+{% load i18n %}
 <div class="container">
     <div class="item-to-print font-arial" contentEditable="true">
         <!-- Header section -->
@@ -16,9 +17,9 @@
                 <p>
                     {{ commercialOffer.project.client }} <br/>
                     {{ commercialOffer.project.client.address|default:"" }} <br/>
-                    Phone :{{ commercialOffer.project.client.phone_number1|default:"" }} <br/>
-                    Email :{{ commercialOffer.project.client.email1|default:"" }} <br/>
-                    Fax :{{ commercialOffer.project.client.fax|default:"" }}
+                    Phone: {{ commercialOffer.project.client.phone_number1|default:"" }} <br/>
+                    Email: {{ commercialOffer.project.client.email1|default:"" }} <br/>
+                    Fax: {{ commercialOffer.project.client.fax|default:"" }}
                 </p>
             </div>
             <div>

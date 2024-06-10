@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 {% load format_numbers %}
 <div class="container-fluid">
     <div class="item-to-print font-arial" contenteditable="true">
@@ -13,9 +14,9 @@
             <div class="size-12">
                 {{ quoteRequest.supplier }} <br/>
                 {{ quoteRequest.supplier.country.country_name_fr|default:"" }} <br/>
-                Phone :{{ quoteRequest.supplier.phone_number|default:"" }} <br/>
-                Email :{{ quoteRequest.supplier.email|default:"" }} <br/>
-                Fax :{{ quoteRequest.supplier.fax|default:"" }}
+                Phone: {{ quoteRequest.supplier.phone_number|default:"" }} <br/>
+                Email: {{ quoteRequest.supplier.email|default:"" }} <br/>
+                Fax: {{ quoteRequest.supplier.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-2">

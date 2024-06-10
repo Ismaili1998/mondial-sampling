@@ -1,4 +1,6 @@
 {% load format_numbers %}
+{% load i18n %}
+{% load l10n %}
 <div class="container-fluid">
     <form
         class="commercial-offer-form"
@@ -26,7 +28,7 @@
                 </label>
                 <div class="col-md-3">
                     <input type="number" required placeholder="commission in %" name="commission"
-                        class="form-control form-control-sm" value="{{ confirmedOffer.commission }}" id="commission" />
+                        class="form-control form-control-sm" value="{{ confirmedOffer.commission|unlocalize }}" id="commission" />
                 </div>
                 <div class="col-md-6">
                     <input type="text" disabled placeholder="Amount" class="form-control form-control-sm"
@@ -78,7 +80,7 @@
                             class="purchase-price form-control form-control-sm"
                             placeholder="purchase price"
                             required
-                            value="{{order.purchase_price}}"/>
+                            value="{{order.purchase_price|unlocalize}}"/>
                         </td>
                         <td class="form-group">
                             <input type="number" name="article-margin"
@@ -86,14 +88,14 @@
                             class="article-margin form-control form-control-sm"
                             placeholder="margin in %"
                             required
-                            value="{{order.margin}}"/>
+                            value="{{order.margin|unlocalize}}"/>
                         </td>
                         <td class="selling-price "> </td>
                         <td class="form-group">
                             <input type="number" name="quantity" 
                             class="article-quantity form-control form-control-sm"
                             required
-                            value="{{order.quantity}}"/>
+                            value="{{order.quantity|unlocalize}}"/>
                         </td>
                         <td> {{order.article.article_unit}} </td>
                         <td class="total-purchase"></td>
@@ -131,7 +133,7 @@
                         <input type="number" name="discount" class="form-control form-control-sm"
                             placeholder = "discount in %" id="exceptional-discount"
                             required
-                            value="{{ confirmedOffer.discount }}" />
+                            value="{{ confirmedOffer.discount|unlocalize }}" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -236,14 +238,14 @@
                     <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="shipping_fee" class="form-control form-control-sm"
-                            id="shipping_fee" value="{{confirmedOffer.shipping_fee|default:"0.00"}}" step="any" />
+                            id="shipping_fee" value="{{confirmedOffer.shipping_fee|unlocalize}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
                     <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="transport_fee" class="form-control form-control-sm"
-                            id="transport_fee" value="{{confirmedOffer.transport_fee|default:"0.00"}}" step="any" />
+                            id="transport_fee" value="{{confirmedOffer.transport_fee|unlocalize}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -267,7 +269,7 @@
                     </div>
                 </div>
                 <div class="form-group row mt-2">
-                    <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> date CCDE: </label>
+                    <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> {% trans "date CCDE" %} </label>
                     <div class="col-sm-4">
                         {{ confirmedOffer.created_at|date:'d-m-Y' }}
                     </div>
@@ -280,7 +282,11 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5 d-flex justify-content-end">
+            <div class="mt-5 d-flex justify-content-end gap-4">
+                <a href="#" class="btn btn-outline-dark"
+                    onclick="load_modal('Generate pdf','{%  url "print-confirmedOffer" confirmedOffer.id %}')">
+                    {% trans 'Download' %} <i class="material-icons align-middle">  download </i>
+                </a>
                 <button class="btn btn-sm btn-dark" type="submit"> Save changes </button>
             </div>
     </form>

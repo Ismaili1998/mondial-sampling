@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load l10n %}
 {% load format_numbers %}
 <div class="container">
     <div class="item-to-print font-arial" contentEditable="true">
@@ -16,9 +17,9 @@
             <div class="size-13">
                 {{ invoice.project.client }} <br />
                 {{ invoice.project.client.address|default:"" }} <br />
-                Phone :{{ invoice.project.client.phone_number1|default:"" }} <br />
-                Email :{{ invoice.project.client.email1|default:"" }} <br />
-                Fax :{{ invoice.project.client.fax|default:"" }}
+                Phone: {{ invoice.project.client.phone_number1|default:"" }} <br />
+                Email: {{ invoice.project.client.email1|default:"" }} <br />
+                Fax: {{ invoice.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -42,13 +43,19 @@
                 </p>
             </div>
         </div>
-        <div class="row">
+        <div class="row size-13">
             <strong>  {{ translations.our_bank }}: </strong>
-            <strong class="size-13">
-                HASPA {{ bank_info.haspa }} 
-                IBAN: {{ bank_info.iban }} 
-                SWIFT/BIC: {{ bank_info.swift }}
-            </strong>
+            <div class="d-flex justify-content-start gap-2">
+                <div>
+                    <strong>HASPA:</strong> {{ bank_info.haspa }}
+                </div>
+                <div>
+                    <strong>IBAN:</strong> {{ bank_info.iban }}
+                </div>
+                <div>
+                    <strong>SWIFT/BIC:</strong> {{ bank_info.swift }}
+                </div>
+            </div>
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
@@ -97,7 +104,7 @@
                     </tbody>
                 </table>
                 <table class="table table-sm table-borderless">
-                    <tbody class="size-13">
+                    <tbody class="size-13 text-nowrap" >
                         <tr>
                             <td colspan="4">
                                 {{translations.payment_date}}: {{ invoice.payment_date|date:'d.m.Y' }}
@@ -108,7 +115,7 @@
                             <td></td>
                             <td>
                                 {{ invoice.get_total_selling|thousand_separator }} 
-                                {{invoice.currency|default:''}}
+                                {{invoice.currency|default:""}}
                             </td>
                         </tr>
                         {% if  invoice.discount %}
@@ -121,7 +128,7 @@
                             <td></td>
                             <td>  
                                 {{ invoice.get_discount_price|thousand_separator }}
-                                {{invoice.currency|default:''}}
+                                {{invoice.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -134,7 +141,7 @@
                             <td></td>
                             <td>
                                 {{ invoice.get_discounted_price|thousand_separator }}
-                                {{invoice.currency|default:''}}
+                                {{invoice.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -145,10 +152,10 @@
                             <td class="size-14" >
                                 {{translations.incoterm}}:
                             </td>
-                            <td> {{invoice.shipping }} </td>
+                            <td> {{invoice.shippingd|default:"" }} </td>
                             <td>
                                 {{ invoice.shipping_fee|thousand_separator }}
-                                {{ invoice.currency|default:''}}
+                                {{ invoice.currency|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -158,10 +165,10 @@
                             <td class="size-14" >
                                 {{translations.transportation}}:
                             </td>
-                            <td> {{invoice.transport}} </td>
+                            <td> {{invoice.transport|default:""}} </td>
                             <td>
                                 {{ invoice.transport_fee|thousand_separator }}
-                                {{invoice.currency|default:''}}
+                                {{invoice.currenc|default:""}}
                             </td>
                         </tr>
                         {% endif %}
@@ -171,18 +178,18 @@
                                 {{translations.total_price}}:
                             </td>
                             <td>
-                                {{ invoice.destination }}
+                                {{ invoice.destination|default:"" }}
                             </td>
                             <td>
                                 {{ invoice.get_total_selling_withFee|thousand_separator }}
-                                {{invoice.currency|default:''}}
+                                {{invoice.currency|default:""}}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ invoice.delivery_time_interval }} {{ invoice.delivery_time_unit }}
+                        {{ invoice.delivery_time_interval|default:"" }} {{ invoice.delivery_time_unit|default:"" }}
                         <br/> 
                         {{translations.payment_mode}}: {{ invoice.payment }}
                     </p>

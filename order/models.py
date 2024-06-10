@@ -63,7 +63,7 @@ class Order(models.Model):
 
     class Meta:
         db_table = 'order'
-        ordering = ['created_at']
+        ordering = ['-created_at']
 
     def __str__(self):
         return "{0} of {1}".format(self.quantity, self.article.article_name)

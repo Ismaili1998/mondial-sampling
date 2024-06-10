@@ -213,7 +213,7 @@ def print_technicalOffer(request, offer_pk):
     context = {'commercialOffer':commercialOffer, 'translations':filtered_translations}
     return render(request, 'technicalOffer_print.html', context)
 
-def print_confirmedOrder(request, offer_pk):
+def print_confirmedOffer(request, offer_pk):
     confirmedOffer = get_object_or_404(Confirmed_commercialOffer, pk=offer_pk)
     try:
         language_code = confirmedOffer.project.client.language.language_code 

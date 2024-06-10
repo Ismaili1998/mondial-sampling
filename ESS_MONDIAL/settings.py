@@ -56,11 +56,16 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'login_required.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
+LOGIN_URL = 'login' 
+LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
+    'login',
+]
 
 ROOT_URLCONF = 'ESS_MONDIAL.urls'
 

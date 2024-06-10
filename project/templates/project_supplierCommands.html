@@ -4,6 +4,7 @@
         <tr>
             <th>{% trans "Supplier command Ref" %}</th>
             <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Date" %}</th>
             <th>{% trans "Print" %}</th>
             <th>{% trans "Action " %}</th>
         </tr>
@@ -21,6 +22,9 @@
                 <td role="button"
                     onclick="load_modal('Update supplier','{%  url "update-supplier"  supplierCommand.supplier.id %}')">
                     {{ supplierCommand.supplier }}/({{ supplierCommand.supplier.language|default:"No language" }})
+                </td>
+                <td>
+                    {{ supplierCommand.created_at|date:'d-m-Y' }}
                 </td>
                 <td>
                     <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  supplierCommand.id %}')"

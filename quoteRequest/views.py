@@ -78,6 +78,7 @@ def update_orders(order_ids, quantities, purchase_prices):
                 order = get_object_or_404(Order, id=order_id)
                 order.quantity = quantity
                 order.purchase_price = purchase_price
+                print(order.id)
                 order.save()
 
 def update_quoteRequest(request,pk):
@@ -92,7 +93,7 @@ def update_quoteRequest(request,pk):
         except:
                 messages.error(request, 'An error occured please retry !')
         return redirect(request.META.get('HTTP_REFERER', '/'))
-    return render(request, 'quoteRequest_edit.html',context = quoteRequest_detail(quoteRequest))
+    return render(request, 'quoteRequest_edit.html',context=quoteRequest_detail(quoteRequest))
  
 def print_quoteRequest(request, request_pk):
     quoteRequest = get_object_or_404(QuoteRequest, pk=request_pk)

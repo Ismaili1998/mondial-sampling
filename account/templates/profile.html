@@ -2,48 +2,62 @@
     <fieldset class="border p-1 mt-2 rounded">
         <form method="POST" class="submit-form" action="{% url 'update-profile' %}">
             {% csrf_token %}
-            <h5> Account Infos </h5>
+            <h5>Account Information</h5>
             <div class="form-group row">
                 <label for="id_first_name" class="col-sm-4 col-form-label col-form-label-sm">First Name</label>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <input type="text" name="first_name" class="form-control form-control-sm" id="id_first_name"
-                        value="{{user.first_name}}" min="2" max="20"/>
+                        value="{{ user.first_name|default:'' }}" placeholder="type your first name" required minlength="2" maxlength="20">
                 </div>
             </div>
             <div class="form-group row mt-3">
                 <label for="id_last_name" class="col-sm-4 col-form-label col-form-label-sm">Last Name</label>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <input type="text" name="last_name" class="form-control form-control-sm" id="id_last_name"
-                        value="{{user.last_name}}" min="2" max="20"/>
+                        value="{{ user.last_name|default:'' }}" placeholder="type your last name" required minlength="2" maxlength="20">
                 </div>
             </div>
             <div class="form-group row mt-3">
                 <label for="id_email" class="col-sm-4 col-form-label col-form-label-sm">Email</label>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <input type="email" name="email" class="form-control form-control-sm" id="id_email"
-                        value="{{user.email}}" min="2" max="20"/>
+                        placeholder="type your email" value="{{ user.email|default:'' }}" required>
                 </div>
             </div>
-            <button class="btn btn-sm btn-dark mt-4" type="submit"> Update profile </button>
+            <div class="form-group row mt-3">
+                <label for="id_phone_number" class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
+                <div class="col-md-6">
+                    <input type="text" name="phone_number" class="form-control form-control-sm" id="id_phone_number"
+                        placeholder="type your phone_number" value="{{ user.phone_number|default:'' }}" required>
+                </div>
+            </div>
+            <div class="form-group row mt-3">
+                <label for="id_fax" class="col-sm-4 col-form-label col-form-label-sm">Fax</label>
+                <div class="col-md-6">
+                    <input type="text" name="fax" class="form-control form-control-sm" id="id_fax"
+                        placeholder="type your fax" value="{{ user.fax|default:'' }}" required>
+                </div>
+            </div>
+            <button class="btn btn-sm btn-outline-primary mt-4" type="submit">Update Profile</button>
         </form>
     </fieldset>
     <fieldset class="border p-1 mt-2 rounded">
         <form method="POST" class="submit-form" action="{% url 'update-password' %}">
-            {%  csrf_token %}
-            <h5> Change your password </h5>
+            {% csrf_token %}
+            <h5>Change your Password</h5>
             <div class="form-group row mt-3">
                 <label for="id_password1" class="col-sm-4 col-form-label col-form-label-sm">New Password</label>
-                <div class="col-md-4">
-                    <input type="password" name="password1" class="form-control form-control-sm" id="id_password1" min="8" max="20"/>
+                <div class="col-md-6">
+                    <input type="password" placeholder="type your password" name="password1" class="form-control form-control-sm" id="id_password1" required minlength="8" maxlength="20">
                 </div>
             </div>
             <div class="form-group row mt-3">
                 <label for="id_password2" class="col-sm-4 col-form-label col-form-label-sm">Confirm Password</label>
-                <div class="col-md-4">
-                    <input type="password" name="password2" class="form-control form-control-sm" id="id_password2" min="8" max="20"/>
+                <div class="col-md-6">
+                    <input type="password" placeholder="retype your password" name="password2" class="form-control form-control-sm" id="id_password2" required minlength="8" maxlength="20">
                 </div>
             </div>
-            <button class="btn btn-sm btn-dark mt-4" type="submit"> Change password </button>
+            <button class="btn btn-sm btn-outline-primary mt-4" type="submit">Change Password</button>
         </form>
     </fieldset>
 </div>
@@ -59,7 +73,6 @@
             data: formData,
             dataType: 'json',
             success: function(response) {
-                $('#Modal').modal('hide');
                 alert(response.message);
             },
             error: function() {

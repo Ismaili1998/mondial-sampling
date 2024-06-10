@@ -1,4 +1,6 @@
 {% load format_numbers %}
+{% load i18n %}
+{% load l10n %}
 <form method="POST" action="{% url "update-supplierCommand" supplierCommand.id %}">
     {% csrf_token %}
     <div class="row">
@@ -38,7 +40,7 @@
                             class="purchase-price form-control form-control-sm" 
                             required
                             placeholder="purchase price"
-                            value="{{order.purchase_price}}"/>
+                            value="{{order.purchase_price|unlocalize}}"/>
                         </td>
                         <td> 
                             <input 
@@ -46,7 +48,7 @@
                                 required
                                 type="number"
                                 name="quantity"
-                                value="{{ order.quantity|default:'1' }}"> 
+                                value="{{ order.quantity|unlocalize }}"> 
                         </td>
                         <td> {{order.article.article_unit|default:""}} </td>
                         <td class="total-purchase"> 
@@ -126,21 +128,21 @@
                     <label for="transport_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee: </label>
                     <div class="col-sm-4">
                         <input type="number" name="transport_fee" class="form-control form-control-sm"
-                            id="transport_fee" value="{{supplierCommand.transport_fee|default:"0.00" }}" step="any" />
+                            id="transport_fee" value="{{supplierCommand.transport_fee|unlocalize }}" step="any" />
                     </div>
-                </div>
+                </div>  
                 <div class="form-group row mt-2">
                     <label for="packaging_fee" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Packaging fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="packaging_fee" class="form-control form-control-sm"
-                            id="packaging_fee" value="{{supplierCommand.packaging_fee|default:"0.00"}}" step="any" />
+                            id="packaging_fee" value="{{supplierCommand.packaging_fee|unlocalize }}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
                     <label for="vat" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Vat : </label>
                     <div class="col-sm-4">
                         <input type="number" name="vat" class="form-control form-control-sm"
-                            id="vat" value="{{supplierCommand.vat|default:"0.00"}}" step="any" />
+                            id="vat" value="{{supplierCommand.vat|unlocalize}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">

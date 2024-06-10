@@ -1,3 +1,5 @@
+{% load i18n %}
+{% load l10n %}
 <form method="POST">
     {% csrf_token %}
     <div class="row">
@@ -23,6 +25,8 @@
                     to the suppliers you have chosen, while incorporating the articles from your current request.
             </p>
         </div>
+        {{ form }}
+
         <div class="col-sm-8">
                 <fieldset class="border p-2">
                     <p class="w-auto"> Supplier : {{ quoteRequest.supplier }}  </p>
@@ -58,12 +62,16 @@
                                     <input type="number" name="purchase-price" 
                                     class="form-control form-control-sm" 
                                     required
+                                    step="0.01"
                                     placeholder="purchase price"
-                                    value="{{order.purchase_price}}"/>
+                                    value="{{order.purchase_price|unlocalize }}"/>
                                 </td>
                                 <td> 
                                     <input class="form-control form-control-sm" required
-                                     value="{{ order.quantity|default:'1' }}" name="quantity"> 
+                                    type="number"
+                                    value="{{order.quantity|unlocalize}}"
+                                    placeholder="quantity"
+                                    name="quantity"> 
                                 </td>
                                 <td> {{order.article.article_unit|default:""}} </td>
                                 <td> <a href="#" class="btn btn-sm btn-remove"
@@ -124,7 +132,7 @@
             var keyword = $(this).val().trim();
             // Send an AJAX request to the server
             $.ajax({
-                url: '{% url "get-supplierDetailByKeyWord" %}',
+                url: '{% url "get-suppliersByKeyWord" %}',
                 method: 'GET',
                 data: {
                     keyword: keyword
@@ -138,7 +146,7 @@
                     for (var i = 0; i < suppliers.length; i++) {
                         html += '<tr>';
                         html += '<td><input class="form-check-input" type="checkbox" value="'+ suppliers[i].id +'" /></td>'
-                        html += '<td>' + suppliers[i].name || '' + '</td>';
+                        html += '<td>' + suppliers[i].supplier_name || '' + '</td>';
                         html += '<td>' + suppliers[i].country || '' + '</td>';
                         html += '</tr>';
                     }

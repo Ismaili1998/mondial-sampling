@@ -1,3 +1,5 @@
+{% load i18n %}
+{% load l10n %}
 <form action="{% url 'create-invoice' confirmedOffer.id %}"  method="POST">
     {% csrf_token %}
     <div class="row mt-2">
@@ -22,7 +24,7 @@
             <div>
                 <!-- hidden inputs -->
                 <input type="hidden" name="project" value="{{ confirmedOffer.project.id }}" />
-                <input type="hidden" name="discount" value="{{ confirmedOffer.discount }}" />
+                <input type="hidden" name="discount" value="{{ confirmedOffer.discount|unlocalize }}" />
                 <input type="hidden" name="shipping" value="{{ confirmedOffer.shipping.id }}" />
                 <input type="hidden" name="transport" value="{{ confirmedOffer.transport.id }}" />
                 <input type="hidden" name="destination" value="{{ confirmedOffer.destination.id }}" />
@@ -31,8 +33,8 @@
                 <input type="hidden" name="delivery_time" value="{{ confirmedOffer.delivery_time|default:"" }}" />
                 <input type="hidden" name="delivery_time_unit" value="{{ confirmedOffer.delivery_time_unit.id }}" />
                 <input type="hidden" name="warranty_period" value="{{ confirmedOffer.warranty_period|default:"" }}" />
-                <input type="hidden" name="shipping_fee" value="{{ confirmedOffer.shipping_fee|default:"0.00" }}" />
-                <input type="hidden" name="transport_fee" value="{{ confirmedOffer.transport_fee|default:"0.00" }}" />
+                <input type="hidden" name="shipping_fee" value="{{ confirmedOffer.shipping_fee|unlocalize }}" />
+                <input type="hidden" name="transport_fee" value="{{ confirmedOffer.transport_fee|unlocalize }}" />
                 <input type="hidden" name="currency" value="{{ confirmedOffer.currency.id }}" />
                 <input type="hidden" name="local_contact" value="{{ confirmedOffer.local_contact }}" />
             </div>

@@ -1,5 +1,6 @@
 {% load static %}
 {% load format_numbers %}
+{% load i18n %}
 <div class="container">
     <div class="item-to-print font-arial" contentEditable="true">
         <!-- Header section -->
@@ -15,9 +16,9 @@
             <div class="size-13">
                 {{ invoice.project.client }} <br />
                 {{ invoice.project.client.address|default:"" }} <br />
-                Phone :{{ invoice.project.client.phone_number1|default:"" }} <br />
-                Email :{{ invoice.project.client.email1|default:"" }} <br />
-                Fax :{{ invoice.project.client.fax|default:"" }}
+                Phone: {{ invoice.project.client.phone_number1|default:"" }} <br />
+                Email: {{ invoice.project.client.email1|default:"" }} <br />
+                Fax: {{ invoice.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -70,12 +71,12 @@
                         {% for order in invoice.get_orders %}
                         <tr class="size-13">
                             <td> {{ forloop.counter }} </td>
-                            <td> {{ order.article.article_nbr}} </td>
+                            <td> {{ order.article.article_nbr }} </td>
                             <td class="text-description"> 
-                                <pre>{{ order.get_description_by_client_lang }}</pre>
+                                <pre> {{ order.get_description_by_client_lang }} </pre>
                             </td>
-                            <td> {{order.quantity|thousand_separator}} </td>
-                            <td> {{order.article.article_unit}} </td>
+                            <td> {{ order.quantity|thousand_separator }} </td>
+                            <td> {{ order.article.article_unit }} </td>
                         </tr>
                         {% endfor %}
                     </tbody>

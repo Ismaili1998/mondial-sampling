@@ -1,3 +1,6 @@
+{% load format_numbers %}
+{% load i18n %}
+{% load l10n %}
 <form action="{% if form_name == "create" %} {% url 'create-packing' invoice.id %} {% else %} {% url 'update-packing' packing.id %}  {% endif %}" method="POST">
     {% csrf_token %}
     <div class="row">

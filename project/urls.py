@@ -18,14 +18,12 @@ urlpatterns = [
 
     path('create-client',views.create_client,name='create-client'),
     path('update-client/<str:pk>',views.edit_client,name='update-client'),
-    path('get-clientByRef/<str:ref>',views.get_clientByRef,name='get-clientByRef'),
     path('get-clientsByKeyWord',views.get_clientsByKeyWord,name='get-clientsByKeyWord'),
 
     
     path('create-supplier',views.supplier_create,name='create-supplier'),
     path('update-supplier/<str:pk>',views.update_supplier,name='update-supplier'),
-    path('get-supplierByKeyWord/', views.get_suppliersByKeyWord, name='get-supplierByKeyWord'),
-    path('get-supplierDetailByKeyWord/', views.get_supplierDetailByKeyWord, name='get-supplierDetailByKeyWord'),
+    path('get-suppliersByKeyWord', views.get_suppliersByKeyWord, name='get-suppliersByKeyWord'),
 
 
     path('create-buyer',views.create_buyer,name='create-buyer'),

@@ -1,5 +1,6 @@
 {% load static %}
 {% load format_numbers %}
+{% load i18n %}
 <div class="container">
     <div class="item-to-print font-arial" contentEditable="true">
         <!-- Header section -->
@@ -15,9 +16,9 @@
             <div class="size-13">
                 {{ invoice.project.client }} <br />
                 {{ invoice.project.client.address|default:"" }} <br />
-                Phone :{{ invoice.project.client.phone_number1|default:"" }} <br />
-                Email :{{ invoice.project.client.email1|default:"" }} <br />
-                Fax :{{ invoice.project.client.fax|default:"" }}
+                Phone: {{ invoice.project.client.phone_number1|default:"" }} <br />
+                Email: {{ invoice.project.client.email1|default:"" }} <br />
+                Fax: {{ invoice.project.client.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
@@ -91,7 +92,7 @@
                     </tbody>
                 </table>
                 <table class="table table-sm table-borderless">
-                    <tbody class="size-13">
+                    <tbody class="size-13 text-nowrap" >
                         <tr>
                             <td colspan="4">
                                 {{translations.payment_date}}: {{ invoice.payment_date|date:'d.m.Y' }}
@@ -139,7 +140,7 @@
                             <td class="size-14" >
                                 {{translations.incoterm}}:
                             </td>
-                            <td> {{invoice.shipping }} </td>
+                            <td> {{invoice.shippingd|default:"" }} </td>
                             <td>
                                 {{ invoice.shipping_fee|thousand_separator }}
                                 {{ invoice.currency|default:""}}
@@ -152,7 +153,7 @@
                             <td class="size-14" >
                                 {{translations.transportation}}:
                             </td>
-                            <td> {{invoice.transport}} </td>
+                            <td> {{invoice.transport|default:""}} </td>
                             <td>
                                 {{ invoice.transport_fee|thousand_separator }}
                                 {{invoice.currenc|default:""}}
@@ -165,7 +166,7 @@
                                 {{translations.total_price}}:
                             </td>
                             <td>
-                                {{ invoice.destination }}
+                                {{ invoice.destination|default:"" }}
                             </td>
                             <td>
                                 {{ invoice.get_total_selling_withFee|thousand_separator }}
@@ -176,7 +177,7 @@
                 </table>
                 <div class="row">
                     <p class="size-13"> {{translations.time_delivery}}:
-                        {{ invoice.delivery_time_interval }} {{ invoice.delivery_time_unit|default:"" }}
+                        {{ invoice.delivery_time_interval|default:"" }} {{ invoice.delivery_time_unit|default:"" }}
                         <br/> 
                         {{translations.payment_mode}}: {{ invoice.payment|default:"" }}
                     </p>
@@ -198,7 +199,7 @@
                     <tbody>
                         {% for hs_code, data in orders_by_hsCode %}
                             <tr>
-                                <td>{{ hs_code }}</td>
+                                <td>{{ hs_code|default:"" }}</td>
                                 <td>{{ data.total_quantities|thousand_separator }}</td>
                                 <td>{{ data.total_price|thousand_separator }} {{invoice.currency|default:""}} </td>
                             </tr>
@@ -229,7 +230,7 @@
         var day = currentDate.getDate();
         var month = currentDate.getMonth() + 1; 
         var year = currentDate.getFullYear();
-
+        
         var formattedDate = day + '.' + month + '.' + year;
         $('#currentDate').text(formattedDate);
 

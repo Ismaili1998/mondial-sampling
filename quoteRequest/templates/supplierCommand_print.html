@@ -1,5 +1,6 @@
 {% load static %}
 {% load format_numbers %}
+{% load i18n %}
 <div class="container-fluid">
     <div class="item-to-print font-arial" contenteditable="true">
         <!-- Header, logo section -->
@@ -13,9 +14,9 @@
             <div class="size-13">
                 {{ supplierCommand.supplier }} <br/>
                 {{ supplierCommand.supplier.country.country_name_fr|default:"" }} <br/>
-                Phone :{{ supplierCommand.supplier.phone_number|default:"" }} <br/>
-                Email :{{ supplierCommand.supplier.email|default:"" }} <br/>
-                Fax :{{ supplierCommand.supplier.fax|default:"" }}
+                Phone: {{ supplierCommand.supplier.phone_number|default:"" }} <br/>
+                Email: {{ supplierCommand.supplier.email|default:"" }} <br/>
+                Fax: {{ supplierCommand.supplier.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">

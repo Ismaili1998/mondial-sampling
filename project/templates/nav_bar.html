@@ -7,17 +7,17 @@
             placeholder="{% trans 'search project' %}" value="{{ project.project_nbr }}" />
         </div>
         <div class="d-flex align-items-center">
-            {% comment %} <form action="{% url 'set_language' %}" method="post" id="language-form">
+            <form action="{% url 'set_language' %}" method="post" id="language-form">
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ redirect_to }}" />
               <div class="form-group mx-4">
                 <select required name="language" class="form-select form-select-sm" id="language">
-                    <option value="es">Deutsh</option>
-                    <option value="en">English</option>
-                    <option value="fr">Français</option>
+                  <option value="es" {% if request.LANGUAGE_CODE == 'de' %}selected{% endif %}>Deutsch</option>
+                  <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+                  <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
                 </select>
               </div>
-            </form> {% endcomment %}
+            </form> 
             <div class="dropdown show">
               <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -32,9 +32,6 @@
                 <a class="dropdown-item"
                   onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
                     class="material-icons align-middle">add</i> New supplier</a>
-                {% comment %} <a class="dropdown-item"
-                  onclick="load_modal('Create Article','{% url 'create-article' project.id %}'" href="#"> <i
-                    class="material-icons align-middle">add</i> New article {{project}}</a> {% endcomment %}
                 <a class="dropdown-item" href="{%  url 'manage-commission' %}"> <i class="material-icons align-middle">manage_search</i> Manage
                   commissions </a>
                 <a class="dropdown-item" href="{%  url 'manage-search' %}"> <i class="material-icons align-middle">manage_search</i> Manage
