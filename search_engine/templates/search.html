@@ -10,7 +10,7 @@
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
         {% include 'alert.html' %}
         <div class="mt-1">
-            <form action="" class="row">
+            <form action="{% url 'manage-search' %}" class="row">
                 <div class="col-md-4">
                     <div class="form-group row mt-2">
                         <label class="col-sm-4 col-form-label col-form-label-sm">Filter By:</label>
@@ -35,72 +35,19 @@
                 </div>
             </form>
         </div>
-        {% if filter_type == "client" %}
-            {% include "search_by_client.html" %}
-        {% elif filter_type == "supplier" %}
-            {% include "search_by_supplier.html" %}
-        {% elif filter_type == "article" %}
-            {% include "search_by_article.html" %}
-        {% endif %}
+        {% block content2 %}
+
+        {% endblock %}
     </div>
 </main>
 {% endblock %}
-
-
 {% block javascript %}
 <script>
-
-    // load page by url, and display it in modal  
-    function load_modal(title, page_url) {
-        $('.modal-title').text(title);
-        $('.modal-body').load(page_url);
-        $('#Modal').modal('show');
-    }
-
-
-    $(document).ready(function () {
-
-        function get_url_name(selectedFilter)
-        {
-            switch(selectedFilter)
-            {
-                case "article": url_name = "{% url 'get-articleByKeyWord' %}";
-                break;
-                case "supplier": url_name = "{% url 'get-supplierByKeyWord' %}";
-                break;
-                case "client": url_name = "{% url 'get-clientsByKeyWord' %}";
-                break;
-            }
-
-            return url_name;
+        // load page by url, and display it in modal  
+        function load_modal(title, page_url) {
+            $('.modal-title').text(title);
+            $('.modal-body').load(page_url);
+            $('#Modal').modal('show');
         }
-
-        var url_name =  get_url_name('{{ filter_type }}');
-
-        $('select[name="filter_type"]').change(function() {
-            selectedFilter = $(this).val();
-            url_name = get_url_name(selectedFilter);
-        });
-
-        $('#search_engine').autocomplete({
-        source: function (request, response) {
-            $.getJSON(url_name,
-            { keyword: request.term }, function (data) {
-                // Map the project numbers to an array of objects with label and value properties
-                var mappedData = $.map(data, function (item) {
-                return {
-                    label: item,
-                    value: item
-                };
-                });
-                response(mappedData);
-            });
-        },
-        select: function (event, ui) {
-        
-        }
-        });
-  });
-
 </script>
 {% endblock %}

@@ -33,11 +33,11 @@ def project_home(request):
 
 
 def project_detail(request, pk):
+    Representatives = Representative.objects.all()
+    context = {'representatives':Representatives}
     try:
         project = Project.objects.get(id=pk)
-        Representatives = Representative.objects.all()
-        context = {'project':project,
-                   'representatives':Representatives}
+        context['project'] = project
     except Project.DoesNotExist:
         messages.error(request, 'Project not found !')
     return render(request, 'project_home.html', context)
