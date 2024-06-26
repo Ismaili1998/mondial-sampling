@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group row">
-                <label for="id_client_nbr" class="col-sm-4 col-form-label col-form-label-sm">Client Number</label>
+                <label for="id_client_nbr" class="col-sm-4 col-form-label col-form-label-sm">Client Nbr</label>
                 <div class="col-sm-8">
                     <input type="text" name="client_nbr" class="form-control form-control-sm" id="id_client_nbr"
                         value="{{client_nbr}}{{client.client_nbr}}"  required />
@@ -104,8 +104,8 @@
             <div class="form-group row mt-2">
                 <label for="id_website" class="col-sm-4 col-form-label col-form-label-sm">Website</label>
                 <div class="col-sm-8">
-                    <input type="url" name="website" class="form-control form-control-sm" id="id_website"
-                     placeholder="https://example.com" pattern="https://.*" size="80"
+                    <input type="text" name="website" class="form-control form-control-sm" id="id_website"
+                     placeholder="https://example.com" size="80"
                      value="{{client.website|default:''}}" />
                 </div>
             </div>
@@ -125,8 +125,12 @@
             </div>
         </div>
     </div>
-    <button type="submit" class="mt-4 btn btn-dark btn-sm">
-        {% if page == 'add-client' %} Save client {% else %} Save changes {% endif %}</button>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="mt-4 btn btn-outline-primary">
+            {% if page == 'add-client' %} Save client {% else %} Save changes {% endif %}
+        </button>
+    </div>
+    
 </form>
 <script>
     $(document).ready(function () {

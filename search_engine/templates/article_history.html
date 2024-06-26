@@ -1,0 +1,188 @@
+{% extends 'search.html' %}
+{% block content2 %}
+<div class="mt-5">
+    <fieldset class="border border-1 p-2">
+        <legend class="fs-4"> Section Client</legend>
+        <div class="row mt-5">
+            <div class="col-md-4 table-scrollable">
+                <strong> Related Invoices</strong>
+                <table class="table table-sm size-13 mt-2 bg-white">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Project</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                        <tr>
+                            <td>
+                                <a href="#"
+                                    onclick="load_modal('Update invoice N°: {{ invoice.invoice_nbr }}','{%  url "update-invoice" invoice.id %}')">
+                                    {{ invoice.invoice_nbr }}
+                                </a>
+                            </td>
+                            <td class="size-12">
+                                <strong> {{ invoice.project.project_nbr }} </strong>
+                                <textarea disabled rows="2"
+                                class="form-control size-11">{{ invoice.project.project_name }}</textarea>
+                            </td>
+                            <td>{{ invoice.created_at|date:'d-m-Y' }}</td>
+        
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No Invoice available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4 table-scrollable">
+                <strong> Related Confirmed offers </strong>
+                <table class="table table-sm size-13 mt-2 bg-white">
+                    <thead>
+                        <tr>
+                            <th>Confirmed offer</th>
+                            <th>Project</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for confirmedOffer in confirmedOffers %}
+                        <tr>
+                            <td>
+                                <a href="#"
+                                    onclick="load_modal('Update confirmed offer N°: {{ confirmedOffer.confirmation_nbr }}','{%  url "update-confirmed-commercialOffer" confirmedOffer.id %}')">
+                                    {{ confirmedOffer.confirmation_nbr }}
+                                </a>
+                            </td>
+                            <td class="size-12">
+                                <strong> {{ confirmedOffer.project.project_nbr }} </strong>
+                                <textarea disabled rows="2"
+                               class="form-control size-11">{{ confirmedOffer.project.project_name }}</textarea>
+                           </td>
+                           <td> {{ confirmedOffer.created_at|date:'d-m-Y' }} </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No confirmed offer available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4 table-scrollable">
+                <strong> Related offers  </strong>
+                <table class="table table-sm size-13 mt-2 bg-white">
+                    <thead>
+                        <tr>
+                            <th>offer</th>
+                            <th>Project</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for offer in commercialOffers %}
+                        <tr>
+                            <td>
+                                <a href="#"
+                                    onclick="load_modal('Update offer N°: {{ offer.offer_nbr }}','{%  url "update-commercialOffer" offer.id %}')">
+                                    {{ offer.offer_nbr }}
+                                </a>
+                            </td>
+                            <td class="size-12">
+                                <strong> {{ offer.project.project_nbr }} </strong>
+                                <textarea disabled rows="2"
+                               class="form-control size-11">{{ offer.project.project_name }}</textarea>
+                            </td>
+                            <td>{{ offer.created_at|date:'d-m-Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No offer available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border border-1 p-2 mt-4">
+        <legend class="fs-4"> Section Supplier</legend>
+        <div class="row mt-5">
+            <div class="col-md-6 table-scrollable">
+                <strong> Related Commands  </strong>
+                <table class="table table-sm size-13 mt-2 bg-white">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Project</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for supplierCommand in supplierCommands %}
+                        <tr>
+                            <td>
+                                <a href="#"
+                                    onclick="load_modal('Update supplier command N°: {{supplierCommand.command_nbr }}','{%  url "update-supplierCommand" supplierCommand.id %}')">
+                                    {{supplierCommand.command_nbr }}
+                                </a>
+                            </td>
+                            <td>
+                            <strong> {{ supplierCommand.project.project_nbr }} </strong>
+                            <textarea disabled rows="2"
+                                class="form-control size-11">{{ supplierCommand.project.project_name }}</textarea>
+                            </td>
+                            <td> {{ supplierCommand.created_at|date:'d-m-Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5"> No supplier Command available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 table-scrollable">
+                <strong> Related quote Requests</strong>
+                <table class="table table-sm size-13 mt-2 bg-white">
+                    <thead>
+                        <tr>
+                            <th>quote Request</th>
+                            <th>Project</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for quoteRequest in quoteRequests %}
+                        <tr>
+                            <td>
+                                <a href="#"
+                                    onclick="load_modal('Update quoteRequest N°: {{ quoteRequest.request_nbr }}','{%  url "update-quoteRequest" quoteRequest.id %}')">
+                                    {{ quoteRequest.request_nbr }}
+                                </a>
+                            </td>
+                            <td>
+                                <strong> {{ quoteRequest.project.project_nbr }} </strong>
+                                <textarea disabled rows="2"
+                                    class="form-control size-11">{{ quoteRequest.project.project_name }}
+                                </textarea>
+                            </td>
+                            <td>{{ quoteRequest.created_at|date:'d-m-Y' }}</td>
+            
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No quoteRequest available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </div>
+    </fieldset>
+</div>
+{% endblock %}

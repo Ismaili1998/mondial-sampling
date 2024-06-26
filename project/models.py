@@ -1,9 +1,10 @@
 from django.db import models
 
+
 class Country(models.Model):
-    country_name_fr = models.CharField(max_length=200, unique=True)
+    country_name_fr = models.CharField(max_length=200) #unique=True for country_name
     country_name_en = models.CharField(max_length=200, null=True)
-    abbreviation = models.CharField(max_length=4, unique=True)
+    abbreviation = models.CharField(max_length=4) #unique=True for abb
 
     def __str__(self):
         return f"{self.country_name_fr} {self.abbreviation}"
@@ -24,9 +25,9 @@ class Language(models.Model):
 
 class Representative(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(null= True, blank=True)
-    fax = models.CharField(max_length=50, blank=True, null= True)
-    phone_number = models.CharField(max_length=40, blank=True, null= True)
+    email = models.EmailField(null= True, blank=True, default=None)
+    fax = models.CharField(max_length=50, blank=True, null= True, default=None)
+    phone_number = models.CharField(max_length=40, blank=True, null= True, default=None)
 
     class Meta:
         db_table = 'representative'
@@ -37,8 +38,8 @@ class Representative(models.Model):
     
 class Buyer(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(null= True, blank=True)
-    phone_number = models.CharField(max_length=40, blank=True, null= True)
+    email = models.EmailField(null= True, blank=True, default=None)
+    phone_number = models.CharField(max_length=40, blank=True, null= True, default=None)
     
     class Meta:
         db_table = 'buyer'
@@ -50,7 +51,7 @@ class Buyer(models.Model):
 
 class Client(models.Model):
     client_nbr = models.CharField(max_length=30,unique=True)
-    client_name = models.CharField(max_length=150, null=True, unique=True)
+    client_name = models.CharField(max_length=150, null=True) #client_name is unique 
     
     email1 = models.EmailField(null=True, blank=True)
     email2 = models.EmailField(null=True, blank=True)
@@ -81,6 +82,7 @@ class Project(models.Model):
     project_nbr = models.CharField(max_length=30, unique=True)
     project_name = models.CharField(max_length=150, null= True)
     our_ref = models.CharField(max_length=50,null=True)
+    rank = models.IntegerField(null=True, default=None)
     #optional fields 
     client_ref = models.CharField(max_length=50,null=True, blank=True)
     project_description = models.TextField(blank=True,max_length=500, null= True)
@@ -107,8 +109,7 @@ class File(models.Model):
         db_table = 'file'
         
 class Supplier(models.Model):
-    supplier_name = models.CharField(max_length=150,null=True)
-    
+    supplier_name = models.CharField(max_length=150)
     supplier_nbr = models.CharField(max_length=30, null=True, blank=True)
     email = models.EmailField(null=True, blank= True)
     phone_number = models.CharField(max_length=40,null=True, blank=True)

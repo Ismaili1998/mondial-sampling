@@ -1,11 +1,12 @@
-<table class="table table-sm mt-3 bg-white size-13 table-scrollable">
+{% load i18n %}
+<table class="table table-sm bg-white size-13">
     <thead>
         <tr>
-            <th>Offer Ref</th>
-            <th>Print CO</th>
-            <th>Print TO</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>{% trans "Offer Ref" %}</th>
+            <th>{% trans "Print CO" %}</th>
+            <th>{% trans "Print TO" %}</th>
+            <th>{% trans "Confirmation" %} </th>
+            <th>{% trans "Action" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -13,7 +14,7 @@
             <tr>
                 <td> 
                     <a href="#"
-                        onclick="load_modal('Update commercial offer','{%  url "update-commercialOffer" offer.id %}')">
+                        onclick="load_modal('Update commercial offer N°: {{offer.offer_nbr }}','{%  url "update-commercialOffer" offer.id %}')">
                         {{ offer.offer_nbr }}
                     </a>
                 </td>
@@ -30,11 +31,10 @@
                     </a>
                 </td>
                 <td>
-                    {% if offer.confirmed_commercialoffer %}
-                        <span class="text-success"> Confirmed </span>
-                    {% else %}
-                        <span > Not confirmed </span>
-                    {% endif %}
+                    <a href="#" class='text-primary'
+                        onclick="load_modal('Confirm this offer','{%  url "confirm-commercialOffer" offer.id %}')">
+                        Confirm offer
+                    </a>
                 </td>
                 <td>
                     <div class="dropdown-item">
@@ -49,7 +49,7 @@
             </tr>
         {% empty %}
         <tr>
-            <td colspan="7">No offer available.</td>
+            <td colspan="7">{% trans "No offer available." %}</td>
         </tr>
         {% endfor %}
     </tbody>

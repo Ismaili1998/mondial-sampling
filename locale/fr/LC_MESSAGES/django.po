@@ -1,0 +1,142 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-23 21:42+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "search project"
+msgstr "chercher projet"
+
+msgid "Project number"
+msgstr "No Projet"
+
+msgid "Project name"
+msgstr "Nom du projet"
+
+msgid "Client number"
+msgstr "Num de client"
+
+msgid "visibility"
+msgstr "visibilité"
+
+msgid "Client Ref"
+msgstr "Référence client"
+
+msgid "Our Ref"
+msgstr "Notre référence"
+
+msgid "Buyer"
+msgstr "Acheteur"
+
+msgid "+ New Buyer"
+msgstr "+ Nouvel acheteur"
+
+msgid "Representative"
+msgstr "Représentant"
+
+msgid "Chose a representant"
+msgstr "Choisissez un représentant"
+
+msgid "Project description"
+msgstr "Description du projet"
+
+msgid "To do"
+msgstr "À faire"
+
+msgid "Project Articles"
+msgstr "Articles du projet"
+
+msgid "Search Article"
+msgstr "Rechercher un article"
+
+msgid "Add New Article"
+msgstr "Ajouter un nouvel article"
+
+msgid "pos"
+msgstr "pos"
+
+msgid "Article Number"
+msgstr "Num de l'article"
+
+msgid "Article Description"
+msgstr "Description de l'article"
+
+msgid "No article available."
+msgstr "Aucun article disponible."
+
+msgid "Quote request Ref"
+msgstr "Réf devis"
+
+msgid "Supplier"
+msgstr "Fournisseur"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Print"
+msgstr "Imprimer"
+
+msgid "Order"
+msgstr "Commande"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "No quote request available."
+msgstr "Aucune demande de devis disponible."
+
+msgid "Supplier command Ref"
+msgstr "Réf cmd fournisseur"
+
+msgid "Offer Ref"
+msgstr "Réf offre"
+
+msgid "Print CO"
+msgstr "Imprimer OC"
+
+msgid "Print TO"
+msgstr "Imprimer OT"
+
+msgid "No offer available."
+msgstr "Aucune offre disponible."
+
+msgid "Confirmed Offer Ref"
+msgstr "Réf offre confirmée"
+
+msgid "Invoice"
+msgstr "Facture"
+
+msgid "No confirmed offer available."
+msgstr "Aucune offre confirmée disponible."
+
+msgid "Invoices"
+msgstr "Réf Facture"
+
+msgid "Customs Report"
+msgstr "Rapport douanier"
+
+msgid "Packing"
+msgstr "Emballage"
+
+msgid "Print tag"
+msgstr "Imprimer l'étiquette"
+
+msgid "Drag and drop files here to upload"
+msgstr "Glissez et déposez les fichiers ici pour les télécharger"
+
+msgid "See project documents"
+msgstr "Documents du projet"

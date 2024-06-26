@@ -1,219 +1,43 @@
 {% extends 'main.html' %}
 {% block content %}
+{% load i18n %}
 <main class="container-fluid">
-  <div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
-    <div class="lh-1">
-      <div class="d-flex justify-content-between">
-        <div>
-          <input type="text" id="searchProject" class="form-control form-control-sm typeahead"
-            placeholder="search projet" value="{{ project.project_nbr }}" />
-        </div>
-        <div class="d-flex align-items-center">
-          <div class="dropdown show">
-            <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Action
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item" href="{% url 'create-project' %}"> <i class="material-icons align-middle">add</i>
-                New project</a>
-              <a class="dropdown-item" data-bs-toggle="modal" href="#" data-bs-target="#Modal"
-                onclick="load_modal('Create client','{%  url "create-client" %}')"> <i
-                  class="material-icons align-middle">add</i> New client</a>
-              <a class="dropdown-item"
-                onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
-                  class="material-icons align-middle">add</i> New supplier</a>
-              <a class="dropdown-item"
-                onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#"> <i
-                  class="material-icons align-middle">add</i> New article </a>
-              <a class="dropdown-item" href="{%  url 'manage-commission' %}"> <i class="material-icons align-middle">manage_search</i> Manage
-                commissions </a>
-              <a class="dropdown-item" href="{%  url 'manage-payment' %}"> <i class="material-icons align-middle">attach_money</i> Manage
-                payment </a>
-            </div>
-          </div>
-          {% comment %} &nbsp;&nbsp;&nbsp;
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Notifications <span class="badge bg-danger">1</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <div class="dropdown-item">
-                  <div class="alert alert-warning" role="alert">
-                    Your payment for P1180048/N10-RDC02 is due in <strong>10</strong> days.
-                  </div>
-                  <div class="alert alert-danger" role="alert">
-                    Your payment for P1180048/N7-RDC02 is due in <strong>5</strong> days.
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul> {% endcomment %}
-          &nbsp;&nbsp;&nbsp;
-          <div class="dropdown show">
-            <a class="dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               <i class="material-icons align-middle">account_circle</i> {{ request.user }}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item mt-2" href="#"
-                  onclick="load_modal('Update profile','{%  url "update-profile" %}')"> 
-                    Profile 
-                </a>
-                <a class="dropdown-item" href="{% url 'logout' %}"> 
-                  Logout 
-                </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
+  {% include 'nav_bar.html' %}
+
   <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
+    {% include 'alert.html' %}
     <form method="POST" enctype="multipart/form-data"
       action="{% if not project %} {% url 'create-project' %} {% else %} {% url 'update-project' project.id %} {% endif %}">
       {% csrf_token %}
-      {% include 'alert.html' %}
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group row">
-            <label for="project_nbr" class="col-sm-3 col-form-label col-form-label-sm">Project number</label>
-            <div class="col-sm-9">
-              <input type="text" name="project_nbr" class="form-control form-control-sm" id="project_nbr"
-                value="{{project_nbr}}{{project.project_nbr}}" required />
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="project_name" class="col-sm-3 col-form-label col-form-label-sm">Project name</label>
-            <div class="col-sm-9">
-              <input type="text" name="project_name" class="form-control form-control-sm" id="project_name"
-                value="{{project.project_name}}" required />
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm">Client number</label>
-            <div class="col-sm-9 d-flex">
-              <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="client" required
-                id="client_nbr" aria-label=".form-select-sm example">
-                <option value=""> Client number </option>
-                {% for client in clients %}
-                  <option value="{{ client.id }}" {% if project.client.client_nbr == client.client_nbr %} selected {% endif%}>
-                    {{ client.client_nbr }}
-                  </option>
-                {% endfor %}
-              </select>
-              &nbsp;
-              <a class="text-info"
-                onclick="get_clientDetail('Client detail','{%  url "update-client" 0 %}')" href="#"><i
-                  class="material-icons align-middle text-dark">visibility</i></a>
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="client_ref" class="col-sm-3 col-form-label col-form-label-sm">Client Ref</label>
-            <div class="col-sm-9">
-              <input type="text" name="client_ref" class="form-control form-control-sm" id="client_ref"
-                value="{{project.client_ref}}" />
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="our_ref" class="col-sm-3 col-form-label col-form-label-sm">Our Ref</label>
-            <div class="col-sm-9">
-              <input type="text" name="our_ref" class="form-control form-control-sm" id="our_ref"
-                value="{{project.our_ref}}" required />
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group row mt-2">
-                <label for="buyer" class="col-sm-3 col-form-label col-form-label-sm">Buyer</label>
-                <div class="col-sm-6">
-                    <select name="buyer" class="form-select form-select-sm" id="buyer" 
-                    onclick="load_modal('New Buyer','{% url "chose-buyer" %}')"
-                    required>
-                        <option selected> {{ project.buyer.name}} </option>
-                    </select>
-                </div>
-                <div class="col-sm-3">
-                    <a href="#" 
-                      class="size-12"
-                      onclick="load_modal('New Buyer','{% url "create-buyer" %}')">
-                      + New Buyer 
-                    </a>
-                </div>
-            </div>
-            <div class="form-group row mt-2">
-                <label for="representative" class="col-sm-3 col-form-label col-form-label-sm">Representative</label>
-                <div class="col-sm-6">
-                    <select name="representative" class="form-select form-select-sm" id="representative" required>
-                        <option value=""> Chose a representant </option>
-                        {% for representative in representatives %}
-                        <option value="{{representative.id }}" {% if project.representative.id == representative.id %} selected {% endif %}>
-                            {{ representative }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group row">
-            <label for="desc" class="col-sm-3 col-form-label col-form-label-sm">Project description</label>
-            <div class="col-sm-9">
-              <textarea class="form-control" name="project_description" id="desc"
-                rows="4">{{project.project_description|default:''}}</textarea>
-            </div>
-          </div>
-          <div class="form-group row mt-2">
-            <label for="to_do" class="col-sm-3 col-form-label col-form-label-sm">To do</label>
-            <div class="col-sm-9">
-              <textarea rows="4" class="form-control" id="to_do" name="to_do" rows="2">{{project.to_do|default:''}}</textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% if page == 'update-project' %}
-      <div class="row">
-        <div class="col-md-6">
-          <div id="dropzone" class="mt-2">
-            <div class="dropdown">
-              <button class="btn btn-sm btn-danger dropdown-toggle" type="button" id="project-documents-dropdown"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="material-icons align-middle">description</i>
-                See Project documents
-              </button>
-              <div class="dropdown-menu" aria-labelledby="project-documents-dropdown">
-                {% for project_file in project.file_set.all %}
-                <a class="dropdown-item" href="{% url 'download-file' project_file.id %}" target="_blank">
-                  {{project_file.file.name }} </a>
-                {% endfor %}
-              </div>
-          </div>
-            <p>Drag and drop files here to upload.</p>
-            <div class="progress" style="display: none;">
-              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endif %}
+
+      {% include 'project_form.html' %}
+
       <div class="mt-3 d-flex justify-content-end">
-        <button type="submit" class="btn btn-dark btn-sm">
-          {% if project %}
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+          {% if not project %}
           Save project
           {% else %}
           Save changes
           {% endif %}
         </button>&nbsp;
-        <a href="{% url 'project-home' %}" class="ml-2 btn btn-dark btn-sm">Refresh</a>
+        <a href="{% url 'project-home' %}" class="ml-2 btn btn-outline-dark btn-sm">{% trans "Refresh" %}</a>
       </div>
     </form>
+
+    {% if project %}
+      
+      {% include 'project_docs.html' %}
+      
+    {% endif %}
+
   </div>
+
   {% if project %}
     <div class="my-3 p-3 border border-1 rounded shadow-sm bg-light">
       <div class="row">
         <div class="col-md-4">
-          <strong class="text-primary">Project Articles</strong>
+          <strong class="text-primary">{% trans "Project Articles" %}</strong>
         </div>
         <div class="col-md-2">
           <form method="POST" action="{% url 'add-article-to-project' %}">
@@ -222,15 +46,15 @@
                 <input type="hidden" name="project_nbr" value="{{ project.project_nbr }}" />
                 <input type="text"  required name="article_nbr" class="searchArticle form-control form-control-sm typeahead" placeholder="Search Article" />
                 <div class="input-group-append">
-                  <button class="btn btn-sm btn-dark" type="submit">Add to project</button>
+                  <button class="btn btn-sm btn-dark" type="submit">{% trans "Add to project" %}</button>
                 </div>
             </div>
           </form>
         </div>
         <div class="col-md-1">
           <a class="dropdown-item"
-            onclick="load_modal('Create Article','{%  url "create-article" %}')" href="#">
-            <i class="material-icons align-middle">add</i> New article
+            onclick="load_modal('Create Article','{% url 'create-article' project.id %}')" href="#">
+            <i class="material-icons align-middle">add</i> {% trans "New article" %}
           </a>
         </div>
         <div class="col-md-3 offset-2">
@@ -251,12 +75,21 @@
           {% include 'project_articles.html' with project=project%}
         </div>
         <div class="col-md-6">
-              {% include  'project_quoteRequests.html' %}
+            <div class="table-scrollable mt-3">
+                {% include  'project_quoteRequests.html' %}
+            </div>
+            <div class="table-scrollable mt-2">
               {% include  'project_supplierCommands.html' %}
-            </hr>
+            </div>
+            <div class="table-scrollable mt-2">
               {% include  'project_commercialOffers.html' %}
+            </div>
+            <div class="table-scrollable mt-2">
               {% include  'project_confirmedOrders.html' %}
+            </div>
+            <div class="table-scrollable">
               {% include  'project_invoices.html' %}
+            </div>
         </div>
       </div>
     </div>
@@ -274,8 +107,14 @@
     $('.modal-body').load(page_url);
     $('#Modal').modal('show');
   }
+
   // search project by project_nbr 
   $(document).ready(function () {
+
+    $('#language-form select').on('change', function() {
+      $('#language-form').submit();
+    });
+
     $('#searchProject').autocomplete({
       source: function (request, response) {
         $.getJSON("{% url 'get-projectsByKeyWord' %}",
@@ -283,8 +122,8 @@
             // Map the project numbers to an array of objects with label and value properties
             var mappedData = $.map(data, function (item) {
               return {
-                label: item,
-                value: item
+                label: item.project_nbr,
+                value: item.id
               };
             });
             response(mappedData);
@@ -297,23 +136,62 @@
         return false;
       }
     });
+    
+    $('.searchClient').autocomplete({
+      source: function (request, response) {
+        $.getJSON("{% url 'get-clientsByKeyWord' %}",
+          { keyword: request.term }, function (data) {
+            // Map the article numbers to an array of objects with label and value properties
+            var mappedData = $.map(data, function (item) {
+              return {
+                label: item.client_nbr,
+                value: item.client_nbr,
+                id:item.id
+              };
+            });
+            response(mappedData);
+          });
+      },
+      select: function(event, ui) {
+          $('#client-id').val(ui.item.id);
+          setClientRef(ui.item.value);
+      }
+    });
+
+
+    $('.searchBuyer').autocomplete({
+      source: function (request, response) {
+        $.getJSON("{% url 'get-buyersByKeyWord' %}",
+          { keyword: request.term }, function (data) {
+            // Map the article numbers to an array of objects with label and value properties
+            var mappedData = $.map(data, function (item) {
+              return {
+                label: item.name,
+                value: item.name,
+                id:item.id
+              };
+            });
+            response(mappedData);
+          });
+      },
+      select: function(event, ui) {
+          $('#buyer-id').val(ui.item.id);
+      }
+    });
+
+
+
+
   });
 
-  // get chosen client id, so that we can use its id 
-  // to get all detail about it
-  let client_id = {{ project.client.id|default:0 }};
-  $('#client_nbr').change(function () {
-    client_id = $(this).val();
-  });
-
-  $('#project_nbr, #client_nbr').on('input', function() {
-            var projectNbr = $('#project_nbr').val();
-            var clientNbr = $('#client_nbr option:selected').text();
-            var ourRef = projectNbr +'-'+ clientNbr;
-            $('#our_ref').val(ourRef.replace(/\s/g, ''));
-  });
+  function setClientRef(clientNbr) {
+    var projectNbr = $('#project_nbr').val();
+    var ourRef = projectNbr +'-'+ clientNbr;
+    $('#our_ref').val(ourRef.replace(/\s/g, ''));
+  }
 
   function get_clientDetail(title, url) {
+    let client_id = $('#client-id').val();
     if (!client_id)
     {
       $('.modal-title').text("please chose a client from the list");
@@ -323,12 +201,23 @@
     }
   }
 
+  function get_buyerDetail(title, url) {
+    let buyer_id = $('#buyer-id').val();
+    if (!buyer_id)
+    {
+      $('.modal-title').text("please chose a buyer from the list");
+    }
+    else{
+      load_modal(title, url.replace('0', buyer_id))
+    }
+  }
+
   {% if project %}
     // search articles 
     $(document).ready(function () {
       $('.searchArticle').autocomplete({
         source: function (request, response) {
-          $.getJSON("{% url 'get-articlesByKeyWord' %}",
+          $.getJSON("{% url 'get-articleByKeyWord' %}",
             { keyword: request.term }, function (data) {
               // Map the article numbers to an array of objects with label and value properties
               var mappedData = $.map(data, function (item) {
@@ -371,7 +260,7 @@
       $.ajax({
         url: '{% url "upload-file-to-project" project.id %}',
         type: 'POST',
-        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
         data: formData,
         processData: false,
         contentType: false,

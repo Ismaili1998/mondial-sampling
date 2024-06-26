@@ -1,16 +1,48 @@
+{% load i18n %}
+{% load l10n %}
 <form action="{% url 'create-invoice' confirmedOffer.id %}"  method="POST">
     {% csrf_token %}
-    <div class="row col-md-6">
-        <div class="form-group row">
-            <label class="col-sm-4 col-form-label col-form-label-sm"> Client number </label>
-            <div class="col-sm-8">
-                <input type="text" name="client_nbr" class="form-control form-control-sm" required/>
+    <div class="row mt-2">
+        <div class="col-md-6 border p-2">
+            <h6 class='text-primary'> Invoice creation  </h6>
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label col-form-label-sm"> 
+                    <strong> Client Ref </strong>
+                </label>
+                <div class="col-sm-8">
+                    <input required placeholder="Client reference" type="text" name="client_nbr" class="form-control form-control-sm"/>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label class="col-sm-4 col-form-label col-form-label-sm"> 
+                    <strong> {{confirmedOffer.project.representative }}'s commission </strong>
+                </label>
+                <div class="col-sm-8">
+                    <input type="number" max="100" min="0" name="commission" placeholder="commission in %" class="form-control form-control-sm" required/>
+                </div>
+            </div>
+            <div>
+                <!-- hidden inputs -->
+                <input type="hidden" name="project" value="{{ confirmedOffer.project.id }}" />
+                <input type="hidden" name="discount" value="{{ confirmedOffer.discount|unlocalize }}" />
+                <input type="hidden" name="shipping" value="{{ confirmedOffer.shipping.id }}" />
+                <input type="hidden" name="transport" value="{{ confirmedOffer.transport.id }}" />
+                <input type="hidden" name="destination" value="{{ confirmedOffer.destination.id }}" />
+                <input type="hidden" name="payment" value="{{ confirmedOffer.payment.id }}" />
+                <input type="hidden" name="payment_date" value="{{ confirmedOffer.payment_date|date:'Y-m-d' }}" />
+                <input type="hidden" name="delivery_time" value="{{ confirmedOffer.delivery_time|default:"" }}" />
+                <input type="hidden" name="delivery_time_unit" value="{{ confirmedOffer.delivery_time_unit.id }}" />
+                <input type="hidden" name="warranty_period" value="{{ confirmedOffer.warranty_period|default:"" }}" />
+                <input type="hidden" name="shipping_fee" value="{{ confirmedOffer.shipping_fee|unlocalize }}" />
+                <input type="hidden" name="transport_fee" value="{{ confirmedOffer.transport_fee|unlocalize }}" />
+                <input type="hidden" name="currency" value="{{ confirmedOffer.currency.id }}" />
+                <input type="hidden" name="local_contact" value="{{ confirmedOffer.local_contact }}" />
+            </div>
+            <div class="mt-2">
+                <button class="btn btn-sm btn-outline-success">
+                       Confirm this offer
+                </button>
             </div>
         </div>
-    </div>
-    <div class="mt-4">
-        <button type="submit" class="btn btn-dark btn-sm mr-4">
-            save changes
-        </button>
     </div>
 </form>

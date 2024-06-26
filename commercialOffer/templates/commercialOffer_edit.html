@@ -1,4 +1,6 @@
 {% load format_numbers %}
+{% load i18n %}
+{% load l10n %}
 <div class="container-fluid">
     <form
         class="commercial-offer-form"
@@ -7,10 +9,10 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group row">
-                    <label for="global-margin" class="col-sm-2 col-form-label col-form-label-sm"><strong>Margin</strong></label>
+                    <label for="global-margin" class="col-sm-3 col-form-label col-form-label-sm"> Global Margin </label>
                     <div class="col-sm-8">
                         <div class="input-group">
-                            <input type="text" name="margin" id="global-margin" value="{{ commercialOffer.margin }}"
+                            <input type="number" name="margin" step="0.01" id="global-margin" value="" placeholder="margin in %"
                                 class="form-control form-control-sm" placeholder="Global Margin in %" />
                             <div class="input-group-append">
                                 <a href="javascript:void(0)" class="btn btn-sm btn-margin" type="submit">Apply margin</a>
@@ -20,7 +22,7 @@
                 </div>
             </div>
             <div class="col-md-6 form-group row">
-                <label for="client_nbr" class="col-sm-2 col-form-label col-form-label-sm"> 
+                <label for="client_nbr" class="col-sm-3 col-form-label col-form-label-sm"> 
                     <strong> Client Ref </strong> 
                 </label>
                 <div class="col-sm-8">
@@ -29,23 +31,23 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-2">
+        <div class="row mt-3">
             <table class="table table-sm bg-white size-13" id="offer-articles-table">
                 <thead class="text-left size-11">
                     <tr>
                         <th>Article nbr</th>
                         <th>Description</th>
                         <th>Purchase price </th>
-                        <th>Qty</th>
                         <th>Margin</th>
-                        <th>Unit</th>
                         <th>Selling price </th>
+                        <th>Qty</th>
+                        <th>Unit</th>
                         <th>Total Purchase</th>
                         <th>Total Selling</th>
                         <th> </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-nowrap">
                     {% for order in commercialOffer.order_set.all %}
                     <tr>
                         <td class="article-id" data-article-id="{{ article.id }}">
@@ -65,23 +67,24 @@
                             class="purchase-price form-control form-control-sm"
                             placeholder="purchase price"
                             required
-                            value="{{order.purchase_price}}"/>
-                        </td>
-                        <td class="form-group">
-                            <input type="number" name="quantity" 
-                            class="article-quantity form-control form-control-sm"
-                            required
-                            value="{{order.quantity}}"/>
+                            step="0.01"
+                            value="{{order.purchase_price|unlocalize}}"/>
                         </td>
                         <td class="form-group">
                             <input type="number" name="article-margin" 
                             class="article-margin form-control form-control-sm"
-                            placeholder="margin in %"
                             required
-                            value="{{order.margin}}"/>
+                            step="0.01"
+                            placeholder="margin in %"
+                            value="{{order.margin|unlocalize}}"/>
                         </td>
-                        <td> {{order.article.article_unit}} </td>
                         <td class="selling-price "> </td>
+                        <td class="form-group">
+                            <input type="number" name="quantity" 
+                            class="article-quantity form-control form-control-sm"
+                            required
+                            value="{{order.quantity|unlocalize}}"/>
+                        <td> {{order.article.article_unit}} </td>
                         <td class="total-purchase"></td>
                         <td class="total-selling"></td>
                         <td> <a href="#" class="btn btn-sm btn-remove"
@@ -117,7 +120,7 @@
                         <input type="number" name="discount" class="form-control form-control-sm"
                             placeholder = "discount in %" id="exceptional-discount"
                             required
-                            value="{{ commercialOffer.discount }}" />
+                            value="{{ commercialOffer.discount|unlocalize }}" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -185,13 +188,13 @@
                 <div class="form-group row mt-2">
                     <label for="time-unit" class="col-sm-4 col-form-label col-form-label-sm">delivery duration</label>
                     <div class="col-sm-8 row">
-                        <div class="col-sm-4">
-                            <input type="text" name="delivery_time_interval" class="form-control form-control-sm"
-                                value="{{commercialOffer.delivery_time_interval|default:""}}" placeholder="duration"/>
-                        </div>
                         <div class="col-sm-8">
+                            <input type="text" name="delivery_time" class="form-control form-control-sm"
+                                value="{{commercialOffer.delivery_time|default:""}}" placeholder="duration"/>
+                        </div>
+                        <div class="col-sm-4">
                             <select name="delivery_time_unit" class="form-select form-select-sm" id="time-unit">
-                                <option value="">Choose a time unit</option>
+                                <option value=""> time unit select </option>
                                 {% for timeUnit in timeUnits %}
                                 <option value="{{ timeUnit.id }}" {% if commercialOffer.delivery_time_unit.id == timeUnit.id %} selected {%endif %}>
                                     {{ timeUnit }}
@@ -222,14 +225,14 @@
                     <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Shipping fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="shipping_fee" class="form-control form-control-sm"
-                            id="shipping_fee" value="{{commercialOffer.shipping_fee|default:"0.00"}}" step="any" />
+                            id="shipping_fee" value="{{commercialOffer.shipping_fee|unlocalize}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
                     <label for="total-price" class="size-13 col-sm-4 col-form-label col-form-label-sm"> Transport fee : </label>
                     <div class="col-sm-4">
                         <input type="number" name="transport_fee" class="form-control form-control-sm"
-                            id="transport_fee" value="{{commercialOffer.transport_fee|default:"0.00"}}" step="any" />
+                            id="transport_fee" value="{{commercialOffer.transport_fee|unlocalize}}" step="any" />
                     </div>
                 </div>
                 <div class="form-group row mt-2">
@@ -253,6 +256,12 @@
                     </div>
                 </div>
                 <div class="form-group row mt-2">
+                    <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> {% trans "date offer" %} </label>
+                    <div class="col-sm-4">
+                        {{ commercialOffer.created_at|date:'d-m-Y' }}
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
                     <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Show local contact: </label>
                     <div class="col-sm-4">
                         <input type="checkbox" {% if commercialOffer.local_contact %} checked {%endif %} class="form-check-input" name="local_contact"
@@ -260,22 +269,22 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
-                <div class="btn-group" role="group" aria-label="Offer Actions">
-                    <button type="submit" class="btn btn-dark btn-sm mr-4">
-                        save changes
-                    </button>
-                    <button type="submit" class="btn btn-sm btn-warning">
-                        create new version
-                    </button>
-                    {% if not commercialOffer.confirmed %}
-                    <a class="btn btn-sm btn-success"
-                        href = "#"
-                        onclick="load_modal('Offer confirmation','{%  url "confirm-commercialOffer"  commercialOffer.id %}')" >
-                        confirm this offer
+            <div class="mt-5 d-flex justify-content-between">
+                <div>
+                    <a class="btn btn-sm btn-outline-success"
+                        href="#" 
+                        onclick="load_modal('Offer confirmation','{%  url "confirm-commercialOffer" commercialOffer.id %}')">
+                        Confirm this offer
                     </a>
-                    {% endif %}
+                    <button type="submit" class="ml-2 btn btn-sm btn-outline-warning">
+                        Clone this offer
+                    </button>
+                    <a href="#" class="ml-2 text-info"
+                        onclick="load_modal('Generate pdf','{%  url "print-technicalOffer" commercialOffer.id %}')">
+                        <i class="material-icons text-dark align-middle">picture_as_pdf</i>
+                    </a>
                 </div>
+                <button class="btn btn-sm btn-dark" type="submit"> Save changes </button>
             </div>
     </form>
 </div>
@@ -285,7 +294,7 @@ $(document).ready(function () {
      // search articles 
       $('.searchArticle').autocomplete({
         source: function (request, response) {
-          $.getJSON("{% url 'get-articlesByKeyWord' %}",
+          $.getJSON("{% url 'get-articleByKeyWord' %}",
             { keyword: request.term }, function (data) {
               // Map the article numbers to an array of objects with label and value properties
               var mappedData = $.map(data, function (item) {
@@ -303,7 +312,7 @@ $(document).ready(function () {
 
     function set_margin() {
         let margin = parseFloat($('#global-margin').val());
-        if (margin >= 0 && margin <= 100) {
+        if (margin >= 0 && margin <= 2) {
             $('#offer-articles-table tbody tr').each(function () {
                 row = $(this);
                 articleMarginInput = row.find('.article-margin');
@@ -323,8 +332,18 @@ $(document).ready(function () {
                 row = $(this);
                 articleQuantity = parseInt(row.find('.article-quantity').val()) || 0;
                 purchasePrice = parseFloat(row.find('.purchase-price').val()) || 0;
-                margin = (row.find('.article-margin').val() / 100) || 0;
-                sellingPrice = purchasePrice + (margin * purchasePrice);
+                margin = parseFloat(row.find('.article-margin').val()) || 0;
+                if (margin > 2 )
+                {
+                    margin = 2;
+                    row.find('.article-margin').val(2);
+                }
+                else if (margin < 0)
+                {
+                    margin = 0 ;
+                    row.find('.article-margin').val(0);
+                }
+                sellingPrice = (margin * purchasePrice);
                 totalSelling = sellingPrice * articleQuantity;
                 sum_total_selling += totalSelling;
 
@@ -437,7 +456,7 @@ $(document).ready(function () {
         // Join the integer and decimal parts with a comma
         var formattedNumber = parts.join(",");
         
-        return formattedNumber;
+        return formattedNumber +" {{commercialOffer.currency|default:''}}";
     }
 
     $('tfoot .btn').click(function(event) {
@@ -448,17 +467,22 @@ $(document).ready(function () {
        
     });
 
-   
-
 
     const form = $('.commercial-offer-form');
     const saveChangesBtn = $('.commercial-offer-form .btn-dark');
-    const createNewBtn = $('.commercial-offer-form .btn-warning');
+    const createNewBtn = $('.commercial-offer-form .btn-outline-warning');
+    const confirmBtn = $('.commercial-offer-form .btn-outline-success');
+
     saveChangesBtn.click(function() {
         form.attr('action', '{% url "update-commercialOffer" commercialOffer.id %}');
     });
+    
     createNewBtn.click(function() {
         form.attr('action', '{% url "create-commercialOffer" commercialOffer.project.id %}');
+    });
+
+    confirmBtn.click(function() {
+        form.attr('action', '{%  url "confirm-commercialOffer"  commercialOffer.id %}');
     });
     
     

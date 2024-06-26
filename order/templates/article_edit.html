@@ -1,0 +1,183 @@
+<form class="submit-form" 
+    action="{% url 'update-article' article.id %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            {% if not article %}
+            <div class="form-group row mt-2">
+                <label class="size-13 col-sm-4 col-form-label col-form-label-sm"> Add to Project </label>
+                <div class="col-sm-4">
+                    <input type="checkbox"  checked class="form-check-input" name="project"
+                        value="{{ project.id }}" step="any" />
+                </div>
+            </div>
+            {% endif %}
+            <div class="form-group row mt-2">
+                <label for="id_article_nbr" class="col-sm-4 col-form-label col-form-label-sm"> Article number</label>
+                <div class="col-sm-8">
+                    <input type="text" name="article_nbr" class="form-control form-control-sm" id="id_article_nbr"
+                        value="{{article_nbr}}{{article.article_nbr}}" required />
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_article_unit" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
+                <div class="col-sm-8">
+                   <select required class="form-select form-select-sm" id="id_article_unit" name="article_unit" aria-label=".form-select-sm example">
+                        <option value=""> Chose an unit </option>
+                        {% for article_unit in article_units %}
+                        <option value="{{ article_unit.id }}" {% if article.article_unit.id == article_unit.id %} selected {% endif%}>
+                            {{ article_unit|default:'' }}
+                        </option>
+                        {% endfor %}     
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label for="id_purchase_price" class="col-sm-4 col-form-label col-form-label-sm">Purchase Price</label>
+                <div class="col-sm-8">
+                    <input required type="number" name="purchase_price" class="form-control form-control-sm"
+                        id="id_purchase_price" value="{{article.purchase_price|default:'0.00'}}" step="any" />
+                </div>
+            </div>
+            <div class="form-group row my-3">
+                <label for="image" class="col-sm-4 col-form-label col-form-label-sm">Upload Image</label>
+                <div class="col-sm-8">
+                    <input type="file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif, .bmp">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-4 offset-4">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="Uploaded Image" class="img-thumbnail" style="width:85px;">
+                    {% endif %}
+                </div>
+            </div>                   
+        </div>
+        <div class="col-md-6">
+            <fieldset class="border p-1 mt-2 rounded">
+                <h6>Exportation</h6>
+                <div class="form-group row">
+                    <label for="id_net_weight" class="col-sm-4 col-form-label col-form-label-sm">Net Weight</label>
+                    <div class="col-sm-8">
+                        <input type="number" name="net_weight" class="form-control form-control-sm" id="id_net_weight"
+                            value="{{article.net_weight|default:''}}" step="any" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_hs_code" class="col-sm-4 col-form-label col-form-label-sm">HS-code</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="hs_code" class="form-control form-control-sm" id="id_hs_code"
+                            value="{{article.hs_code|default:''}}" />
+                    </div>
+                </div>
+                <div class="form-group row mt-2">
+                    <label for="id_customs_description" class="col-sm-4 col-form-label col-form-label-sm"> Customs description </label>
+                    <div class="col-sm-8">
+                        <textarea name="customs_description" class="form-control form-control-sm"
+                            id="id_customs_description">{{article.customs_description|default:''}}</textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group row mt-2">
+            <label for="id_description_fr" class="col-sm-2 col-form-label col-form-label-sm">Description
+                (French) 
+                <a href="#" id="translate" class="size-12"> Translate </a>
+            </label>
+            <div class="col-sm-10">
+                <textarea required name="description_fr" rows="12" class="form-control form-control-sm"
+                    id="id_description_fr">{{article.description_fr|default:''}}</textarea>
+            </div>
+        </div>
+        <div class="form-group row mt-2">
+            <label for="id_description_de" class="col-sm-2 col-form-label col-form-label-sm">Description
+                (German)</label>
+            <div class="col-sm-10">
+                <textarea name="description_de" class="form-control form-control-sm"
+                    rows="12" id="id_description_de">{{article.description_de|default:''}}</textarea>
+            </div>
+        </div>
+        <div class="form-group row mt-2">
+            <label for="id_description_en" class="col-sm-2 col-form-label col-form-label-sm">Description
+                (English)</label>
+            <div class="col-sm-10">
+                <textarea name="description_en" class="form-control form-control-sm"
+                    rows="12" id="id_description_en">{{article.description_en|default:''}}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group row mt-2">
+            <label for="id_comment" class="col-md-2 col-form-label col-form-label-sm">Comment
+                </label>
+            <div class="col-md-10">
+                <textarea name="comment" class="form-control form-control-sm"
+                    rows="2" id="id_comment">{{article.comment|default:''}}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 d-flex justify-content-end">
+        <button type="submit" class="btn btn-outline-primary"> 
+            Save changes 
+        </button>
+    </div>
+</form>
+<script>
+
+    $(document).ready(function () {
+        $('#translate').click(function() {
+            let frenchText = $('#id_description_fr').val();
+            
+            if (frenchText.length == 0)
+            {
+                $('#id_description_en').val('');
+                $('#id_description_de').val('');
+                return     
+            }
+
+            // Make an API call to translate the French word to English
+            $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|en', function (response) {
+                var englishTranslation = response.responseData.translatedText;
+                $('#id_description_en').val(englishTranslation);
+            });
+            // Make an API call to translate the French word to German
+            $.get('https://api.mymemory.translated.net/get?q=' + frenchText + '&langpair=fr|de', function (response) {
+                var germanTranslation = response.responseData.translatedText;
+                $('#id_description_de').val(germanTranslation);
+            });
+
+        });
+
+        $('.submit-form').submit(function(event) {
+            event.preventDefault();
+            let form = $(this)[0]; // Get the form element
+            let formData = new FormData(form); // Create a FormData object
+        
+            let url = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                processData: false, // Prevent jQuery from processing the data
+                contentType: false, // Prevent jQuery from setting content type
+                dataType: 'json',
+                success: function(response) {
+                    $('#Modal').modal('hide');
+                    if(response.success) {
+                        alert(response.success);
+                    } else {
+                        alert(response.error);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred');
+                }
+            });
+        });
+        
+
+
+    });
+</script>

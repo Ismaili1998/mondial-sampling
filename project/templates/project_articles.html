@@ -6,13 +6,14 @@
         <input type="checkbox" class="form-check-input bg-secondary" id="check-all">
       </th>
       <th> pos </th>
-      <th> Article Number </th>
+      <th> Article Number  </th>
       <th> Article Description </th>
+      <th> Image </th>
       <th>  </th>
     </tr>
   </thead>
   <tbody>
-    {% for article in articles %}
+    {% for article in project.article_set.all %}
     <tr>
       <td><input type="checkbox" class="form-check-input" name="article" value="{{ article.id }}"></td>
       <td>{{ forloop.counter }}</td>
@@ -28,8 +29,13 @@
           </details>
       </td>
       <td>
+        {% if article.image %}
+            <img src="{{ article.image.url }}" alt="Uploaded Image" style="width:50px;">
+        {% endif %}
+      </td>
+      <td>
         <div class="dropdown-item">
-            <form method="POST" action="{% url 'remove-article-from-project' article.id  %}">
+            <form method="POST" action="{% url 'remove-article-from-project' project.id article.id  %}">
                 {% csrf_token %}
                 <a class="text-danger delete-btn" href="#" title="delete this offer">
                     <i class="material-icons size-11">clear</i>

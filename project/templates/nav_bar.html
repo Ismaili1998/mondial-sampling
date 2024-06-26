@@ -1,0 +1,59 @@
+{% load i18n %}
+<div class="p-3 my-3 text-white bg-dark rounded shadow-sm">
+    <div class="lh-1">
+      <div class="d-flex justify-content-between">
+        <div>
+          <input type="text" id="searchProject" class="form-control form-control-sm typeahead"
+            placeholder="{% trans 'search project' %}" value="{{ project.project_nbr }}" />
+        </div>
+        <div class="d-flex align-items-center">
+            <form action="{% url 'set_language' %}" method="post" id="language-form">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}" />
+              <div class="form-group mx-4">
+                <select required name="language" class="form-select form-select-sm" id="language">
+                  <option value="de" {% if request.LANGUAGE_CODE == 'de' %}selected{% endif %}>Deutsch</option>
+                  <option value="en" {% if request.LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+                  <option value="fr" {% if request.LANGUAGE_CODE == 'fr' %}selected{% endif %}>Français</option>
+                </select>
+              </div>
+            </form> 
+            <div class="dropdown show">
+              <a class="btn btn-light btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Action
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'create-project' %}"> <i class="material-icons align-middle">add</i>
+                  New project</a>
+                <a class="dropdown-item" data-bs-toggle="modal" href="#" data-bs-target="#Modal"
+                  onclick="load_modal('Create client','{%  url "create-client" %}')"> <i
+                    class="material-icons align-middle">add</i> New client</a>
+                <a class="dropdown-item"
+                  onclick="load_modal('Create Supplier','{%  url "create-supplier" %}')" href="#"> <i
+                    class="material-icons align-middle">add</i> New supplier</a>
+                <a class="dropdown-item" href="{%  url 'manage-commission' %}"> <i class="material-icons align-middle">manage_search</i> Manage
+                  commissions </a>
+                <a class="dropdown-item" href="{%  url 'manage-search' %}"> <i class="material-icons align-middle">manage_search</i> Manage
+                  search  </a>
+              </div>
+            </div>
+            <div class="dropdown show mx-4">
+              <a class="dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons align-middle">account_circle</i> {{ request.user }}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item mt-2" href="#"
+                    onclick="load_modal('Update profile','{%  url "update-profile" %}')"> 
+                    {% trans "Profile" %}
+                  </a>
+                  <a class="dropdown-item" href="{% url 'logout' %}"> 
+                    {% trans "Logout" %} 
+                  </a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>

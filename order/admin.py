@@ -5,7 +5,8 @@ from .models import Article, ArticleUnit
 
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ('article_nbr', 'description_fr', 'description_de', 'description_en','article_unit','hs_code')}),
+        (None, {'fields': 
+                ('purchase_price', 'article_nbr', 'description_fr', 'description_de', 'description_en','article_unit','hs_code')}),
     ]
     
     list_display = (

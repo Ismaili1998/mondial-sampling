@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth import logout
 from .forms import UserForm, ChangePasswordForm
+from project.views import get_message_error
 
-def sign_in(request):
+def log_in(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -27,7 +28,7 @@ def sign_in(request):
 
 def log_out(request):
     logout(request)
-    return redirect('sign-in')  # Redirect to the desired page after logout (replace 'home' with your target URL name)
+    return redirect('login')  # Redirect to the desired page after logout (replace 'home' with your target URL name)
 
 def update_profile(request):
     user = request.user
@@ -47,4 +48,5 @@ def update_password(request):
             passwordForm.save()
             message = 'Password updated successfully'
             return JsonResponse({'message':message})
+        return JsonResponse({'message':get_message_error(passwordForm)})
     return render(request, 'profile.html', {'user': user})

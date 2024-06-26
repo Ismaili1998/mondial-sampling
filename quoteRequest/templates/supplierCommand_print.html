@@ -1,5 +1,6 @@
 {% load static %}
 {% load format_numbers %}
+{% load i18n %}
 <div class="container-fluid">
     <div class="item-to-print font-arial" contenteditable="true">
         <!-- Header, logo section -->
@@ -11,15 +12,15 @@
         <!-- Contact section -->
         <div class="mt-2 d-flex justify-content-between">
             <div class="size-13">
-                {{ quoteRequest.supplier }} <br/>
-                {{ quoteRequest.supplier.country.country_name_fr|default:"" }} <br/>
-                Phone :{{ quoteRequest.supplier.phone_number|default:"" }} <br/>
-                Email :{{ quoteRequest.supplier.email|default:"" }} <br/>
-                Fax :{{ quoteRequest.supplier.fax|default:"" }}
+                {{ supplierCommand.supplier }} <br/>
+                {{ supplierCommand.supplier.country.country_name_fr|default:"" }} <br/>
+                Phone: {{ supplierCommand.supplier.phone_number|default:"" }} <br/>
+                Email: {{ supplierCommand.supplier.email|default:"" }} <br/>
+                Fax: {{ supplierCommand.supplier.fax|default:"" }}
             </div>
             <div>
                 <h6 class="mt-5 text-center outset-border py-2 px-5">
-                   {{ translations.purchasing_order }} <br/> {{ quoteRequest.suppliercommand.command_nbr }} 
+                   {{ translations.purchasing_order }} <br/> {{ supplierCommand.command_nbr }} 
                 </h6>
             </div>
             <div class="size-13">
@@ -33,8 +34,8 @@
         </div>
         <div class="mt-2 d-flex justify-content-between">
             <div>
-                <p> {{translations.project_nbr}}: {{ quoteRequest.project.project_nbr }} <br/>
-                    {{translations.our_ref}} : {{ quoteRequest.suppliercommand.command_nbr }}<br/>
+                <p> {{translations.project_nbr}}: {{ supplierCommand.project.project_nbr }} <br/>
+                    {{translations.our_ref}} : {{ supplierCommand.command_nbr }}<br/>
                 </p>
             </div>
             <div class="ml-10 size-12">
@@ -56,7 +57,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in quoteRequest.order_set.all %}
+                        {% for order in orders %}
                         <tr>
                             <td> {{ forloop.counter }} </td>
                             <td> {{ order.article.article_nbr }} </td>
@@ -64,9 +65,9 @@
                                 <pre>{{ order.get_description_by_supplier_lang }}</pre>
                             </td>
                             <td> {{ order.quantity|thousand_separator  }} </td>
-                            <td> {{ order.article.article_unit }} </td>
-                            <td> {{ order.purchase_price|thousand_separator  }} {{ quoteRequest.suppliercommand.currency }} </td>
-                            <td> {{ order.get_total_purchase|thousand_separator }} {{ quoteRequest.suppliercommand.currency }} </td>
+                            <td> {{ order.article.article_unit|default:"" }} </td>
+                            <td> {{ order.purchase_price|thousand_separator  }} {{ supplierCommand.currency|default:"" }} </td>
+                            <td> {{ order.get_total_purchase|thousand_separator }} {{ supplierCommand.currency|default:"" }} </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -75,27 +76,27 @@
                     <tbody class="size-13">
                         <tr>
                             <td>
-                                {{translations.payment_date}}: {{  quoteRequest.suppliercommand.payment_date|date:'d.m.Y' }}
+                                {{translations.payment_date}}: {{  supplierCommand.payment_date|date:'d.m.Y' }}
                             </td>
                             <td class="size-13">
-                                {{translations.time_delivery }}: 
-                                {{ quoteRequest.suppliercommand.delivery_time_interval}}
-                                {{ quoteRequest.suppliercommand.delivery_time_unit}}
+                                {{ translations.time_delivery|default:"..." }}: 
+                                {{ supplierCommand.delivery_time|default:"..."}}
+                                {{ supplierCommand.delivery_time_unit|default:"..."}}
                             </td>
                             <td></td>
                             <td>
                                 Total: 
                                 <strong>
-                                {{ quoteRequest.get_total_purchase|thousand_separator }}
-                                {{ quoteRequest.suppliercommand.currency }} </strong>
+                                {{ supplierCommand.get_total_purchase|thousand_separator }}
+                                {{ supplierCommand.currency|default:"" }} </strong>
                             </td>
                         </tr>
                          <tr>
                             <td colspan="3"></td>
                             <td>
                                 {{ translations.freight_packaging }} :
-                                <strong> {{ quoteRequest.suppliercommand.get_fee|thousand_separator }}
-                                    {{ quoteRequest.suppliercommand.currency }}
+                                <strong> {{ supplierCommand.get_fee|thousand_separator }}
+                                    {{ supplierCommand.currency|default:"" }}
                                 </strong>
                             </td>
                         </tr>    
@@ -104,8 +105,8 @@
                             </td>
                             <td>
                                 Final Total:
-                                <strong> {{ quoteRequest.suppliercommand.get_final_total|thousand_separator }}
-                                    {{ quoteRequest.suppliercommand.currency }}
+                                <strong> {{ supplierCommand.get_final_total|thousand_separator }}
+                                    {{ supplierCommand.currency|default:"" }}
                                 </strong>
                             </td>
                         </tr>                  
@@ -114,7 +115,7 @@
             </div>
         </div>
         <div>
-            <p class="size-13"> {{translations.payment_mode}}: {{ quoteRequest.suppliercommand.payment }} </p>
+            <p class="size-13"> {{translations.payment_mode}}: {{ supplierCommand.payment|default:"" }} </p>
         </div>
         <!-- Footer section -->
         <div class="row mt-3">

@@ -1,44 +1,44 @@
-<table class="table table-sm mt-3 bg-white size-13 table-scrollable" style="max-height: 400px;">
+{% load i18n %}
+<table class="table table-sm bg-white size-13" style="max-height: 400px;">
     <thead>
         <tr>
-            <th>Quote request Ref</th>
-            <th>Supplier</th>
-            <th>Print</th>
-            <th>Order </th>
-            <th>Action</th>
+            <th>{% trans "Quote request Ref" %}</th>
+            <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Print" %}</th>
+            <th>{% trans "Order " %}</th>
+            <th>{% trans "Action" %}</th>
         </tr>
     </thead>
     <tbody>
         {% for quoteRequest in project.quoterequest_set.all %}
             <tr>
                 <td>
-                    <a onclick="load_modal('Update quoteRequest','{%  url "update-quoteRequest"  quoteRequest.id %}')"
+                    <a onclick="load_modal('Update quoteRequest N°: {{quoteRequest.request_nbr }}',
+                                '{%  url "update-quoteRequest"  quoteRequest.id %}')"
                         href="#">
                         {{ quoteRequest.request_nbr }}
                     </a>
                 </td>
-                <td>
+                <td class="pointer"
+                    role="button"
+                    onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
+                >
                     {{ quoteRequest.supplier }}/({{ quoteRequest.supplier.language|default:"No language" }})
-                    <a  onclick="load_modal('Update supplier','{%  url "update-supplier"  quoteRequest.supplier.id %}')"
-                        href="#"><i
-                        class="material-icons align-middle size-13 text-dark">visibility</i>
-                    </a>
                 </td>
                 <td>
-                    <a href="#" onclick="load_modal('Generate pdf','{%  url "create-quoteRequest-pdfReport"  quoteRequest.id %}')"
+                    {{ quoteRequest.created_at|date:'d-m-Y' }}
+                </td>
+                <td>
+                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-quoteRequest" quoteRequest.id %}')"
                     >
                         <i class="material-icons align-middle text-dark">picture_as_pdf</i>
                     </a>
                 </td>
                 <td>
-                    {% if not quoteRequest.suppliercommand %}
-                        <a href="#" onclick="load_modal('Supplier command','{%  url "supplier-command"  quoteRequest.id %}')"
-                        >
+                    <a href="#" onclick="load_modal('Create supplier command ','{%  url "create-supplierCommand" quoteRequest.id %}')">
                             <i class="material-icons align-middle text-dark">shopping_cart_checkout</i>
-                        </a>
-                    {% else %}
-                    <span> shopped </span>
-                    {% endif %}
+                    </a>
                 </td>
                 <td>
                     <form method="POST" action="{% url 'delete-quoteRequest' quoteRequest.id %}">
@@ -51,7 +51,7 @@
             </tr>
         {% empty %}
             <tr>
-                <td colspan="7">No quote Request available.</td>
+                <td colspan="7">{% trans "No quote Request available." %}</td>
             </tr>
         {% endfor %}
     </tbody>

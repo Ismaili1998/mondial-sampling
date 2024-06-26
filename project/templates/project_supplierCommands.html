@@ -1,30 +1,40 @@
-<table class="table table-sm mt-3 bg-white size-13 table-scrollable">
+{% load i18n %}
+<table class="table table-sm bg-white size-13">
     <thead>
         <tr>
-            <th>Supplier command Ref</th>
-            <th>Print</th>
-            <th>Action </th>
+            <th>{% trans "Supplier command Ref" %}</th>
+            <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Print" %}</th>
+            <th>{% trans "Action " %}</th>
         </tr>
     </thead>
     <tbody>
-        {% for quoteRequest in project.quoterequest_set.all %}
-            {% if quoteRequest.suppliercommand %}
+        {% for supplierCommand in project.suppliercommand_set.all %}
+            {% if supplierCommand %}
             <tr>
                 <td>
-                    <a onclick="load_modal('Update command','{%  url "update-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                    <a onclick="load_modal('Update command  N°: {{supplierCommand.command_nbr}}','{%  url "update-supplierCommand"  supplierCommand.id %}')"
                         href="#">
-                        {{ quoteRequest.suppliercommand.command_nbr }}
+                        {{ supplierCommand.command_nbr }}
                     </a>
                 </td>
+                <td role="button"
+                    onclick="load_modal('Update supplier','{%  url "update-supplier"  supplierCommand.supplier.id %}')">
+                    {{ supplierCommand.supplier }}/({{ supplierCommand.supplier.language|default:"No language" }})
+                </td>
                 <td>
-                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  quoteRequest.suppliercommand.id %}')"
+                    {{ supplierCommand.created_at|date:'d-m-Y' }}
+                </td>
+                <td>
+                    <a href="#" onclick="load_modal('Generate pdf','{%  url "print-supplierCommand"  supplierCommand.id %}')"
                     >
                         <i class="material-icons align-middle text-dark">picture_as_pdf</i>
                     </a>
                 </td>
                 <td>
                     <div class="dropdown-item">
-                        <form method="POST" action="{% url 'delete-supplierCommand' quoteRequest.suppliercommand.id  %}">
+                        <form method="POST" action="{% url 'delete-supplierCommand' supplierCommand.id  %}">
                             {% csrf_token %}
                             <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
                                 <i class="material-icons size-11">clear</i>
@@ -36,7 +46,7 @@
             {% endif %}
         {% empty %}
             <tr>
-                <td colspan="7">No command available.</td>
+                <td colspan="7">{% trans "No command available." %}</td>
             </tr>
         {% endfor %}
     </tbody>

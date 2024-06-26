@@ -1,0 +1,33 @@
+{% load i18n %}
+<div class="row mt-3 mt-md-0">
+    <div class="col-md-6">
+      <div id="dropzone">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-danger dropdown-toggle" type="button" id="project-documents-dropdown"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons align-middle">description</i>
+            See Project documents
+          </button>
+          <div class="dropdown-menu" aria-labelledby="project-documents-dropdown">
+            {% for project_file in project.file_set.all %}
+              <div class="dropdown-item d-flex justify-content-between gap-4">
+                    <a class="text-dark" href="{% url 'download-file' project_file.id %}" target="_blank">
+                        {{project_file.file.name }} 
+                    </a>
+                    <form method="POST" action="{% url 'remove-file' project_file.id %}">
+                        {% csrf_token %}
+                        <a class="text-danger delete-btn" href="#" title="cancel this confirmation">
+                            <i class="material-icons size-11">clear</i>
+                        </a>
+                    </form>
+              </div>
+            {% endfor %}
+          </div>
+      </div>
+        <p>{% trans "Drag and drop files here to upload" %}</p>
+        <div class="progress" style="display: none;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
