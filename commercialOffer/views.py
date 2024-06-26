@@ -24,7 +24,6 @@ def commercialOffer_detail(commercialOffer):
                'destinations':destinations,
                'shippings': shippings}
 
-
 def confirmedOffer_detail(confirmedOffer):
     timeUnits = TimeUnit.objects.all()
     payments = Payment.objects.all()
