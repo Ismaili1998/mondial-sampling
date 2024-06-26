@@ -65,7 +65,7 @@ class CommercialOffer(AbstractCommercialOffer):
     offer_nbr = models.CharField(max_length=100, unique=True)
     class Meta:
         db_table = 'commercialoffer'
-        ordering = ['-rank']
+        ordering = ['-created_at','-rank']
 
     def __str__(self):
         return self.offer_nbr
@@ -77,7 +77,7 @@ class Confirmed_commercialOffer(AbstractCommercialOffer):
 
     class Meta:
         db_table = 'confirmed_commercialoffer'
-        ordering = ['-rank']
+        ordering = ['-created_at','-rank']
 
     def get_commission(self):
         grand_total = self.get_total_selling_withFee()
