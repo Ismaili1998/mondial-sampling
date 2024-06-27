@@ -24,6 +24,7 @@ def commercialOffer_detail(commercialOffer):
                'destinations':destinations,
                'shippings': shippings}
 
+
 def confirmedOffer_detail(confirmedOffer):
     timeUnits = TimeUnit.objects.all()
     payments = Payment.objects.all()
@@ -243,7 +244,7 @@ def update_confirmed_commercialOffer(request, pk):
         if  form.is_valid():
             form.save()
             update_orders(request)
-            messages.success(request, 'Confirmed offer has been created successfully')
+            messages.success(request, 'Confirmed offer has been updated successfully')
             return redirect(request.META.get('HTTP_REFERER', '/'))
     context = confirmedOffer_detail(confirmedOffer)
     return render(request, 'confirmed_commercialOffer_edit.html', context)

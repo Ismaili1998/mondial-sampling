@@ -131,7 +131,7 @@ def update_invoice(request, pk):
         if  form.is_valid():
             form.save()
             update_orders(request)
-            messages.success(request, 'Invoice has been created successfully')
+            messages.success(request, 'Invoice has been updated successfully')
         else:
             messages.error(request, get_message_error(form))
         return redirect(request.META.get('HTTP_REFERER', '/'))

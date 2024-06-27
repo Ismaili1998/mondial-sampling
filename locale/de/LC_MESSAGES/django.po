@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-06-12 17:08+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "search project"
+msgstr "Projekt suchen"
+
+msgid "Project number"
+msgstr "Projektnummer"
+
+msgid "Project name"
+msgstr "Projektname"
+
+msgid "Client number"
+msgstr "Kundennummer"
+
+msgid "visibility"
+msgstr "Sichtbarkeit"
+
+msgid "Client Ref"
+msgstr "Kunden Nbr"
+
+msgid "Our Ref"
+msgstr "Unsere Referenz"
+
+msgid "Buyer"
+msgstr "Käufer"
+
+msgid "+ New Buyer"
+msgstr "+ Neuer Käufer"
+
+msgid "Representative"
+msgstr "Vertreter"
+
+msgid "Chose a representant"
+msgstr "Wählen Sie einen Vertreter"
+
+msgid "Project description"
+msgstr "Projekt beschreibung"
+
+msgid "To do"
+msgstr "Zu tun"
+
+msgid "Project Articles"
+msgstr "Projektartikel"
+
+msgid "Search Article"
+msgstr "Artikel suchen"
+
+msgid "Add New Article"
+msgstr "Neuen Artikel hinzufügen"
+
+msgid "pos"
+msgstr "Pos"
+
+msgid "Article Number"
+msgstr "Artikelnummer"
+
+msgid "Article Description"
+msgstr "Artikelbeschreibung"
+
+msgid "No article available."
+msgstr "Kein Artikel verfügbar."
+
+msgid "Quote request Ref"
+msgstr "Anfrag Nbr"
+
+msgid "Supplier"
+msgstr "Lieferant"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Print"
+msgstr "Drucken"
+
+msgid "Order"
+msgstr "Bestellung"
+
+msgid "Action"
+msgstr "Aktion"
+
+msgid "No quote request available."
+msgstr "Keine anfrag verfügbar."
+
+msgid "Supplier command Ref"
+msgstr "bestellung Nbr"
+
+msgid "Offer Ref"
+msgstr "Angebot"
+
+msgid "Print CO"
+msgstr "CO drucken"
+
+msgid "Print TO"
+msgstr "TO drucken"
+
+msgid "No offer available."
+msgstr "Kein Angebot verfügbar."
+
+msgid "Confirmed Offer Ref"
+msgstr "Auftrage Nbr"
+
+msgid "Invoice"
+msgstr "Rechnung"
+
+msgid "No confirmed offer available."
+msgstr "Kein auftrage verfügbar."
+
+msgid "Invoices"
+msgstr "Rechnungen"
+
+msgid "Customs Report"
+msgstr "Zollbericht"
+
+msgid "Packing"
+msgstr "Verpackung"
+
+msgid "Print tag"
+msgstr "Etikett drucken"
+
+msgid "Drag and drop files here to upload"
+msgstr "Dateien hierher ziehen und ablegen, um sie hochzuladen"
+
+msgid "See project documents"
+msgstr "Projektdokumente anzeigen"
+
+msgid "Save changes"
+msgstr "speichern"
+
+msgid "Refresh"
+msgstr "Aktualisierung"

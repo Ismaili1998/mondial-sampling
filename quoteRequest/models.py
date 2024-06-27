@@ -22,7 +22,7 @@ class QuoteRequest(AbstractQuoteRequest):
     request_nbr = models.CharField(max_length=100,unique=True)
     class Meta:
         db_table = 'quote_request'
-        ordering = ['-request_nbr']
+        ordering = ['-created_at','-rank']
 
 class SupplierCommand(AbstractQuoteRequest):
     command_nbr = models.CharField(max_length=100, unique=True)
@@ -39,7 +39,7 @@ class SupplierCommand(AbstractQuoteRequest):
 
     class Meta:
         db_table = 'supplier_command'
-        ordering = ['-command_nbr']
+        ordering = ['-created_at','-rank']
 
     def get_final_total(self):
         return self.get_total_purchase() + self.get_fee()

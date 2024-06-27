@@ -21,8 +21,9 @@
                         </a>
                     </td>
                     <td class="size-12">
-                         <textarea disabled rows="2"
-                        class="form-control size-11">{{ invoice.project.project_name }}</textarea>
+                        <strong> {{ invoice.project.project_nbr }} </strong>
+                        <textarea disabled rows="2"
+                            class="form-control size-11">{{ invoice.project.project_name }}</textarea>
                     </td>
                     <td>{{ invoice.created_at|date:'d-m-Y' }}</td>
 
@@ -55,6 +56,7 @@
                         </a>
                     </td>
                     <td class="size-12">
+                        <strong> {{ confirmedOffer.project.project_nbr }} </strong>
                         <textarea disabled rows="2"
                        class="form-control size-11">{{ confirmedOffer.project.project_name }}</textarea>
                    </td>
@@ -88,6 +90,7 @@
                         </a>
                     </td>
                     <td class="size-12">
+                        <strong> {{ offer.project.project_nbr }} </strong>
                         <textarea disabled rows="2"
                        class="form-control size-11">{{ offer.project.project_name }}</textarea>
                     </td>

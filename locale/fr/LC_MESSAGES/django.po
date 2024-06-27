@@ -79,7 +79,7 @@ msgid "No article available."
 msgstr "Aucun article disponible."
 
 msgid "Quote request Ref"
-msgstr "Réf demande devis"
+msgstr "Réf devis"
 
 msgid "Supplier"
 msgstr "Fournisseur"
@@ -100,7 +100,7 @@ msgid "No quote request available."
 msgstr "Aucune demande de devis disponible."
 
 msgid "Supplier command Ref"
-msgstr "Référence de commande fournisseur"
+msgstr "Réf cmd fournisseur"
 
 msgid "Offer Ref"
 msgstr "Réf offre"
@@ -124,7 +124,7 @@ msgid "No confirmed offer available."
 msgstr "Aucune offre confirmée disponible."
 
 msgid "Invoices"
-msgstr "Factures"
+msgstr "Réf Facture"
 
 msgid "Customs Report"
 msgstr "Rapport douanier"

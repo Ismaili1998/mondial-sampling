@@ -17,13 +17,14 @@
             <tr>
                 <td>
                     <a href="#"
-                        onclick="load_modal('UpdatesupplierCommand N°: {{supplierCommand.command_nbr }}','{%  url "update-supplierCommand" supplierCommand.id %}')">
+                        onclick="load_modal('Update supplier Command N°: {{supplierCommand.command_nbr }}','{%  url "update-supplierCommand" supplierCommand.id %}')">
                         {{supplierCommand.command_nbr }}
                     </a>
                 </td>
                 <td>
-                <textarea disabled rows="2"
-                    class="form-control size-11">{{ supplierCommand.project.project_name }}</textarea>
+                    <strong> {{ supplierCommand.project.project_nbr }} </strong>
+                    <textarea disabled rows="2"
+                        class="form-control size-11">{{ supplierCommand.project.project_name }}</textarea>
                 </td>
                 <td> {{ supplierCommand.created_at|date:'d-m-Y' }}</td>
             </tr>
@@ -55,6 +56,7 @@
                     </a>
                 </td>
                 <td>
+                    <strong> {{ quoteRequest.project.project_nbr }} </strong>
                     <textarea disabled rows="2"
                         class="form-control size-11">{{ quoteRequest.project.project_name }}
                     </textarea>

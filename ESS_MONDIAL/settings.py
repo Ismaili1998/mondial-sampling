@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*)x7eux06n(qyb74lpi7-50j*$j$h$66muykeh^rk3^+lzvme-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.178.44']
 
 
 # Application definition
@@ -95,22 +95,22 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # xxx update
-# DATABASES = {
-#    'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ESS_MONDIAL',
-#         'USER': 'root',
-#         'PASSWORD': 'root',
-#         'HOST':'localhost',
-#         'PORT':'3306',
-#     }
-# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+   'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ess_mondial',
+        'USER': 'root',
+        'PASSWORD': 'UzW@!2025',
+        'HOST':'localhost',
+        'PORT':'3306',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -141,7 +141,7 @@ LANGUAGE_CODE = 'en-us'
 LANGUAGES = [
     ('en', 'English'),
     ('fr', 'French'),
-    ('de', 'German'),
+    ('de', 'Germany'),
     # Add more languages as needed
 ]
 
@@ -151,12 +151,14 @@ LOCALE_PATHS = (
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-     BASE_DIR / 'static',
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [
+#      BASE_DIR / 'static',
+#]
 
-MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
