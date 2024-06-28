@@ -8,8 +8,9 @@ from django.conf import settings
 from django.views.static import serve
 from django.http import Http404
 from order.models import Article 
-import os 
 from datetime import datetime
+from project.utils import get_access_token
+import requests
 
 def get_project_nbr():
     P_PREFIX = 'P'
@@ -120,7 +121,52 @@ def get_clientsByKeyWord(request):
     projects = Client.objects.filter(client_nbr__icontains=keyword).values('id','client_nbr')[:20]
     return JsonResponse(list(projects), safe=False)
 
+@csrf_exempt
 def upload_file_to_project(request, project_pk):
+    project = get_object_or_404(Project, id=project_pk)
+    if len(project.file_set.all()) > 10:
+        return JsonResponse({'message': 'No more than 10 files !'})
+
+    if request.method == 'POST' and request.FILES:
+        files = request.FILES.getlist('files')
+        if len(files) > 10:
+            return JsonResponse({'message': 'No more than 10 files !'})
+
+        access_token = get_access_token()  # Ensure you have a function to get the current access token
+        if not access_token:
+            return JsonResponse({'message': 'Unable to authenticate with OneDrive'})
+
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/octet-stream'
+        }
+
+        filenames = []
+        for file in files:
+            # # Create a new instance of File in the database without saving the file locally
+            # project_file = File(
+            #     project=project,
+            #     file=None,  # We won't save the file locally
+            #     description=""
+            # )
+            # project_file.save()  # Save to get the ID
+
+            # Upload file to OneDrive
+            upload_url = f'https://graph.microsoft.com/v1.0/me/drive/root:/project_files/{file.name}:/content'
+            response = requests.put(upload_url, headers=headers, data=file.read())
+
+            if response.status_code == 201:
+                filenames.append(file.name)
+            else:
+                # If upload fails, delete the created File instance and return error
+                # project_file.delete()
+                return JsonResponse({'message': 'File upload failed', 'details': response.json()})
+
+        return JsonResponse({'message': 'Files have been added successfully', 'filenames': filenames})
+    else:
+        return JsonResponse({'message': 'Invalid request'})
+    
+def upload_file_to_project_old(request, project_pk):
     project = get_object_or_404(Project, id=project_pk)
     if len(project.file_set.all()) > 10:
         return JsonResponse({'message': 'No more than 10 files !'})
@@ -128,13 +174,11 @@ def upload_file_to_project(request, project_pk):
         files = request.FILES.getlist('files')
         if len(files) > 10:
             return JsonResponse({'message': 'No more than 10 files !'})
-        filenames = []
         for file in files:
             project_file = File(project=project,
                                        file=file,
                                        description="")
             project_file.save()
-            filenames.append(project_file.file.name)
         return JsonResponse({'message': 'files have been added successfully'})
     else:
         return JsonResponse({'message': 'Invalid request'})

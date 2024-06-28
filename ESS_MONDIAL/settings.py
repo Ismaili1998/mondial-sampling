@@ -163,3 +163,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Azure App registration for One drive 
+CLIENT_ID = ''
+TENANT_ID = ''
+CLIENT_SECRET = ''
+AUTHORITY = ''
+REDIRECT_URI = 'http://localhost:8000/callback'
+SCOPES = ['https://graph.microsoft.com/.default']
