@@ -2,8 +2,8 @@ from django.contrib import admin
 from .models import Language, Country, Representative,Buyer \
     , Currency, Shipping, Transport, Payment, Client, Supplier, Bank_info, Project
 
-admin.site.site_header = 'ESS-MONDIAL Administration'
-admin.site.site_title = 'ESS-MONDIAL Administration'
+admin.site.site_header = 'Mondial-sampling Administration'
+admin.site.site_title = 'Mondial-sampling Administration'
 
 
 class projectAdmin(admin.ModelAdmin):

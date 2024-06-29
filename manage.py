@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ESS_MONDIAL.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mondial-sampling.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -29,7 +29,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ESS_MONDIAL.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mondial-sampling.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

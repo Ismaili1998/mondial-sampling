@@ -1,5 +1,5 @@
 """
-ASGI config for ESS_MONDIAL project.
+ASGI config for mondial-simpling project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ESS_MONDIAL.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mondial-simpling.settings')
 
 application = get_asgi_application()
