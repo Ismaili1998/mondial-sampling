@@ -44,8 +44,8 @@ def get_representativeInvoices(request):
             invoices = Confirmed_commercialOffer.objects.filter(created_at__range=[start_date, end_date], 
                                                                 project__representative=representative)[:100]
         else:
-            invoices = Invoice.objects.filter(created_at__range=[start_date, end_date], 
-                                                                project__representative=representative)[:100]
+            invoices = Invoice.objects.filter(project__representative=representative)[:100]
+            #created_at__range=[start_date, end_date]
     return  representative, invoices
 
 def get_context(request):
@@ -103,7 +103,7 @@ def update_advancePayment(request, pk):
 
     # Assuming get_context is a function defined elsewhere
     context = get_context(request)
-    context['form_name'] = "update"
+    context['form_name'] = "updaeeete"
     context['advancePayment'] = advancePayment
     return render(request, 'commission.html', context)
 

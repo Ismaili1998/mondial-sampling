@@ -104,30 +104,41 @@
             <fieldset class="border p-1 mt-2 rounded">
                 <h6> Supplier represenatant  </h6>
                 <div class="form-group row mt-2">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Contact name</label>
-                    <div class="col-sm-8">
+                    <div class="col-sm-3">
+                        <label>
+                            <input type="radio" class="form-check-input" name="supplier_contact-gender" value="1" 
+                            {% if supplier.supplier_contact.gender  %} checked {% endif %}>
+                            Mr 
+                        </label>
+                        <label>
+                            <input type="radio" class="form-check-input" name="supplier_contact-gender" value="0" 
+                            {% if not supplier.supplier_contact.gender %} checked {% endif %}>
+                            Mme
+                        </label>
+                    </div>
+                    <div class="col-sm-9">
                         <input type="text" name="supplier_contact-name" class="form-control form-control-sm"
                             value="{{supplier.supplier_contact.name|default:''}}" />
-                    </div>
+                    </div>  
                 </div>
                 <div class="form-group row mt-1">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Email</label>
-                    <div class="col-sm-8">
+                    <label class="col-sm-3 col-form-label col-form-label-sm">Email</label>
+                    <div class="col-sm-9">
                         <input type="email" name="supplier_contact-email" class="form-control form-control-sm"
                             value="{{supplier.supplier_contact.email|default:''}}" />
                     </div>
                 </div>
                 <div class="form-group row mt-1">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Phone number</label>
-                    <div class="col-sm-8">
+                    <label class="col-sm-3 col-form-label col-form-label-sm">Phone number</label>
+                    <div class="col-sm-9">
                         <input type="text" name="supplier_contact-phone_number" class="form-control form-control-sm"
                             value="{{supplier.supplier_contact.phone_number|default:''}}" />
                     </div>
                 </div>
             </fieldset>
             <div class="form-group row mt-2">
-                <label for="comment" class="col-sm-4 col-form-label col-form-label-sm">Comment</label>
-                <div class="col-sm-8">
+                <label for="comment" class="col-sm-3 col-form-label col-form-label-sm"> Comment </label>
+                <div class="col-sm-9">
                     <textarea name="comment" class="form-control form-control-sm" rows="3"
                         id="comment"> {{supplier.comment|default:'' }} </textarea>
                 </div>

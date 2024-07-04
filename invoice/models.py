@@ -12,7 +12,7 @@ class Invoice(AbstractCommercialOffer):
     
     def get_commission(self):
         grand_total = self.get_total_selling_withFee()
-        commission = grand_total * (1 + (self.commission * grand_total / 100))
+        commission = self.commission * grand_total / 100
         return round(commission, 2)
 
     def clone_orders_from_confirmedOffer(self, confirmedOffer):

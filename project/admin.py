@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Language, Country, Representative,Buyer \
-    , Currency, Shipping, Transport, Payment, Client, Supplier, Bank_info, Project
+    , Currency, Shipping, Transport, Destination, Payment, \
+    Client, Supplier, Bank_info, Project, TimeUnit
 
 admin.site.site_header = 'Mondial-sampling Administration'
 admin.site.site_title = 'Mondial-sampling Administration'
@@ -67,6 +68,18 @@ class PaymentAdmin(admin.ModelAdmin):
     )
     search_fields = ['mode']
 
+class DestinationAdmin(admin.ModelAdmin):
+    list_display = (
+        'destination_name',
+    )
+    search_fields = ['destination_name']
+
+class TimeUnitAdmin(admin.ModelAdmin):
+    list_display = (
+        'unit_name',
+    )
+    search_fields = ['unit_name']
+
 class ClientAdmin(admin.ModelAdmin):
     list_display = (
         'client_nbr',
@@ -88,6 +101,8 @@ admin.site.register(Country, CountryAdmin)
 admin.site.register(Currency, CurrencyAdmin)
 admin.site.register(Shipping, ShippingAdmin)
 admin.site.register(Transport, TransportAdmin)
+admin.site.register(Destination, DestinationAdmin)
+admin.site.register(TimeUnit, TimeUnitAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Supplier,SupplierAdmin)

@@ -47,9 +47,9 @@
                     </td>
                     <td>{{ invoice.get_commission|thousand_separator }} {{ invoice.get_currency }} </td>
                 {% else %}
-                    <td>{{ invoice.confirmed_commercialOffer.project.client }}</td>
-                    <td>{{ invoice.confirmed_commercialOffer.project.buyer }}</td>
-                    <td>{{ invoice.confirmed_commercialOffer.project }}</td>
+                    <td>{{ invoice.project.client }}</td>
+                    <td>{{ invoice.project.buyer }}</td>
+                    <td>{{ invoice.project }}</td>
                     <td> <a href="#" class="text-info"
                         onclick="load_modal('Invoice','{%  url "update-invoice" invoice.id %}')"> 
                         {{ invoice.invoice_nbr }} </a>
@@ -90,7 +90,7 @@
                     </tr>
                     <tr>
                         <th>Remaining:</th>
-                        <td class="{% if remaining < 0 %}text-danger{% else %}text-success{% endif %}">
+                        <td class="{% if remaining > 0 %}text-danger{% else %}text-success{% endif %}">
                             <strong>
                                 {{ remaining|thousand_separator }} {{ invoices.0.get_currency  }}
                             </strong>

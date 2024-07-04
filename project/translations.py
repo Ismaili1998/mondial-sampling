@@ -1,7 +1,7 @@
 translations = {
 
     'greeting': {
-        'en': 'Dear Sirs',
+        'en': 'Dear',
         'fr': 'Messieurs',
         'de': 'Sehr geehrte',
     },
@@ -9,7 +9,7 @@ translations = {
     'controlling_idea_qr': {
         'en': 'Please provide us urgently with your best price and delivery time for',
         'fr': 'Veuillez nous transmettre en toute urgence votre meilleure offre et delai pour',
-        'de': 'Damen und Herrn, erbeten Ihr günstigstes Angebot in aller Eile über',
+        'de': 'wir bitten, Ihr bestes kaumännisches und technisches Angebot für folgende Pos. zu unterbreiten',
     },
 
     'controlling_idea_sc': {

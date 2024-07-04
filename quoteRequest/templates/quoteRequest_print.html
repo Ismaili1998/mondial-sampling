@@ -13,20 +13,21 @@
         <div class="mt-2 d-flex justify-content-between">
             <div class="size-12">
                 {{ quoteRequest.supplier }} <br/>
-                {{ quoteRequest.supplier.country.country_name_fr|default:"" }} <br/>
+                {{ quoteRequest.supplier.supplier_contact.name|default:"" }} <br/>
+                Email 1: {{ quoteRequest.supplier.supplier_contact.email|default:"" }} <br/>
+                Email 2: {{ quoteRequest.supplier.email|default:"" }} <br/>
                 Phone: {{ quoteRequest.supplier.phone_number|default:"" }} <br/>
-                Email: {{ quoteRequest.supplier.email|default:"" }} <br/>
                 Fax: {{ quoteRequest.supplier.fax|default:"" }}
             </div>
-            <div>
-                <h6 class="mt-5 text-center outset-border py-2 px-2">
-                   {{ translations.inquiry }} <br/> {{ quoteRequest.request_nbr }} 
-                </h6>
+            <div class="logo-color mt-5 text-center outset-border py-2 px-2">
+                <strong> {{ translations.inquiry }} </strong>
+                <br/>
+                <strong>{{ quoteRequest.request_nbr }} </strong>
             </div>
             <div class="size-13">
                 <p>
                     <strong> {{ translations.contact_name }} </strong> <br/>
-                    Mr: {{ request.user.first_name|default:"" }} <br/>
+                    Mr: {{ request.user.first_name|default:"" }} {{ request.user.last_name|default:"" }} <br/>
                     Email :{{ request.user.email|default:"" }} <br/>
                     Tel: {{ request.user.phone_number|default:"" }} <br/>
                     Fax: {{ request.user.fax|default:"" }}
@@ -44,7 +45,9 @@
             </div>
         </div>
         <div class="size-13 row mt-4">
-            <p> {{ translations.greeting }}, <br/> {{ translations.controlling_idea_qr }} </p>
+            <p> {{ translations.greeting }} 
+                {{ quoteRequest.supplier.supplier_contact.name|default:'' }},
+                <br/> {{ translations.controlling_idea_qr }}: </p>
             <p> Free text to edit ! </p>
         </div>
         <!-- Body section -->

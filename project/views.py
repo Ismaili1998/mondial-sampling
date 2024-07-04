@@ -305,7 +305,7 @@ def update_supplier(request, pk):
                 else:
                     for field, errors in supplier_contact_form.errors.items():
                         for error in errors:
-                            print(f"++Field: {field} - Error: {error}")
+                            print(f"Field: {field} - Error: {error}")
             except:
                 pass
                 supplier_contact_form = Supplier_contactForm(prefix='supplier_contact',

@@ -1,5 +1,6 @@
 {% load format_numbers %}
 {% load i18n %}
+{% load l10n %}
 <div class="container-fluid">
     <form
         action="{% url 'create-commercialOffer' project.id %}"
@@ -60,7 +61,7 @@
                             class="purchase-price form-control form-control-sm"
                             step="0.01"
                             placeholder="purchase price"
-                            value = "{{ article.purchase_price }}"
+                            value = "{{ article.purchase_price|unlocalize }}"
                             required
                             />
                         </td>

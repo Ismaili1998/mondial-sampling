@@ -137,6 +137,7 @@ class Supplier_contact(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True, blank=True, null= True)
     phone_number = models.CharField(max_length=20, blank=True, null= True)
+    gender = models.BooleanField(default=1)
     supplier = models.OneToOneField(Supplier, on_delete=models.SET_NULL, blank=True, null= True)
 
 
